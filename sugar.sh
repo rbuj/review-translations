@@ -19,7 +19,7 @@ NC=`tput sgr0` # No Color
 
 CODI=(abacus analyzejournal calculate chat deducto erikos finance followmebutia fototoon fractionbounce get-books get-internet-archive-books imageviewer infoslicer jukebox log maze measure memorize paint paths physics pippy ruler read readetexts read-sd-comics record speak terminal turtleart turtleart-extras typing-turtle viewslides visualmatch browse words-activity write)
 TRADUCCIO=(Abacus AnalyzeJournal Calculate Chat Deducto Erikos Finance FollowMeButia FotoToon FractionBounce GetBooks GetIABooks ImageViewer InfoSlicer Jukebox Log Maze Measure Memorize Paint Paths Physics Pippy Ruler Read ReadETexts ReadSDComics Record Speak Terminal TurtleArt TurtleArtExtras TypingTurtle ViewSlides Dimensions Web Words Write)
-PACKAGE_SUFFIX=(abacus no calculator chat deducto no finance no fototoon fractionbounce no getiabooks imageviewer infoslicer jukebox log maze measure memorize paint no physics pippy ruler read no no record speak terminal turtleart no typing-turtle view-slides no no words write)
+PACKAGE_SUFFIX=(abacus analyze calculator chat deducto no finance no fototoon fractionbounce no getiabooks imageviewer infoslicer jukebox log maze measure memorize paint no physics pippy ruler read no no record speak terminal turtleart no typing-turtle view-slides visualmatch browse words write)
 
 DIRECTORI_TREBALL=$PWD
 DIRECTORI_BASE=${DIRECTORI_TREBALL}/sugar
