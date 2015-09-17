@@ -19,32 +19,35 @@ NC=`tput sgr0` # No Color
 
 DIRECTORI_TREBALL=$PWD
 DIRECTORI_BASE=${DIRECTORI_TREBALL}
+LANG_CODE=
+
+function usage {
+    echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
+}
 
 function update_src {
     cd ${DIRECTORI_BASE}
     if [ ! -d $1 ]; then
-        echo -ne "Es clona el codi font "
+        echo -ne "downloading : source code - git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     else
         cd $1
-        echo -ne "S'actualitza el codi font "
+        echo -ne "downloading : source code - git pull "
         git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-        cd ..
     fi
 }
 
-function obte_codi {
+function get_code {
     update_src dnf https://github.com/rpm-software-management/dnf.git
 }
 
-function obte_traduccio {
-    echo -ne "S'obté la traducció"
+function get_trans {
+    echo -ne "downloading : translation "
     cd ${DIRECTORI_BASE}/dnf/po
-    zanata-cli -B pull -l ca &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
 }
 
-function compila_codi {
-    echo "Es compila el codi"
+function build_src {
     cd ${DIRECTORI_BASE}/dnf
     dnf builddep dnf.spec -y &> /dev/null
     if [ ! -d "${DIRECTORI_BASE}/dnf/build" ]; then
@@ -56,12 +59,12 @@ function compila_codi {
 }
 
 function test {
-    obte_codi
-    obte_traduccio
-    compila_codi
+    get_code
+    get_trans
+    build_src
 }
 
-function revisio {
+function report {
 if [ ! -d "${DIRECTORI_TREBALL}/languagetool" ]; then
     cd ${DIRECTORI_TREBALL}
     git clone https://github.com/languagetool-org/languagetool.git
@@ -74,7 +77,7 @@ LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
 java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
 LANGUAGETOOL_PID=$!
 
-echo -ne "Revisió: S'espera que s'hagi iniciat el servidor web del langtool"
+echo -ne "wait for langtool"
 until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
     printf '.'
     sleep 1
@@ -99,16 +102,16 @@ export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
 
 cat << EOF > ${DIRECTORI_TREBALL}/dnf-informe.html
 <!DOCTYPE html>
-<html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Memòries de traducció lliures al català</title>
+    <title>Translation Report</title>
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/dnf/po/ca.po >> ${DIRECTORI_TREBALL}/dnf-informe.html
+echo "checking : running posieve"
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/dnf/po/ca.po >> ${DIRECTORI_TREBALL}/dnf-informe.html
 
 cat << EOF >> ${DIRECTORI_TREBALL}/dnf-informe.html
 </body>
@@ -118,17 +121,36 @@ EOF
 kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
-
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
 fi
 
-echo -ne "S'instal·len les eines necessaries "
-dnf install -y svn maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
 
-### Principal ###
+rpm -q subversion maven python-enchant &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "installing : required packages"
+    sudo dnf install -y subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+fi
+
+### Main ###
 test
-revisio
-echo "S'ha finalitzat!"
+report
+echo "complete!"
+echo "Test your translation with:"
+echo ""
+echo "    PYTHONPATH=\`readlink -f .\` bin/dnf-3 ARGS" 
+echo ""
