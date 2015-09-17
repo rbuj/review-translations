@@ -102,7 +102,7 @@ cat << EOF > ${DIRECTORI_TREBALL}/rpm-informe.html
 EOF
 
 echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule -s list --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/rpm/po/ca.po >> ${DIRECTORI_TREBALL}/rpm-informe.html
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/rpm/po/ca.po >> ${DIRECTORI_TREBALL}/rpm-informe.html
 
 cat << EOF >> ${DIRECTORI_TREBALL}/rpm-informe.html
 </body>
