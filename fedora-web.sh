@@ -93,7 +93,7 @@ cat << EOF > ${DIRECTORI_TREBALL}/fedora-web-informe.html
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Memòries de traducció lliures al català</title>
   </head>
-<body>
+<body bgcolor="#080808" text="#D0D0D0">
 EOF
 
 echo "Revisió: S'analitzen les traduccions"
