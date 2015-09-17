@@ -19,12 +19,17 @@ NC=`tput sgr0` # No Color
 
 DIRECTORI_TREBALL=$PWD
 DIRECTORI_BASE=${DIRECTORI_TREBALL}/fedora-main
+LANG_CODE=
 
 PROJECT=(abrt abrt anaconda anaconda anaconda anaconda authconfig blivet blivet blivet blivet chkconfig comps firewalld firewalld gnome-abrt gnome-abrt initscripts libpwquality libreport libreport libuser liveusb-creator mlocate newt passwd pykickstart pykickstart python-meh python-meh selinux setroubleshoot system-config-firewall system-config-kdump system-config-kickstart system-config-language system-config-printer usermode)
 VERSION=(master rhel7 rhel7-branch rhel6-branch f23-branch master master rhel7-branch rhel6-branch f23-branch master master master master RHEL-7 master rhel7 master master master rhel7 default master default master password master rhel7-branch master rhel7-branch master master master master master master master default)
 
-function obte_traduccio {
-    echo -ne "S'obté la traducció "${PROJECT[$1]}"-"${VERSION[$1]}" "
+function usage {
+    echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
+}
+
+function get_trans {
+    echo -ne "downloading : ${PROJECT[$1]}-${VERSION[$1]} "
     if [ ! -d "${DIRECTORI_BASE}/${PROJECT[$1]}-${VERSION[$1]}" ]; then
         mkdir -p ${DIRECTORI_BASE}/${PROJECT[$1]}-${VERSION[$1]}
     fi
@@ -42,16 +47,16 @@ function obte_traduccio {
 EOF
     fi
     cd ${DIRECTORI_BASE}/${PROJECT[$1]}"-"${VERSION[$1]}
-    zanata-cli -B pull -l ca &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function test {
     for (( i=0; i<${#PROJECT[@]}; i++ )); do
-        obte_traduccio $i
+        get_trans $i
     done
 }
 
-function revisio {
+function checking {
 if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
     cd ${DIRECTORI_TREBALL}
     svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
@@ -69,13 +74,13 @@ cat << EOF > ${DIRECTORI_TREBALL}/fedora-main-informe.html
 <html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Memòries de traducció lliures al català</title>
+    <title>Translation Report</title>
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
+echo -ne "checking : check the translations"
+posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
 
 cat << EOF >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
 </body>
@@ -83,17 +88,32 @@ cat << EOF >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
 EOF
 }
 
-
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
 fi
 
-echo -ne "S'instal·len les eines necessaries "
-dnf install -y svn maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
 
-### Principal ###
+rpm -q subversion maven python-enchant &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "installing : required packages"
+    sudo dnf install -y subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+fi
+
+### Main ###
 test
-revisio
-echo "S'ha finalitzat!"
+checking
+echo "Complete!"

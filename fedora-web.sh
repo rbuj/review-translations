@@ -107,15 +107,11 @@ EOF
 kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
-
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
+rpm -q subversion maven python-enchant &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "installing : required packages"
+    sudo dnf install -y subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 fi
-
-echo -ne "S'instal·len les eines necessaries "
-dnf install -y svn maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
 
 ### Principal ###
 test
