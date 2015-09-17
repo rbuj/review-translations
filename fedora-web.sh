@@ -94,7 +94,7 @@ export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
 
 cat << EOF > ${DIRECTORI_TREBALL}/fedora-web-informe.html
 <!DOCTYPE html>
-<html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Report</title>

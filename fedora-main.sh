@@ -71,7 +71,7 @@ export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
 
 cat << EOF > ${DIRECTORI_TREBALL}/fedora-main-informe.html
 <!DOCTYPE html>
-<html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>Translation Report</title>
@@ -80,7 +80,7 @@ cat << EOF > ${DIRECTORI_TREBALL}/fedora-main-informe.html
 EOF
 
 echo -ne "checking : check the translations"
-posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
+posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
 
 cat << EOF >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
 </body>
