@@ -78,7 +78,7 @@ function prepara_revisio {
 }
 
 function test {
-rm -fr sugar
+rm -fr ${DIRECTORI_BASE}/sugar
 for PROJECTE in sugar sugar-toolkit-gtk3; do
     echo -ne ${PROJECTE}": es crea el mo "
     curl -s -S http://translate.sugarlabs.org/export/$PROJECTE/ca.po > ${DIRECTORI_BASE}/$PROJECTE.po
