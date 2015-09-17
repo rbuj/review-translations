@@ -152,5 +152,5 @@ report
 echo "complete!"
 echo "Test your translation with:"
 echo ""
-echo "    PYTHONPATH=\`readlink -f .\` bin/dnf-3 ARGS" 
+echo "    PYTHONPATH=\`readlink -f dnf\` dnf/bin/dnf-3 ARGS" 
 echo ""
