@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # ---------------------------------------------------------------------------
 # Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
@@ -21,9 +22,14 @@ DIRECTORI_TREBALL=$PWD
 DIRECTORI_BASE=${DIRECTORI_TREBALL}/fedora-web
 
 TRADUCCIO=(fedorahosted.org boot.fedoraproject.org fedoracommunity.org start.fedoraproject.org spins.fedoraproject.org getfedora.org labs.fedoraproject.org arm.fedoraproject.org)
+LANG_CODE=
+
+function usage {
+    echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
+}
 
 function obte_traduccio {
-    echo -ne "S'obté la traducció "${TRADUCCIO[$1]}" "
+    echo -ne "downloading : "${TRADUCCIO[$1]}" "
     if [ ! -d "${DIRECTORI_BASE}/${TRADUCCIO[$1]}" ]; then
         mkdir -p ${DIRECTORI_BASE}/${TRADUCCIO[$1]}
     fi
@@ -41,7 +47,7 @@ function obte_traduccio {
 EOF
     fi
     cd ${DIRECTORI_BASE}/${TRADUCCIO[$1]}
-    zanata-cli -B pull -l ca &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function test {
@@ -63,7 +69,7 @@ LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
 java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
 LANGUAGETOOL_PID=$!
 
-echo -ne "Revisió: S'espera que s'hagi iniciat el servidor web del langtool"
+echo -ne "ckecking: wait for langtool"
 until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
     printf '.'
     sleep 1
@@ -91,13 +97,13 @@ cat << EOF > ${DIRECTORI_TREBALL}/fedora-web-informe.html
 <html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Memòries de traducció lliures al català</title>
+    <title>Report</title>
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-web-informe.html
+echo "checking: check translations"
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-web-informe.html
 
 cat << EOF >> ${DIRECTORI_TREBALL}/fedora-web-informe.html
 </body>
@@ -106,6 +112,25 @@ EOF
 
 kill -9 $LANGUAGETOOL_PID > /dev/null
 }
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
 
 rpm -q subversion maven python-enchant &> /dev/null
 if [ $? -ne 0 ]; then
@@ -116,4 +141,4 @@ fi
 ### Principal ###
 test
 revisio
-echo "S'ha finalitzat!"
+echo "complete!"
