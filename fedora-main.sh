@@ -69,7 +69,8 @@ fi
 export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
 export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
 
-cat << EOF > ${DIRECTORI_TREBALL}/fedora-main-informe.html
+HTML_REPORT=${DIRECTORI_TREBALL}/fedora-main-report.html
+cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -80,9 +81,9 @@ cat << EOF > ${DIRECTORI_TREBALL}/fedora-main-informe.html
 EOF
 
 echo -ne "checking : check the translations"
-posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
+posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${HTML_REPORT}
 
-cat << EOF >> ${DIRECTORI_TREBALL}/fedora-main-informe.html
+cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF

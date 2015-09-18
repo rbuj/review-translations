@@ -100,7 +100,8 @@ fi
 export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
 export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
 
-cat << EOF > ${DIRECTORI_TREBALL}/dnf-informe.html
+HTML_REPORT=${DIRECTORI_TREBALL}/dnf-report.html
+cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -111,9 +112,9 @@ cat << EOF > ${DIRECTORI_TREBALL}/dnf-informe.html
 EOF
 
 echo "checking : running posieve"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/dnf/po/ca.po >> ${DIRECTORI_TREBALL}/dnf-informe.html
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/dnf/po/${LANG_CODE}.po >> ${HTML_REPORT}
 
-cat << EOF >> ${DIRECTORI_TREBALL}/dnf-informe.html
+cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
