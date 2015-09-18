@@ -13,80 +13,10 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
-WORK_PATH=$PWD
-BASE_PATH=${WORK_PATH}/fedora-main
 LANG_CODE=
-
-PROJECT=(abrt abrt anaconda anaconda anaconda anaconda authconfig blivet blivet blivet blivet chkconfig comps firewalld firewalld gnome-abrt gnome-abrt initscripts libpwquality libreport libreport libuser liveusb-creator mlocate newt passwd pykickstart pykickstart python-meh python-meh selinux setroubleshoot system-config-firewall system-config-kdump system-config-kickstart system-config-language system-config-printer usermode)
-VERSION=(master rhel7 rhel7-branch rhel6-branch f23-branch master master rhel7-branch rhel6-branch f23-branch master master master master RHEL-7 master rhel7 master master master rhel7 default master default master password master rhel7-branch master rhel7-branch master master master master master master master default)
 
 function usage {
     echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
-}
-
-function get_trans {
-    echo -ne "downloading : ${PROJECT[$1]}-${VERSION[$1]} "
-    if [ ! -d "${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}" ]; then
-        mkdir -p ${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}
-    fi
-    FITXER=${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}/zanata.xml
-    if [ ! -f "${FITXER}" ]; then
-        cat << EOF > ${FITXER}
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config xmlns="http://zanata.org/namespace/config/">
-  <url>https://fedora.zanata.org/</url>
-  <project>${PROJECT[$1]}</project>
-  <project-version>${VERSION[$1]}</project-version>
-  <project-type>gettext</project-type>
-
-</config>
-EOF
-    fi
-    cd ${BASE_PATH}/${PROJECT[$1]}"-"${VERSION[$1]}
-    zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
-}
-
-function test {
-    for (( i=0; i<${#PROJECT[@]}; i++ )); do
-        get_trans $i
-    done
-}
-
-function checking {
-if [ ! -d ${WORK_PATH}/pology ]; then
-    cd ${WORK_PATH}
-    svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-    cd pology
-    mkdir build && cd build
-    cmake ..
-    make
-fi
-
-export PYTHONPATH=${WORK_PATH}}/pology:$PYTHONPATH
-export PATH=${WORK_PATH}/pology/bin:$PATH
-
-HTML_REPORT=${WORK_PATH}/fedora-main-report.html
-cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Translation Report</title>
-  </head>
-<body bgcolor="#080808" text="#D0D0D0">
-EOF
-
-echo -ne "checking : check the translations"
-posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
-
-cat << EOF >> ${HTML_REPORT}
-</body>
-</html>
-EOF
 }
 
 if [ $# -lt 1 ]; then
@@ -108,13 +38,6 @@ case $i in
 esac
 done
 
-rpm -q subversion maven python-enchant zanata-client &> /dev/null
-if [ $? -ne 0 ]; then
-    echo "installing : required packages"
-    sudo dnf install -y subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
-fi
-
 ### Main ###
-test
-checking
-echo "Complete!"
+./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
+echo "complete!"
