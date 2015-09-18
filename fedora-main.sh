@@ -66,7 +66,7 @@ if [ ! -d ${WORK_PATH}/pology ]; then
     make
 fi
 
-export PYTHONPATH=${}/pology:$PYTHONPATH
+export PYTHONPATH=${WORK_PATH}}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 
 HTML_REPORT=${WORK_PATH}/fedora-main-report.html
