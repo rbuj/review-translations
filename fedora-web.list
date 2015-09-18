@@ -1,8 +1,9 @@
-arm.fedoraproject.org
-boot.fedoraproject.org
-fedoracommunity.org
-fedorahosted.org
-getfedora.org
-labs.fedoraproject.org
-spins.fedoraproject.org
-start.fedoraproject.org
+fedora-web arm.fedoraproject.org
+fedora-web boot.fedoraproject.org
+fedora-web fedoracommunity.org
+fedora-web fedorahosted.org
+fedora-web getfedora.org
+fedora-web labs.fedoraproject.org
+fedora-web spins.fedoraproject.org
+fedora-web start.fedoraproject.org
+fedora-software master

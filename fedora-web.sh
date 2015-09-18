@@ -27,30 +27,31 @@ function usage {
 }
 
 function get_trans {
-    echo -ne "downloading : "${1}" "
-    if [ ! -d "${BASE_PATH}/${1}" ]; then
-        mkdir -p ${BASE_PATH}/${1}
+    echo -ne "downloading : "${1}" "${2}
+    if [ ! -d "${BASE_PATH}/${1}-${2}" ]; then
+        mkdir -p ${BASE_PATH}/${1}-${2}
     fi
-    FITXER=${BASE_PATH}/${1}/zanata.xml
+    FITXER=${BASE_PATH}/${1}-${2}/zanata.xml
     if [ ! -f "${FITXER}" ]; then
         cat << EOF > ${FITXER}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://fedora.zanata.org/</url>
-  <project>fedora-web</project>
-  <project-version>${1}</project-version>
+  <project>${1}</project>
+  <project-version>${2}</project-version>
   <project-type>gettext</project-type>
 
 </config>
 EOF
     fi
-    cd ${BASE_PATH}/${1}
+    cd ${BASE_PATH}/${1}-${2}
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function test {
-    while read p; do
-        get_trans $p
+    while read -r p; do
+        set -- $p
+        get_trans $1 $2
     done <fedora-web.list
 }
 
