@@ -133,10 +133,10 @@ case $i in
 esac
 done
 
-rpm -q subversion maven python-enchant &> /dev/null
+rpm -q subversion maven python-enchant zanata-client &> /dev/null
 if [ $? -ne 0 ]; then
     echo "installing : required packages"
-    sudo dnf install -y subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+    sudo dnf install -y subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 fi
 
 ### Principal ###
