@@ -17,8 +17,8 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-DIRECTORI_TREBALL=$PWD
-DIRECTORI_BASE=${DIRECTORI_TREBALL}/fedora-main
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}/fedora-main
 LANG_CODE=
 
 PROJECT=(abrt abrt anaconda anaconda anaconda anaconda authconfig blivet blivet blivet blivet chkconfig comps firewalld firewalld gnome-abrt gnome-abrt initscripts libpwquality libreport libreport libuser liveusb-creator mlocate newt passwd pykickstart pykickstart python-meh python-meh selinux setroubleshoot system-config-firewall system-config-kdump system-config-kickstart system-config-language system-config-printer usermode)
@@ -30,10 +30,10 @@ function usage {
 
 function get_trans {
     echo -ne "downloading : ${PROJECT[$1]}-${VERSION[$1]} "
-    if [ ! -d "${DIRECTORI_BASE}/${PROJECT[$1]}-${VERSION[$1]}" ]; then
-        mkdir -p ${DIRECTORI_BASE}/${PROJECT[$1]}-${VERSION[$1]}
+    if [ ! -d "${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}" ]; then
+        mkdir -p ${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}
     fi
-    FITXER=${DIRECTORI_BASE}/${PROJECT[$1]}-${VERSION[$1]}/zanata.xml
+    FITXER=${BASE_PATH}/${PROJECT[$1]}-${VERSION[$1]}/zanata.xml
     if [ ! -f "${FITXER}" ]; then
         cat << EOF > ${FITXER}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -46,7 +46,7 @@ function get_trans {
 </config>
 EOF
     fi
-    cd ${DIRECTORI_BASE}/${PROJECT[$1]}"-"${VERSION[$1]}
+    cd ${BASE_PATH}/${PROJECT[$1]}"-"${VERSION[$1]}
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
@@ -57,8 +57,8 @@ function test {
 }
 
 function checking {
-if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
-    cd ${DIRECTORI_TREBALL}
+if [ ! -d ${WORK_PATH}/pology ]; then
+    cd ${WORK_PATH}
     svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
     cd pology
     mkdir build && cd build
@@ -66,10 +66,10 @@ if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
     make
 fi
 
-export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
-export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
+export PYTHONPATH=${}/pology:$PYTHONPATH
+export PATH=${WORK_PATH}/pology/bin:$PATH
 
-HTML_REPORT=${DIRECTORI_TREBALL}/fedora-main-report.html
+HTML_REPORT=${WORK_PATH}/fedora-main-report.html
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
@@ -81,7 +81,7 @@ cat << EOF > ${HTML_REPORT}
 EOF
 
 echo -ne "checking : check the translations"
-posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${HTML_REPORT}
+posieve check-rules,check-spell-ec,stats -s lang:${LANG_CODE} -s showfmsg --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
 cat << EOF >> ${HTML_REPORT}
 </body>

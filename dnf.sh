@@ -17,8 +17,8 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-DIRECTORI_TREBALL=$PWD
-DIRECTORI_BASE=${DIRECTORI_TREBALL}
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}
 LANG_CODE=
 
 function usage {
@@ -26,7 +26,7 @@ function usage {
 }
 
 function update_src {
-    cd ${DIRECTORI_BASE}
+    cd ${BASE_PATH}
     if [ ! -d $1 ]; then
         echo -ne "downloading : source code - git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
@@ -43,14 +43,15 @@ function get_code {
 
 function get_trans {
     echo -ne "downloading : translation "
-    cd ${DIRECTORI_BASE}/dnf/po
+    cd ${BASE_PATH}/dnf/po
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
 }
 
 function build_src {
-    cd ${DIRECTORI_BASE}/dnf
-    dnf builddep dnf.spec -y &> /dev/null
-    if [ ! -d "${DIRECTORI_BASE}/dnf/build" ]; then
+    cd ${BASE_PATH}/dnf
+    echo "installing builddeps..."
+    sudo dnf builddep dnf.spec -y &> /dev/null
+    if [ ! -d "${BASE_PATH}/dnf/build" ]; then
         mkdir build
     fi
     pushd build;
@@ -65,14 +66,14 @@ function test {
 }
 
 function report {
-if [ ! -d "${DIRECTORI_TREBALL}/languagetool" ]; then
-    cd ${DIRECTORI_TREBALL}
+if [ ! -d "${WORK_PATH}/languagetool" ]; then
+    cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
     cd languagetool
     ./build.sh languagetool-standalone clean package -DskipTests
 fi
 
-cd ${DIRECTORI_TREBALL}
+cd ${WORK_PATH}
 LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
 java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
 LANGUAGETOOL_PID=$!
@@ -88,8 +89,8 @@ else
     echo " ${GREEN}[ OK ]${NC}"
 fi
 
-if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
-    cd ${DIRECTORI_TREBALL}
+if [ ! -d ${WORK_PATH}/pology ]; then
+    cd ${WORK_PATH}
     svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
     cd pology
     mkdir build && cd build
@@ -97,10 +98,10 @@ if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
     make
 fi
 
-export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
-export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
+export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+export PATH=${WORK_PATH}/pology/bin:$PATH
 
-HTML_REPORT=${DIRECTORI_TREBALL}/dnf-report.html
+HTML_REPORT=${WORK_PATH}/dnf-report.html
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
@@ -112,7 +113,7 @@ cat << EOF > ${HTML_REPORT}
 EOF
 
 echo "checking : running posieve"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/dnf/po/${LANG_CODE}.po >> ${HTML_REPORT}
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/dnf/po/${LANG_CODE}.po >> ${HTML_REPORT}
 
 cat << EOF >> ${HTML_REPORT}
 </body>

@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # ---------------------------------------------------------------------------
 # Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
@@ -18,53 +17,53 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-DIRECTORI_TREBALL=$PWD
-DIRECTORI_BASE=${DIRECTORI_TREBALL}/fedora-web
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}/fedora-web
 
-TRADUCCIO=(fedorahosted.org boot.fedoraproject.org fedoracommunity.org start.fedoraproject.org spins.fedoraproject.org getfedora.org labs.fedoraproject.org arm.fedoraproject.org)
+TRANSLATION=(fedorahosted.org boot.fedoraproject.org fedoracommunity.org start.fedoraproject.org spins.fedoraproject.org getfedora.org labs.fedoraproject.org arm.fedoraproject.org)
 LANG_CODE=
 
 function usage {
     echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
 }
 
-function obte_traduccio {
-    echo -ne "downloading : "${TRADUCCIO[$1]}" "
-    if [ ! -d "${DIRECTORI_BASE}/${TRADUCCIO[$1]}" ]; then
-        mkdir -p ${DIRECTORI_BASE}/${TRADUCCIO[$1]}
+function get_trans {
+    echo -ne "downloading : "${TRANSLATION[$1]}" "
+    if [ ! -d "${BASE_PATH}/${TRANSLATION[$1]}" ]; then
+        mkdir -p ${BASE_PATH}/${TRANSLATION[$1]}
     fi
-    FITXER=${DIRECTORI_BASE}/${TRADUCCIO[$1]}/zanata.xml
+    FITXER=${BASE_PATH}/${TRANSLATION[$1]}/zanata.xml
     if [ ! -f "${FITXER}" ]; then
         cat << EOF > ${FITXER}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://fedora.zanata.org/</url>
   <project>fedora-web</project>
-  <project-version>${TRADUCCIO[$1]}</project-version>
+  <project-version>${TRANSLATION[$1]}</project-version>
   <project-type>gettext</project-type>
 
 </config>
 EOF
     fi
-    cd ${DIRECTORI_BASE}/${TRADUCCIO[$1]}
+    cd ${BASE_PATH}/${TRANSLATION[$1]}
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function test {
-    for (( i=0; i<${#TRADUCCIO[@]}; i++ )); do
-        obte_traduccio $i
+    for (( i=0; i<${#TRANSLATION[@]}; i++ )); do
+        get_trans $i
     done
 }
 
 function report {
-if [ ! -d "${DIRECTORI_TREBALL}/languagetool" ]; then
-    cd ${DIRECTORI_TREBALL}
+if [ ! -d "${}/languagetool" ]; then
+    cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
     cd languagetool
     ./build.sh languagetool-standalone clean package -DskipTests
 fi
 
-cd ${DIRECTORI_TREBALL}
+cd ${WORK_PATH}
 LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
 java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
 LANGUAGETOOL_PID=$!
@@ -80,8 +79,8 @@ else
     echo " ${GREEN}[ OK ]${NC}"
 fi
 
-if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
-    cd ${DIRECTORI_TREBALL}
+if [ ! -d ${WORK_PATH}/pology ]; then
+    cd ${WORK_PATH}
     svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
     cd pology
     mkdir build && cd build
@@ -89,10 +88,10 @@ if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
     make
 fi
 
-export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
-export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
+export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+export PATH=${WORK_PATH}/pology/bin:$PATH
 
-HTML_REPORT=${DIRECTORI_TREBALL}/fedora-web-report.html
+HTML_REPORT=${WORK_PATH}/fedora-web-report.html
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
@@ -104,7 +103,7 @@ cat << EOF > ${HTML_REPORT}
 EOF
 
 echo "checking: check translations"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/ >> ${HTML_REPORT}
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
 cat << EOF >> ${HTML_REPORT}
 </body>
