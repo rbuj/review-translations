@@ -56,7 +56,7 @@ function test {
 }
 
 function report {
-if [ ! -d "${}/languagetool" ]; then
+if [ ! -d "${WORK_PATH}/languagetool" ]; then
     cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
     cd languagetool
