@@ -105,7 +105,7 @@ cat << EOF > ${HTML_REPORT}
 EOF
 
 echo "checking: check translations"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
+posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:hunspell --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
 cat << EOF >> ${HTML_REPORT}
 </body>
@@ -143,10 +143,10 @@ if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; 
 fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
-rpm -q subversion maven python-enchant zanata-client &> /dev/null
+rpm -q hunspell-${LANG_CODE} subversion maven python-enchant zanata-client &> /dev/null
 if [ $? -ne 0 ]; then
     echo "installing : required packages"
-    sudo dnf install -y subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+    sudo dnf install -y hunspell-${LANG_CODE} subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 fi
 
 ### Main ###
