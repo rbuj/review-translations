@@ -138,7 +138,7 @@ if [ $? -ne 0 ]; then
     sudo dnf install -y subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 fi
 
-### Principal ###
+### Main ###
 test
 report
 echo "complete!"
