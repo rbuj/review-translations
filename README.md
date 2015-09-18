@@ -8,7 +8,7 @@ Installation on Fedora
 ----------------------
 
 ```
-https://github.com/rbuj/review-translations.git
+git clone https://github.com/rbuj/review-translations.git
 ```
 
 Usage Examples
