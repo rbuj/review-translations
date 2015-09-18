@@ -1,8 +1,8 @@
 # review-translations
 
-Bash scripts for Fedora Project translations, which make a report for reviewing the translations of a specified language.
-* fedora-web.sh : checks the projects in the web group, https://fedora.zanata.org/version-group/view/web
-* fedora-main.sh : checks the projects in the main group,  https://fedora.zanata.org/version-group/view/main
+Bash scripts for Fedora Project translations, to make a report for the reviewing of the translations for a specified language.
+* fedora-web.sh : checks the web group projects, https://fedora.zanata.org/version-group/view/web
+* fedora-main.sh : checks the main group projects,  https://fedora.zanata.org/version-group/view/main
 
 Installation on Fedora
 ----------------------
