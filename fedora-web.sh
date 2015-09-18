@@ -20,7 +20,6 @@ NC=`tput sgr0` # No Color
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}/fedora-web
 
-TRANSLATION=(fedorahosted.org boot.fedoraproject.org fedoracommunity.org start.fedoraproject.org spins.fedoraproject.org getfedora.org labs.fedoraproject.org arm.fedoraproject.org)
 LANG_CODE=
 
 function usage {
@@ -28,31 +27,31 @@ function usage {
 }
 
 function get_trans {
-    echo -ne "downloading : "${TRANSLATION[$1]}" "
-    if [ ! -d "${BASE_PATH}/${TRANSLATION[$1]}" ]; then
-        mkdir -p ${BASE_PATH}/${TRANSLATION[$1]}
+    echo -ne "downloading : "${1}" "
+    if [ ! -d "${BASE_PATH}/${1}" ]; then
+        mkdir -p ${BASE_PATH}/${1}
     fi
-    FITXER=${BASE_PATH}/${TRANSLATION[$1]}/zanata.xml
+    FITXER=${BASE_PATH}/${1}/zanata.xml
     if [ ! -f "${FITXER}" ]; then
         cat << EOF > ${FITXER}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
   <url>https://fedora.zanata.org/</url>
   <project>fedora-web</project>
-  <project-version>${TRANSLATION[$1]}</project-version>
+  <project-version>${1}</project-version>
   <project-type>gettext</project-type>
 
 </config>
 EOF
     fi
-    cd ${BASE_PATH}/${TRANSLATION[$1]}
+    cd ${BASE_PATH}/${1}
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function test {
-    for (( i=0; i<${#TRANSLATION[@]}; i++ )); do
-        get_trans $i
-    done
+    while read p; do
+        get_trans $p
+    done <fedora-web.list
 }
 
 function report {
