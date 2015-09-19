@@ -17,9 +17,14 @@ LANG_CODE=
 GENERATE_REPORT=
 
 function usage {
-    echo -ne "This script downloads the translations of the projects that belongs to main group [1]."
-    echo -ne "\n  usage : $0 -l|--lang=LANG_CODE [-r|--report]\n"
-    echo -ne "   -r|report       generate group report\n\n"
+    echo "This script downloads the translations of the projects that belongs to main group [1]."
+    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo -ne "\nMandatory arguments:\n"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo -ne "\nOptional arguments:\n"
+    echo "   -r, --report          Generate group report"
+    echo "   -h, --help            Display this help and exit"
+    echo ""
     echo -ne "[1] https://fedora.zanata.org/version-group/view/main\n"
 }
 
