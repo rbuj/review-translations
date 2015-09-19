@@ -95,7 +95,7 @@ EOF
 </body>
 </html>
 EOF
-
+    chmod 644 ${HTML_REPORT}
     kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
