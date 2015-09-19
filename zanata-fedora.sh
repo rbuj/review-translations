@@ -23,18 +23,23 @@ BASE_PATH=
 LANG_CODE=
 PROJECT_NAME=
 INPUT_FILE=
+VERBOSE=
 
 function usage {
     echo $"usage"" : $0 [-l|--lang]=LANG_CODE [-p|--project]=PROJECT_NAME [-f|--file]=INPUT_FILE"
 }
 
-function get_trans {
-    echo -ne "downloading : ${1} ${2} "
+function project_folder {
     if [ ! -d "${BASE_PATH}/${1}-${2}" ]; then
-        mkdir -p ${BASE_PATH}/${1}-${2}
+        if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating project folder ";fi
+       	mkdir -p ${BASE_PATH}/${1}-${2} > /dev/null && if [ -n "${VERBOSE}" ]; then echo "${GREEN}[ OK ]${NC}"; fi || exit 1
     fi
+}
+
+function project_config {
     ZANATA_FILE=${BASE_PATH}/${1}-${2}/zanata.xml
     if [ ! -f "${ZANATA_FILE}" ]; then
+        if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating zanata.xml file "; fi
         cat << EOF > ${ZANATA_FILE}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
@@ -45,56 +50,80 @@ function get_trans {
 
 </config>
 EOF
+        if [ $? -ne 0 ]; then
+            if [ -n "${VERBOSE}" ]; then echo "${RED}[ FAIL ]${NC}"; fi
+        else
+       	    if [ -n "${VERBOSE}" ]; then echo "${GREEN}[ OK ]${NC}"; fi
+        fi
     fi
+}
+
+function project_download {
+    if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : downloading project translation "; fi
     cd ${BASE_PATH}/${1}-${2}
     zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
-function test {
+function download {
+    rpm -q zanata-client &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "download : installing required packages"
+        sudo dnf install -y zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+    fi
     while read -r p; do
         set -- $p
-        get_trans $1 $2
+        if [ -z "${VERBOSE}" ]; then echo -ne "${1} (${2}) "; fi
+        project_folder $1 $2
+        project_config $1 $2
+        project_download $1 $2
     done <${INPUT_FILE}
 }
 
 function report {
-if [ ! -d "${WORK_PATH}/languagetool" ]; then
+    rpm -q hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        sudo dnf install -y hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+    fi
+
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        echo "report : building languagetool"
+        cd ${WORK_PATH}
+        git clone https://github.com/languagetool-org/languagetool.git
+        cd languagetool
+        ./build.sh languagetool-standalone clean package -DskipTests
+    fi
+
     cd ${WORK_PATH}
-    git clone https://github.com/languagetool-org/languagetool.git
-    cd languagetool
-    ./build.sh languagetool-standalone clean package -DskipTests
-fi
+    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+    LANGUAGETOOL_PID=$!
 
-cd ${WORK_PATH}
-LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-LANGUAGETOOL_PID=$!
+    echo -ne "report : waiting for langtool"
+    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
+        printf '.'
+        sleep 1
+    done
+    if [ $? -ne 0 ]; then
+        echo " ${RED}[ FAIL ]${NC}"
+    else
+        echo " ${GREEN}[ OK ]${NC}"
+    fi
 
-echo -ne "ckecking: wait for langtool"
-until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
-    printf '.'
-    sleep 1
-done
-if [ $? -ne 0 ]; then
-    echo " ${RED}[ FAIL ]${NC}"
-else
-    echo " ${GREEN}[ OK ]${NC}"
-fi
+    if [ ! -d ${WORK_PATH}/pology ]; then
+        echo "report : building pology"
+        cd ${WORK_PATH}
+        svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
+        cd pology
+        mkdir build && cd build
+        cmake ..
+        make
+    fi
+    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+    export PATH=${WORK_PATH}/pology/bin:$PATH
 
-if [ ! -d ${WORK_PATH}/pology ]; then
-    cd ${WORK_PATH}
-    svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-    cd pology
-    mkdir build && cd build
-    cmake ..
-    make
-fi
-
-export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-export PATH=${WORK_PATH}/pology/bin:$PATH
-
-HTML_REPORT=${WORK_PATH}/fedora-web-report.html
-cat << EOF > ${HTML_REPORT}
+    HTML_REPORT=${WORK_PATH}/fedora-web-report.html
+    cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -104,15 +133,15 @@ cat << EOF > ${HTML_REPORT}
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-echo "checking: check translations"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:hunspell --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
+    echo "report : checking translations"
+    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:hunspell --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
-cat << EOF >> ${HTML_REPORT}
+    cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
 
-kill -9 $LANGUAGETOOL_PID > /dev/null
+    kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
 for i in "$@"
@@ -130,6 +159,9 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
+    -v|--verbose)
+    VERBOSE="YES"
+    ;;
     *)
     usage
     exit 1
@@ -143,12 +175,6 @@ if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; 
 fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
-rpm -q hunspell-${LANG_CODE} subversion maven python-enchant zanata-client &> /dev/null
-if [ $? -ne 0 ]; then
-    echo "installing : required packages"
-    sudo dnf install -y hunspell-${LANG_CODE} subversion maven python-enchant zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
-fi
-
 ### Main ###
-test
+download
 report
