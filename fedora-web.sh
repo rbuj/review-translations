@@ -14,15 +14,14 @@
 # more details.
 # ---------------------------------------------------------------------------
 LANG_CODE=
+GENERATE_REPORT=
 
 function usage {
-    echo $"usage"" : $0 [-l|--lang]=LANG_CODE"
+    echo -ne "This script downloads the translations of the projects that belongs to web group [1]."
+    echo -ne "\n  usage : $0 -l|--lang=LANG_CODE [-r|--report]\n"
+    echo -ne "   -r|--report       generate group report\n\n"
+    echo -ne "[1] https://fedora.zanata.org/version-group/view/web\n"
 }
-
-if [ $# -lt 1 ]; then
-    usage
-    exit 1
-fi
 
 for i in "$@"
 do
@@ -31,6 +30,13 @@ case $i in
     LANG_CODE="${i#*=}"
     shift # past argument=value
     ;;
+    -r|--report)
+    GENERATE_REPORT="YES"
+    ;;
+    -h|--help)
+    usage
+    exit 0
+    ;;
     *)
     usage
     exit 1
@@ -38,6 +44,15 @@ case $i in
 esac
 done
 
+if [ -z ${LANG_CODE} ]; then
+    usage
+    exit 1
+fi
+
 ### Main ###
-./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
+if [ -n "$GENERATE_REPORT" ]; then
+    ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list -r
+else
+    ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
+fi
 echo "complete!"

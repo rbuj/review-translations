@@ -24,6 +24,7 @@ LANG_CODE=
 PROJECT_NAME=
 INPUT_FILE=
 VERBOSE=
+GENERATE_REPORT=
 
 function usage {
     echo $"usage"" : $0 [-l|--lang]=LANG_CODE [-p|--project]=PROJECT_NAME [-f|--file]=INPUT_FILE"
@@ -159,6 +160,9 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
+    -r|--report)
+    GENERATE_REPORT="YES"
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -177,4 +181,6 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 ### Main ###
 download
-report
+if [ -n "$GENERATE_REPORT" ]; then
+    report
+fi
