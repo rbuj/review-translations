@@ -1,22 +1,22 @@
-abrt master
+abrt master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/abrt.mo
 abrt rhel7
 anaconda rhel7-branch
 anaconda rhel6-branch
-anaconda f23-branch
-anaconda master
-authconfig master
+anaconda f23-branch F23 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
+anaconda master DEV LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
+authconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/authconfig.mo
 blivet rhel7-branch
 blivet rhel6-branch
-blivet f23-branch
-blivet master
-chkconfig master
+blivet f23-branch F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
+blivet master DEV LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
+chkconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/chkconfig.mo
 comps master
-firewalld master
+firewalld master F23 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/firewalld.mo
 firewalld RHEL-7
-gnome-abrt master
+gnome-abrt master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gnome-abrt.mo
 gnome-abrt rhel7
-initscripts master
-libpwquality master
+initscripts master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/initscripts.mo
+libpwquality master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libpwquality.mo
 libreport master
 libreport rhel7
 libuser default

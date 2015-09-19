@@ -60,7 +60,7 @@ if [ -z ${LANG_CODE} ]; then
 fi
 
 ### Main ###
-./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
+# ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
 if [ -n "$GENERATE_REPORT" ]; then
     ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main
 fi

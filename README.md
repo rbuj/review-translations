@@ -24,6 +24,7 @@ Mandatory arguments:
 
 Optional arguments:
    -r, --report          Generate group report
+   -i, --install         Install translations
    -h, --help            Display this help and exit
 
 [1] https://fedora.zanata.org/version-group/view/main

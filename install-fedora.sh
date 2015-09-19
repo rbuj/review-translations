@@ -36,11 +36,34 @@ function usage {
     echo "   -v, --verbose         Verbose operation"
 }
 
+function install_trans {
+    IFS=';' read -a TRANS <<< "$3"
+    echo -ne "installing ${1} (${2}) "
+    for i in "${TRANS[@]}"; do
+        IFS=':' read -a ADDR <<< "${i//"LOCALE"/${LANG_CODE}}"
+        rm -f ${ADDR[1]} && msgfmt ${BASE_PATH}/${1}-${2}/${ADDR[0]} -o ${ADDR[1]} && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    done
+}
+
 function install {
+    VERSION="upstream"
+    if [ -f "/etc/fedora-release" ]; then
+        VERSION_AUX=`cat /etc/fedora-release`
+        case ${VERSION_AUX} in
+            "Fedora release 23 (Twenty Three)")
+            VERSION="F23"
+            ;;
+        esac
+    fi
     while read -r p; do
         set -- $p
-        echo -ne "${1} (${2}) "
-        echo "TODO"
+        if [ $# -eq 3 ]; then
+            install_trans $@
+        elif [ $# -eq 4 ]; then
+            if [ "$VERSION" = "$3" ]; then
+                install_trans $1 $2 $4
+            fi
+        fi
     done <${INPUT_FILE}
 }
 
