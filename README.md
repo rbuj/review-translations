@@ -15,12 +15,18 @@ Usage Examples
 --------------
 
 ```
-$ ./fedora-web.sh -h
-This script downloads the translations of the projects that belongs to web group [1].
-  usage : ./fedora-web.sh -l|--lang=LANG_CODE [-r|--report]
-   -r|report       generate group report
+$ ./fedora-main.sh -h
+This script downloads the translations of the projects that belongs to main group [1].
+    usage : ./fedora-main.sh -l|--lang=LANG_CODE [ARGS]
 
-[1] https://fedora.zanata.org/version-group/view/web
+Mandatory arguments:
+   -l|--lang=LANG_CODE   Locale to pull from the server
+
+Optional arguments:
+   -r, --report          Generate group report
+   -h, --help            Display this help and exit
+
+[1] https://fedora.zanata.org/version-group/view/main
 ```
 
 
