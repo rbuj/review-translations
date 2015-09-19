@@ -17,22 +17,22 @@ gnome-abrt master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gnome-abrt.
 gnome-abrt rhel7
 initscripts master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/initscripts.mo
 libpwquality master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libpwquality.mo
-libreport master
+libreport master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libreport.mo
 libreport rhel7
-libuser default
-liveusb-creator master
-mlocate default
-newt master
-passwd password
+libuser default LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libuser.mo
+liveusb-creator master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/liveusb-creator.mo
+mlocate default LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/mlocate.mo
+newt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/newt.mo
+passwd password LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/passwd.mo
 pykickstart master
 pykickstart rhel7-branch
-python-meh master
+python-meh master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
 python-meh rhel7-branch
-selinux master
-setroubleshoot master
-system-config-firewall master
-system-config-kdump master
-system-config-kickstart master
-system-config-language master
-system-config-printer master
-usermode default
+selinux master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/policycoreutils.mo
+setroubleshoot master framework/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot.mo;plugins/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot-plugins.mo
+system-config-firewall master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-firewall.mo
+system-config-kdump master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-kdump.mo
+system-config-kickstart master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-kickstart.mo
+system-config-language master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-language.mo
+system-config-printer master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-printer.mo
+usermode default LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/usermode.mo
