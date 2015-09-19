@@ -17,7 +17,7 @@ Usage Examples
 ```
 $ ./fedora-web.sh -h
 This script downloads the translations of the projects that belongs to web group [1].
-  usage : ./fedora-web.sh [-l|--lang]=LANG_CODE
+  usage : ./fedora-web.sh -l|--lang=LANG_CODE [-r|--report]
    -r|report       generate group report
 
 [1] https://fedora.zanata.org/version-group/view/web
