@@ -24,7 +24,6 @@ LANG_CODE=
 PROJECT_NAME=
 INPUT_FILE=
 VERBOSE=
-GENERATE_REPORT=
 
 function usage {
     echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
@@ -33,7 +32,6 @@ function usage {
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo -ne "\nOptional arguments:\n"
-    echo "   -r, --report          Generate group report"
     echo "   -h, --help            Display this help and exit"
     echo "   -v, --verbose         Verbose operation"
 }
@@ -88,71 +86,6 @@ function download {
     done <${INPUT_FILE}
 }
 
-function report {
-    rpm -q hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        sudo dnf install -y hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
-    fi
-
-    if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        echo "report : building languagetool"
-        cd ${WORK_PATH}
-        git clone https://github.com/languagetool-org/languagetool.git
-        cd languagetool
-        ./build.sh languagetool-standalone clean package -DskipTests
-    fi
-
-    cd ${WORK_PATH}
-    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-    LANGUAGETOOL_PID=$!
-
-    echo -ne "report : waiting for langtool"
-    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
-        printf '.'
-        sleep 1
-    done
-    if [ $? -ne 0 ]; then
-        echo " ${RED}[ FAIL ]${NC}"
-    else
-        echo " ${GREEN}[ OK ]${NC}"
-    fi
-
-    if [ ! -d ${WORK_PATH}/pology ]; then
-        echo "report : building pology"
-        cd ${WORK_PATH}
-        svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-        cd pology
-        mkdir build && cd build
-        cmake ..
-        make
-    fi
-    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-    export PATH=${WORK_PATH}/pology/bin:$PATH
-
-    HTML_REPORT=${WORK_PATH}/fedora-web-report.html
-    cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Report</title>
-  </head>
-<body bgcolor="#080808" text="#D0D0D0">
-EOF
-
-    echo "report : checking translations"
-    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:hunspell --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
-
-    cat << EOF >> ${HTML_REPORT}
-</body>
-</html>
-EOF
-
-    kill -9 $LANGUAGETOOL_PID > /dev/null
-}
-
 for i in "$@"
 do
 case $i in
@@ -167,9 +100,6 @@ case $i in
     -p=*|--project=*)
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
-    ;;
-    -r|--report)
-    GENERATE_REPORT="YES"
     ;;
     -v|--verbose)
     VERBOSE="YES"
@@ -193,6 +123,3 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 ### Main ###
 download
-if [ -n "$GENERATE_REPORT" ]; then
-    report
-fi

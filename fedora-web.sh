@@ -55,9 +55,8 @@ if [ -z ${LANG_CODE} ]; then
 fi
 
 ### Main ###
+./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list -r
-else
-    ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
+    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-web
 fi
 echo "complete!"
