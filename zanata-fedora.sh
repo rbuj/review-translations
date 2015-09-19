@@ -31,7 +31,7 @@ function usage {
 
 function project_folder {
     if [ ! -d "${BASE_PATH}/${1}-${2}" ]; then
-        if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating project folder ";fi
+        if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating project folder "; fi
        	mkdir -p ${BASE_PATH}/${1}-${2} > /dev/null && if [ -n "${VERBOSE}" ]; then echo "${GREEN}[ OK ]${NC}"; fi || exit 1
     fi
 }
