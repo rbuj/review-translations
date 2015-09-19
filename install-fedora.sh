@@ -13,21 +13,35 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0` # No Color
+
+WORK_PATH=$PWD
+BASE_PATH=
+
 LANG_CODE=
-GENERATE_REPORT=
-INSTALL_TRANS=
+PROJECT_NAME=
+INPUT_FILE=
+VERBOSE=
 
 function usage {
-    echo "This script downloads the translations of the projects that belongs to main group [1]."
-    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
+    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo -ne "\nOptional arguments:\n"
-    echo "   -r, --report          Generate group report"
-    echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
-    echo ""
-    echo -ne "[1] https://fedora.zanata.org/version-group/view/main\n"
+    echo "   -v, --verbose         Verbose operation"
+}
+
+function install {
+    while read -r p; do
+        set -- $p
+        echo -ne "${1} (${2}) "
+        echo "TODO"
+    done <${INPUT_FILE}
 }
 
 for i in "$@"
@@ -37,11 +51,16 @@ case $i in
     LANG_CODE="${i#*=}"
     shift # past argument=value
     ;;
-    -r|--report)
-    GENERATE_REPORT="YES"
+    -f=*|--file=*)
+    INPUT_FILE="${i#*=}"
+    shift # past argument=value
     ;;
-    -i|--install)
-    INSTALL_TRANS="YES"
+    -p=*|--project=*)
+    PROJECT_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -v|--verbose)
+    VERBOSE="YES"
     ;;
     -h|--help)
     usage
@@ -54,18 +73,11 @@ case $i in
 esac
 done
 
-if [ -z ${LANG_CODE} ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
     usage
     exit 1
 fi
+BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 ### Main ###
-./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
-if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main
-fi
-if [ -n "$INSTALL_TRANS" ]; then
-    echo "Installing translations"
-    sudo ./install-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
-fi
-echo "complete!"
+install
