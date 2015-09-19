@@ -39,6 +39,7 @@ function usage {
 function install_trans {
     IFS=';' read -a TRANS <<< "$3"
     echo -ne "installing ${1} (${2}) "
+    if [ ${#TRANS[@]} -gt 1 ]; then echo -ne "${#TRANS[@]} files:\n"; fi
     for i in "${TRANS[@]}"; do
         IFS=':' read -a ADDR <<< "${i//"LOCALE"/${LANG_CODE}}"
         dnf provides ${ADDR[1]} &> /dev/null
@@ -46,7 +47,7 @@ function install_trans {
             echo -ne "[pakage ${ADDR[1]} was not installed. installing...] "
             dnf install -y `dnf repoquery -f ${ADDR[1]}` &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
         fi
-        if [ ${TRANS[@]} -gt 1 ]; then echo -ne "\n${ADDR[1]} "; fi
+        if [ ${#TRANS[@]} -gt 1 ]; then echo -ne "    ${ADDR[1]} "; fi
         rm -f ${ADDR[1]} && msgfmt ${BASE_PATH}/${1}-${2}/${ADDR[0]} -o ${ADDR[1]} && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     done
 }
