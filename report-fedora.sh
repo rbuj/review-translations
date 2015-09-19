@@ -77,7 +77,7 @@ function report {
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
     export PATH=${WORK_PATH}/pology/bin:$PATH
 
-    HTML_REPORT=${WORK_PATH}/fedora-web-report.html
+    HTML_REPORT=${WORK_PATH}/${PROJECT_NAME}-report.html
     cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
