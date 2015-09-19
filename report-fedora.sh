@@ -106,10 +106,6 @@ case $i in
     LANG_CODE="${i#*=}"
     shift # past argument=value
     ;;
-    -f=*|--file=*)
-    INPUT_FILE="${i#*=}"
-    shift # past argument=value
-    ;;
     -p=*|--project=*)
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
