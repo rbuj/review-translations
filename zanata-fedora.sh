@@ -27,7 +27,15 @@ VERBOSE=
 GENERATE_REPORT=
 
 function usage {
-    echo $"usage"" : $0 [-l|--lang]=LANG_CODE [-p|--project]=PROJECT_NAME [-f|--file]=INPUT_FILE"
+    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
+    echo -ne "\nMandatory arguments:\n"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
+    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
+    echo -ne "\nOptional arguments:\n"
+    echo "   -r, --report          Generate group report"
+    echo "   -h, --help            Display this help and exit"
+    echo "   -v, --verbose         Verbose operation"
 }
 
 function project_folder {
@@ -165,6 +173,10 @@ case $i in
     ;;
     -v|--verbose)
     VERBOSE="YES"
+    ;;
+    -h|--help)
+    usage
+    exit 0
     ;;
     *)
     usage
