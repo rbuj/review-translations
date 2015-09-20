@@ -13,8 +13,11 @@ git clone https://github.com/rbuj/review-translations.git
 
 Useful translator comments
 --------------------------
-* well-spelled, to skip words in spell checking for the report generation, more info in the section: [Skipping Messages and Words](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html#sec-lgspskip) of the [Pology User Manual](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html)
-* apply-rule and skip-rule, to apply or to skip a rule for the report generation, more info in the section: [Skipping and Manually Applying The Rule on A Message](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) of the [Pology User Manual](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html)
+| Translator comment  | Feature | Description | More info  |
+| ------------------- | ------- | ----------- | ---------- |
+| well-spelled:       | report  | to skip words in spell checking | [Skipping Messages and Words](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html#sec-lgspskip) section of the [Pology User Manual](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) |
+| apply-rule:         | report  | to apply a rule | [Skipping and Manually Applying The Rule on A Message](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) section of the [Pology User Manual](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) |
+| skip-rule:          | report  | to skip a rule | [Skipping and Manually Applying The Rule on A Message](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) section of the [Pology User Manual](http://pology.nedohodnik.net//doc/user/en_US/index-mono.html) |
 
 Usage Examples
 --------------
