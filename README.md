@@ -1,6 +1,6 @@
 # review-translations
 
-Bash scripts for downloading the Fedora Project translations. Those scripts can also make a report for reviewing the grammar and the orthographic mistakes for a specified language.
+Bash scripts for downloading the Fedora Project translations. Those scripts can also make a report for reviewing grammar and spelling mistakes for a specified language.
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
 * fedora-main.sh : download the translations that belongs to the [main group](https://fedora.zanata.org/version-group/view/main)
 
