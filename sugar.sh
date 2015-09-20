@@ -74,7 +74,7 @@ function prepara_revisio {
     if [ ! -d "${DIRECTORI_BASE}/sugar/${CODI[$1]}" ]; then
         mkdir -p "${DIRECTORI_BASE}/sugar/${CODI[$1]}"
     fi
-    cat ${DIRECTORI_BASE}/${CODI[$1]}/po/ca.po | perl -pe "s/(#:\s(.)*:(\d)*)/\${1}\n#, python-format/g" > ${DIRECTORI_BASE}/sugar/${CODI[$1]}/ca.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+    cp ${DIRECTORI_BASE}/${CODI[$1]}/po/ca.po ${DIRECTORI_BASE}/sugar/${CODI[$1]}/ca.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 }
 
 function test {
