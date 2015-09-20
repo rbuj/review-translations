@@ -34,11 +34,21 @@ function usage {
     echo "   -v, --verbose         Verbose operation"
 }
 
+function fedora_wordlist {
+    if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
+        mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
+    fi
+    WORDS=`cat ./wordlist | wc -l`
+    DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
+    echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
+    cat wordlist >> ${DICT}
+}
+
 function report {
-    rpm -q hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
+    rpm -q aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
-        sudo dnf install -y hunspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
     fi
 
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
@@ -89,7 +99,8 @@ function report {
 EOF
 
     echo "report : checking translations"
-    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:hunspell --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
+    fedora_wordlist
+    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
     cat << EOF >> ${HTML_REPORT}
 </body>
