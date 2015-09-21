@@ -17,167 +17,304 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-CODI=(abacus analyzejournal calculate chat deducto erikos finance followmebutia fototoon fractionbounce get-books get-internet-archive-books imageviewer infoslicer jukebox log maze measure memorize paint paths physics pippy ruler read readetexts read-sd-comics record speak terminal turtleart turtleart-extras typing-turtle viewslides visualmatch browse words-activity write)
-TRADUCCIO=(Abacus AnalyzeJournal Calculate Chat Deducto Erikos Finance FollowMeButia FotoToon FractionBounce GetBooks GetIABooks ImageViewer InfoSlicer Jukebox Log Maze Measure Memorize Paint Paths Physics Pippy Ruler Read ReadETexts ReadSDComics Record Speak Terminal TurtleArt TurtleArtExtras TypingTurtle ViewSlides Dimensions Web Words Write)
-PACKAGE_SUFFIX=(abacus analyze calculator chat deducto no finance no fototoon fractionbounce no getiabooks imageviewer infoslicer jukebox log maze measure memorize paint no physics pippy ruler read no no record speak terminal turtleart no typing-turtle view-slides visualmatch browse words write)
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}/sugar
 
-DIRECTORI_TREBALL=$PWD
-DIRECTORI_BASE=${DIRECTORI_TREBALL}/sugar
+LANG_CODE=
+GENERATE_REPORT=
+INSTALL_TRANS=
+
+function usage {
+    echo "This script downloads the translations of the Sugar Labs project"
+    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo -ne "\nMandatory arguments:\n"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo -ne "\nOptional arguments:\n"
+    echo "   -r, --report          Generate group report"
+    echo "   -i, --install         Install translations"
+    echo "   -h, --help            Display this help and exit"
+    echo ""
+}
 
 function update_src {
-    cd ${DIRECTORI_BASE}
-    if [ ! -d $1 ]; then
-        echo -ne "$1: Es clona el codi font "
+    cd ${BASE_PATH}
+    if [ ! -d "${BASE_PATH}/${1}" ]; then
+        echo -ne "$1 : git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     else
         cd $1
-        echo -ne "$1: S'actualitza el codi font "
+        echo -ne "$1 : git pull "
         git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-        cd ..
     fi
 }
 
-function install_rpm {
-    echo -ne ${CODI[$1]}" : S'insta·len les dependències del paquet "
-    if [ "x${PACKAGE_SUFFIX[$1]}" == "xno" ]; then
-        echo "${RED}[ NO DISP ]${NC}"
-    else
-        echo -ne sugar-${PACKAGE_SUFFIX[$1]}" "
-        dnf builddep -y sugar-${PACKAGE_SUFFIX[$1]} &> /dev/null && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-    fi
+function download_trans {
+    echo -ne "$1 : downloading translation"
+    curl -s -S $2 > ${BASE_PATH}/${1}/po/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 }
 
-function obte_codi {
-    update_src ${CODI[$1]} git://git.sugarlabs.org/${CODI[$1]}/mainline.git
+function download {
+    rm -fr ${BASE_PATH}/sugar
+    for PROJECT in sugar sugar-toolkit-gtk3; do
+        echo -ne ${PROJECT}" : downloading translation "
+        curl -s -S http://translate.sugarlabs.org/export/${PROJECT}/ca.po > ${BASE_PATH}/${PROJECT}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+    done
+
+    while read -r p; do
+        set -- ${p//"LOCALE"/${LANG_CODE}}
+        if [ $# -ge 3 ]; then
+            update_src $1 $3
+            download_trans $1 $2
+        fi
+    done < sugar.list
 }
 
-function obte_traduccio {
-    echo -ne ${CODI[$1]}" : S'obté la traducció"
-    curl -s -S http://translate.sugarlabs.org/export/${TRADUCCIO[$1]}/ca.po > ${DIRECTORI_BASE}/${CODI[$1]}/po/ca.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+# project_name rpm
+function install_builddeps {
+    echo -ne ${1}" : installing builddeps "
+    dnf builddep -y ${2} &> /dev/null && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 }
 
-function compila_codi {
-    echo -ne ${CODI[$1]}" : Es compila el codi"
-    cd ${DIRECTORI_BASE}/${CODI[$1]}
+# project_name
+function build_code {
+    echo -ne ${1}" : build "
+    cd ${BASE_PATH}/${1}
     python setup.py build &> /dev/null && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 }
 
-function installa_codi {
-    echo -ne ${CODI[$1]}" : S'instal·la el codi"
-    cd ${DIRECTORI_BASE}/${CODI[$1]}
+function install_binaries {
+    echo -ne ${1}" : installing binaries"
+    cd ${BASE_PATH}/${1}
     python setup.py install &> /dev/null && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-    cd $DIRECTORI_TREBALL
 }
 
-function prepara_revisio {
-    echo -ne ${CODI[$1]}" : Es prepara la revisió"
-    if [ ! -d "${DIRECTORI_BASE}/sugar/${CODI[$1]}" ]; then
-        mkdir -p "${DIRECTORI_BASE}/sugar/${CODI[$1]}"
+function install {
+    for PROJECT in sugar sugar-toolkit-gtk3; do
+        echo -ne "${PROJECT} : installing translation "
+        rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${PROJECT}.mo
+        msgfmt ${BASE_PATH}/${PROJECT}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${PROJECT}.mo && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+    done
+    while read -r p; do
+        set -- ${p//"LOCALE"/${LANG_CODE}}
+        if [ $# -ge 4 ]; then
+            install_builddeps $1 $4
+            build_code $1
+            install_binaries $1
+        fi
+    done < sugar.list
+}
+
+# section project_name html_file
+function report_toc_project {
+    cat << EOF >> ${3}
+    <li><span class="secno">${1}</span> <span><a href="#${PROJECT}">${2}</a></span>
+      <ul class="toc">
+        <li><span class="secno">${1}.1</span> <span><a href="CheckSpellEc${2}">check-spell-ec</a></span></li>
+        <li><span class="secno">${1}.2</span> <span><a href="#CheckRules${2}">check-rules</a></span></li>
+        <li><span class="secno">${1}.3</span> <span><a href="#CheckGrammar${2}">check-grammar</a></span></li>
+        <li><span class="secno">${1}.4</span> <span><a href="#i=Stats${2}">stats</a></span></li>
+      </ul>
+    </li>
+EOF
+}
+
+# project_name translation_file html_filename
+function report_project_cotent {
+    cat << EOF >> $3
+<h1 id=${PROJECT}>${1} <a href="#toc">[^]</a></h1>
+<h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html $2 >> $3
+    cat << EOF >> $3
+<h2 id=CheckRules${1}>check-rules <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html $2 >> $3
+    cat << EOF >> $3
+<h2 id=CheckGrammar${1}>check-grammar <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html $2 >> $3
+    cat << EOF >> $3
+<h2 id=Stats${1}>stats <a href="#toc">[^]</a></h2>
+EOF
+    posieve stats --msgfmt-check --skip-obsolete --coloring-type=html $2 >> $3
+}
+
+function install_lt {
+    rpm -q aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
     fi
-    cp ${DIRECTORI_BASE}/${CODI[$1]}/po/ca.po ${DIRECTORI_BASE}/sugar/${CODI[$1]}/ca.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-}
 
-function test {
-rm -fr ${DIRECTORI_BASE}/sugar
-for PROJECTE in sugar sugar-toolkit-gtk3; do
-    echo -ne ${PROJECTE}": es crea el mo "
-    curl -s -S http://translate.sugarlabs.org/export/$PROJECTE/ca.po > ${DIRECTORI_BASE}/$PROJECTE.po
-    msgfmt ${DIRECTORI_BASE}/${PROJECTE}.po -o /usr/share/locale/ca/LC_MESSAGES/${PROJECTE}.mo && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-    if [ ! -d "${DIRECTORI_BASE}/sugar/${PROJECTE}" ]; then
-        mkdir -p "${DIRECTORI_BASE}/sugar/${PROJECTE}"
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        echo "report : building languagetool"
+        cd ${WORK_PATH}
+        git clone https://github.com/languagetool-org/languagetool.git
+        cd languagetool
+        ./build.sh languagetool-standalone clean package -DskipTests
     fi
-    echo -ne ${PROJECTE}": es prepara per a la revisió"
-    cat ${DIRECTORI_BASE}/${PROJECTE}.po | perl -pe "s/(#:\s(.)*:(\d)*)/\${1}\n#, python-format/g" > ${DIRECTORI_BASE}/sugar/${PROJECTE}/ca.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-done
-
-for (( i=0; i<${#CODI[@]}; i++ )); do
-    install_rpm $i
-    obte_codi $i
-    obte_traduccio $i
-    compila_codi $i
-    installa_codi $i
-    prepara_revisio $i
-done
 }
 
-function revisio {
-if [ ! -d "${DIRECTORI_TREBALL}/languagetool" ]; then
-    cd ${DIRECTORI_TREBALL}
-    git clone https://github.com/languagetool-org/languagetool.git
-    cd languagetool
-    ./build.sh languagetool-standalone clean package -DskipTests
-fi
+function install_pology {
+    if [ ! -d ${WORK_PATH}/pology ]; then
+        echo "report : building pology"
+        cd ${WORK_PATH}
+        svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
+        cd pology
+        mkdir build && cd build
+        cmake ..
+        make
+    fi
+}
 
-cd ${DIRECTORI_TREBALL}
-LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-LANGUAGETOOL_PID=$!
+function report {
+    install_lt
+    cd ${WORK_PATH}
+    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+    LANGUAGETOOL_PID=$!
 
-echo -ne "Revisió: S'espera que s'hagi iniciat el servidor web del langtool"
-until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
-    printf '.'
-    sleep 1
-done
-if [ $? -ne 0 ]; then
-    echo " ${RED}[ FAIL ]${NC}"
-else
-    echo " ${GREEN}[ OK ]${NC}"
-fi
+    echo -ne "report : waiting for langtool"
+    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
+        printf '.'
+        sleep 1
+    done
+    if [ $? -ne 0 ]; then
+        echo " ${RED}[ FAIL ]${NC}"
+    else
+        echo " ${GREEN}[ OK ]${NC}"
+    fi
 
-if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
-    cd ${DIRECTORI_TREBALL}
-    svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-    cd pology
-    mkdir build && cd build
-    cmake ..
-    make
-fi
+    install_pology
+    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+    export PATH=${WORK_PATH}/pology/bin:$PATH
 
-export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
-export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
-
-cat << EOF > ${DIRECTORI_TREBALL}/sugar-informe.html
+    HTML_REPORT=${WORK_PATH}/sugar-report.html
+    cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Memòries de traducció lliures al català</title>
+    <title>Translation Report</title>
+    <style type="text/css">
+        /* unvisited link */
+        a:link {
+            color: #D0D0D0;
+        }
+
+        /* visited link */
+        a:visited {
+            color: #00FF00;
+        }
+
+        /* mouse over link */
+        a:hover {
+            color: #FF00FF;
+        }
+
+        /* selected link */
+        a:active {
+            color: #0000FF;
+        }
+    </style>
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
+<h1 id=toc>Table of contents</h1>
+<div data-fill-with="table-of-contents"><ul class="toc">
+  <li><span class="secno">1</span> <span><a href="#Sucrose">Sucrose</a></span>
+    <ul class="toc">
 EOF
 
-echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/sugar/ >> ${DIRECTORI_TREBALL}/sugar-informe.html
+    COUNTER=1
+    for PROJECT in sugar sugar-toolkit-gtk3; do
+        report_toc_project 2.${COUNTER} ${PROJECT} ${HTML_REPORT}
+        let "COUNTER++"
+    done
 
-cat << EOF >> ${DIRECTORI_TREBALL}/sugar-informe.html
+    cat << EOF >> ${HTML_REPORT}
+    </ul>
+  </li>
+  <li><span class="secno">2</span> Activities</span>
+  <ul class="toc">
+EOF
+
+    COUNTER=1
+    while read -r p; do
+        set -- $p
+        if [ $# -ge 3 ]; then
+            report_toc_project 2.${COUNTER} ${1} ${HTML_REPORT}
+            let "COUNTER++"
+        fi
+    done < sugar.list
+
+    cat << EOF >> ${HTML_REPORT}
+  </ul>
+  </li>
+</ul>
+<h1 id="Sucrose">Sucrose</h1>
+EOF
+
+    for PROJECT in sugar sugar-toolkit-gtk3; do
+        report_project_cotent ${PROJECT} ${BASE_PATH}/${PROJECT}.po ${HTML_REPORT}
+    done
+
+    while read -r p; do
+        echo "report : checking translations"
+        set -- $p
+        set -- ${p//"LOCALE"/${LANG_CODE}}
+        echo "${1} : check translations"
+        if [ $# -ge 3 ]; then
+            report_project_cotent ${1} ${BASE_PATH}/${1}/po/${LANG_CODE}.po ${HTML_REPORT}
+        fi
+    done < sugar.list
+
+    cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
 
-kill -9 $LANGUAGETOOL_PID > /dev/null
+    kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -r|--report)
+    GENERATE_REPORT="YES"
+    ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
+    ;;
+    -h|--help)
+    usage
+    exit 0
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
 
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
+if [ -z ${LANG_CODE} ]; then
+    usage
+    exit 1
 fi
 
-echo -ne "S'instal·len les eines necessaries "
-dnf install -y svn maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-
-if [ ! -d ${DIRECTORI_BASE} ]; then
-    mkdir ${DIRECTORI_BASE}
+if [ ! -d "${BASE_PATH}" ]; then
+    mkdir ${BASE_PATH}
 fi
 
-update_src fractionbounce git://git.sugarlabs.org/fractionboounce/fractionbounce.git
-update_src words-activity git://git.sugarlabs.org/words-activity/words-activity.git
-update_src deducto git://git.sugarlabs.org/deducto/deducto.git
-update_src analyzejournal git://git.sugarlabs.org/analyzejournal/analyzejournal.git
-update_src turtleart-extras git://git.sugarlabs.org/turtleart-extras/turtleart-extras.git
-
-### Principal ###
-test
-revisio
-echo "S'ha finalitzat!"
+### Main ###
+download
+if [ -n "$GENERATE_REPORT" ]; then
+    report
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    install
+fi
+echo "complete!"
