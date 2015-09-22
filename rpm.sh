@@ -128,7 +128,7 @@ function report {
 EOF
 
     echo "************************************************"
-    echo "* checking translations..."
+    echo "* checking translation..."
     echo "************************************************"
     posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/rpm/po/${LANG_CODE}.po >> ${HTML_REPORT}
 
@@ -137,13 +137,15 @@ EOF
 </html>
 EOF
 
-    kill -9 $LANGUAGETOOL_PID > /dev/null
+    kill -9 ${LANGUAGETOOL_PID} > /dev/null
 }
 
 function install {
-    echo -ne "installing translation "
+    echo -ne "installing translation"
+    set -x
     sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/rpm.mo
-    msgfmt po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/rpm.mo &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    sudo msgfmt ${WORK_PATH}/rpm/po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/rpm.mo
+    set -
 }
 
 for i in "$@"
