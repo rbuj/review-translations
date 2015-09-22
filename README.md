@@ -5,10 +5,16 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-upstream.sh : download the translations that belongs to the [upstream group](https://fedora.zanata.org/version-group/view/upstream)
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
 
-More scripts:
-* deploy.sh : a deployment example for publishing the reports in a local apache server.
-* sugar.sh : download and test the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
+Components:
+* build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
+* build-pology.sh : builds Pology in the specified path if there is no pology folder
+* install-fedora.sh : installs the translations in the system
+* report-fedora.sh : makes a translation report of a Fedora group
+* zanata-fedora.sh : downloads the translations of a Fedora group
 
+More scripts:
+* deploy.sh : a deployment example for publishing the reports in a local apache server
+* sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
 Installation on Fedora
 ----------------------

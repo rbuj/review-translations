@@ -45,20 +45,19 @@ function fedora_wordlist {
 }
 
 function report {
-    rpm -q aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell &> /dev/null
+    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
-        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell
+        set -x
+        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
+        set -
     fi
-
+    #########################################
+    # LANGUAGETOOL
+    #########################################
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        echo "report : building languagetool"
-        cd ${WORK_PATH}
-        git clone https://github.com/languagetool-org/languagetool.git
-        cd languagetool
-        ./build.sh languagetool-standalone clean package -DskipTests
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH}
     fi
-
     cd ${WORK_PATH}
     LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
     java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
@@ -75,14 +74,11 @@ function report {
         echo " ${GREEN}[ OK ]${NC}"
     fi
 
+    #########################################
+    # POLOGY
+    #########################################
     if [ ! -d ${WORK_PATH}/pology ]; then
-        echo "report : building pology"
-        cd ${WORK_PATH}
-        svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-        cd pology
-        mkdir build && cd build
-        cmake ..
-        make
+        ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
     fi
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
     export PATH=${WORK_PATH}/pology/bin:$PATH
@@ -103,7 +99,6 @@ EOF
     echo "************************************************"
     fedora_wordlist
     posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:aspell -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
-    echo "************************************************"
 
     cat << EOF >> ${HTML_REPORT}
 </body>

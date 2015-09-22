@@ -54,9 +54,11 @@ function download_trans {
 }
 
 function download {
-    rm -fr ${BASE_PATH}/sugar
+    echo "************************************************"
+    echo "* downloading sources & translations..."
+    echo "************************************************"
     for PROJECT in sugar sugar-toolkit-gtk3; do
-        echo -ne ${PROJECT}" : downloading translation "
+        echo -ne ${PROJECT}" "
         curl -s -S http://translate.sugarlabs.org/export/${PROJECT}/ca.po > ${BASE_PATH}/${PROJECT}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
     done
 
@@ -139,22 +141,6 @@ EOF
     posieve stats --msgfmt-check --skip-obsolete --coloring-type=html $2 >> $3
 }
 
-function install_lt {
-    rpm -q aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell
-    fi
-
-    if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        echo "report : building languagetool"
-        cd ${WORK_PATH}
-        git clone https://github.com/languagetool-org/languagetool.git
-        cd languagetool
-        ./build.sh languagetool-standalone clean package -DskipTests
-    fi
-}
-
 function install_pology {
     if [ ! -d ${WORK_PATH}/pology ]; then
         echo "report : building pology"
@@ -168,7 +154,19 @@ function install_pology {
 }
 
 function report {
-    install_lt
+    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        set -x
+        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
+        set -
+    fi
+    #########################################
+    # LANGUAGETOOL
+    #########################################
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH}
+    fi
     cd ${WORK_PATH}
     LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
     java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
@@ -185,7 +183,12 @@ function report {
         echo " ${GREEN}[ OK ]${NC}"
     fi
 
-    install_pology
+    #########################################
+    # POLOGY
+    #########################################
+    if [ ! -d ${WORK_PATH}/pology ]; then
+        ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
+    fi
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
     export PATH=${WORK_PATH}/pology/bin:$PATH
 
@@ -224,6 +227,10 @@ function report {
   <li><span class="secno">1</span> <span><a href="#Sucrose">Sucrose</a></span>
     <ul class="toc">
 EOF
+
+    echo "************************************************"
+    echo "* checking translations..."
+    echo "************************************************"
 
     COUNTER=1
     for PROJECT in sugar sugar-toolkit-gtk3; do
