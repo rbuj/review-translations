@@ -109,10 +109,10 @@ function report_toc_project {
     cat << EOF >> ${3}
     <li><span class="secno">${1}</span> <span><a href="#${PROJECT}">${2}</a></span>
       <ul class="toc">
-        <li><span class="secno">${1}.1</span> <span><a href="CheckSpellEc${2}">check-spell-ec</a></span></li>
+        <li><span class="secno">${1}.1</span> <span><a href="#CheckSpellEc${2}">check-spell-ec</a></span></li>
         <li><span class="secno">${1}.2</span> <span><a href="#CheckRules${2}">check-rules</a></span></li>
         <li><span class="secno">${1}.3</span> <span><a href="#CheckGrammar${2}">check-grammar</a></span></li>
-        <li><span class="secno">${1}.4</span> <span><a href="#i=Stats${2}">stats</a></span></li>
+        <li><span class="secno">${1}.4</span> <span><a href="#Stats${2}">stats</a></span></li>
       </ul>
     </li>
 EOF
