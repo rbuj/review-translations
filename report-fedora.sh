@@ -38,10 +38,10 @@ function fedora_wordlist {
     if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
         mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
     fi
-    WORDS=`cat ./wordlist | wc -l`
+    WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
     DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
     echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-    cat wordlist >> ${DICT}
+    cat ${WORK_PATH}/wordlist >> ${DICT}
 }
 
 function report {
