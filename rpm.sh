@@ -63,7 +63,7 @@ function get_trans {
     echo -ne "downloading translation "
     cd ${BASE_PATH}/rpm
     rm -f po/${LANG_CODE}.po
-    tx pull -l ${LANG_CODE} &> /dev/null
+    tx pull -l ${LANG_CODE} > /dev/null
     if [ $? -ne 0 ]; then
         echo " ${RED}[ FAIL ]${NC}"
         exit 1
