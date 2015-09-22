@@ -121,7 +121,7 @@ EOF
 # project_name translation_file html_filename
 function report_project_cotent {
     cat << EOF >> $3
-<h1 id=${PROJECT}>${1} <a href="#toc">[^]</a></h1>
+<h1 id=${1}>${1} <a href="#toc">[^]</a></h1>
 <h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
     posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html $2 >> $3
