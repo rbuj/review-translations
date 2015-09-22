@@ -75,8 +75,11 @@ function download {
     rpm -q zanata-client &> /dev/null
     if [ $? -ne 0 ]; then
         echo "download : installing required packages"
-        sudo dnf install -y zanata-client &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+        sudo dnf install -y zanata-client
     fi
+    echo "************************************************"
+    echo "* downloading translations..."
+    echo "************************************************"
     while read -r p; do
         set -- $p
         if [ -z "${VERBOSE}" ]; then echo -ne "${1} (${2}) "; fi

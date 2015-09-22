@@ -48,7 +48,7 @@ function report {
     rpm -q aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
-        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant
     fi
 
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
@@ -98,7 +98,9 @@ function report {
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-    echo "report : checking translations"
+    echo "************************************************"
+    echo "* checking translations..."
+    echo "************************************************"
     fedora_wordlist
     posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
