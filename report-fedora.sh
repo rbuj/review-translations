@@ -45,10 +45,10 @@ function fedora_wordlist {
 }
 
 function report {
-    rpm -q aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
+    rpm -q aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
-        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant
+        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell
     fi
 
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
@@ -102,7 +102,7 @@ EOF
     echo "* checking translations..."
     echo "************************************************"
     fedora_wordlist
-    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
+    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:aspell -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
 
     cat << EOF >> ${HTML_REPORT}
 </body>

@@ -140,10 +140,10 @@ EOF
 }
 
 function install_lt {
-    rpm -q aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null
+    rpm -q aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
-        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+        sudo dnf install -y aspell-${LANG_CODE} subversion maven python-enchant enchant-aspell
     fi
 
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
