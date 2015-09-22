@@ -6,7 +6,7 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
 * sugar.sh : download and test the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
-Other bash scripts:
+More scripts:
 * deploy.sh : a deployment example for publishing the reports in a local apache server.
 
 
