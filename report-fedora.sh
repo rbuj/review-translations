@@ -103,6 +103,7 @@ EOF
     echo "************************************************"
     fedora_wordlist
     posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule -s provider:aspell -s detail --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/ >> ${HTML_REPORT}
+    echo "************************************************"
 
     cat << EOF >> ${HTML_REPORT}
 </body>

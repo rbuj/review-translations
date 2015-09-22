@@ -87,6 +87,7 @@ function download {
         project_config $1 $2
         project_download $1 $2
     done <${INPUT_FILE}
+    echo "************************************************"
 }
 
 for i in "$@"
