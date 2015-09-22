@@ -17,112 +17,170 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-DIRECTORI_TREBALL=$PWD
-DIRECTORI_BASE=${DIRECTORI_TREBALL}
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}
 
-function update_src {
-    cd ${DIRECTORI_BASE}
+LANG_CODE=
+GENERATE_REPORT=
+INSTALL_TRANS=
+
+function usage {
+    echo "This script downloads the translation of the rpm package"
+    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo -ne "\nMandatory arguments:\n"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo -ne "\nOptional arguments:\n"
+    echo "   -r, --report          Generate group report"
+    echo "   -i, --install         Install translations"
+    echo "   -h, --help            Display this help and exit"
+    echo ""
+}
+
+function download_code {
+    cd ${BASE_PATH}
     if [ ! -d $1 ]; then
-        echo -ne "Es clona el codi font "
+        echo -ne "git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     else
         cd $1
-        echo -ne "S'actualitza el codi font "
+        echo -ne "git pull "
         git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-        cd ..
     fi
 }
 
-function obte_codi {
-    update_src rpm https://github.com/rpm-software-management/rpm.git
+function get_code {
+    download_code rpm https://github.com/rpm-software-management/rpm.git
 }
 
-function obte_traduccio {
-    echo -ne "S'obté la traducció "
-    cd ${DIRECTORI_BASE}/rpm
-    rm -f po/ca.po
-    tx pull -l ca &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+function get_trans {
+    rpm -q transifex-client &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        set -x
+        sudo dnf install -y transifex-client
+        set -
+    fi
+    echo -ne "downloading translation "
+    cd ${BASE_PATH}/rpm
+    rm -f po/${LANG_CODE}.po
+    tx pull -l ${LANG_CODE} &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo " ${RED}[ FAIL ]${NC}"
+        exit 1
+    else
+        echo " ${GREEN}[ OK ]${NC}"
+    fi
 }
 
-function compila_traduccio {
-    echo -ne "Es compila i s'instal·la la traduccio "
-    msgfmt po/ca.po -o /usr/share/locale/ca/LC_MESSAGES/rpm.mo &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+function download {
+    get_code
+    get_trans
 }
 
-function test {
-    obte_codi
-    obte_traduccio
-    compila_traduccio
-}
+function report {
+    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        set -x
+        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
+        set -
+    fi
+    #########################################
+    # LANGUAGETOOL
+    #########################################
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH}
+    fi
+    cd ${WORK_PATH}
+    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+    LANGUAGETOOL_PID=$!
 
-function revisio {
-if [ ! -d "${DIRECTORI_TREBALL}/languagetool" ]; then
-    cd ${DIRECTORI_TREBALL}
-    git clone https://github.com/languagetool-org/languagetool.git
-    cd languagetool
-    ./build.sh languagetool-standalone clean package -DskipTests
-fi
+    echo -ne "report : waiting for langtool"
+    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
+        printf '.'
+        sleep 1
+    done
+    if [ $? -ne 0 ]; then
+        echo " ${RED}[ FAIL ]${NC}"
+    else
+        echo " ${GREEN}[ OK ]${NC}"
+    fi
 
-cd ${DIRECTORI_TREBALL}
-LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-LANGUAGETOOL_PID=$!
+    #########################################
+    # POLOGY
+    #########################################
+    if [ ! -d ${WORK_PATH}/pology ]; then
+        ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
+    fi
+    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+    export PATH=${WORK_PATH}/pology/bin:$PATH
 
-echo -ne "Revisió: S'espera que s'hagi iniciat el servidor web del langtool"
-until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
-    printf '.'
-    sleep 1
-done
-if [ $? -ne 0 ]; then
-    echo " ${RED}[ FAIL ]${NC}"
-else
-    echo " ${GREEN}[ OK ]${NC}"
-fi
-
-if [ ! -d ${DIRECTORI_TREBALL}/pology ]; then
-    cd ${DIRECTORI_TREBALL}
-    svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-    cd pology
-    mkdir build && cd build
-    cmake ..
-    make
-fi
-
-export PYTHONPATH=${DIRECTORI_TREBALL}/pology:$PYTHONPATH
-export PATH=${DIRECTORI_TREBALL}/pology/bin:$PATH
-
-cat << EOF > ${DIRECTORI_TREBALL}/rpm-informe.html
+    HTML_REPORT=${WORK_PATH}/rpm-report.html
+    cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
-<html lang="ca" xml:lang="ca" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Memòries de traducció lliures al català</title>
+    <title>Translation Report</title>
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
 EOF
 
-echo "Revisió: S'analitzen les traduccions"
-posieve check-rules,check-spell-ec,check-grammar,stats -s lang:ca -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${DIRECTORI_BASE}/rpm/po/ca.po >> ${DIRECTORI_TREBALL}/rpm-informe.html
+    echo "************************************************"
+    echo "* checking translations..."
+    echo "************************************************"
+    posieve check-rules,check-spell-ec,check-grammar,stats -s lang:${LANG_CODE} -s showfmsg -s byrule --msgfmt-check --skip-obsolete --coloring-type=html ${BASE_PATH}/rpm/po/${LANG_CODE}.po >> ${HTML_REPORT}
 
-cat << EOF >> ${DIRECTORI_TREBALL}/rpm-informe.html
+    cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
 
-kill -9 $LANGUAGETOOL_PID > /dev/null
+    kill -9 $LANGUAGETOOL_PID > /dev/null
 }
 
+function install {
+    echo -ne "installing translation "
+    sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/rpm.mo
+    msgfmt po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/rpm.mo &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+}
 
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -r|--report)
+    GENERATE_REPORT="YES"
+    ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
+    ;;
+    -h|--help)
+    usage
+    exit 0
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
+
+if [ -z ${LANG_CODE} ]; then
+    usage
+    exit 1
 fi
 
-echo -ne "S'instal·len les eines necessaries "
-dnf install -y svn maven python-enchant &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-
-### Principal ###
-test
-revisio
-echo "S'ha finalitzat!"
+### Main
+download
+if [ -n "$GENERATE_REPORT" ]; then
+    report
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    install
+fi
+echo "complete!"

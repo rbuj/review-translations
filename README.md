@@ -14,6 +14,7 @@ Components:
 
 More scripts:
 * deploy.sh : a deployment example for publishing the reports in a local apache server
+* rpm.sh : downloads and tests the translations of RPM package
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
 Installation on Fedora
