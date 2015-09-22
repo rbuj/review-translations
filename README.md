@@ -5,7 +5,7 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-upstream.sh : download the translations that belongs to the [upstream group](https://fedora.zanata.org/version-group/view/upstream)
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
 
-Components:
+Components (scripts which are used by other scrips):
 * build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
 * build-pology.sh : builds Pology in the specified path if there is no pology folder
 * install-fedora.sh : installs the translations in the system
