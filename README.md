@@ -4,10 +4,10 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-main.sh : download the translations that belongs to the [main group](https://fedora.zanata.org/version-group/view/main)
 * fedora-upstream.sh : download the translations that belongs to the [upstream group](https://fedora.zanata.org/version-group/view/upstream)
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
-* sugar.sh : download and test the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
 More scripts:
 * deploy.sh : a deployment example for publishing the reports in a local apache server.
+* sugar.sh : download and test the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
 
 Installation on Fedora
