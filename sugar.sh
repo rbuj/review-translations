@@ -266,7 +266,6 @@ EOF
     done
 
     while read -r p; do
-        echo "report : checking translations"
         set -- $p
         set -- ${p//"LOCALE"/${LANG_CODE}}
         echo "${1} : check translations"
