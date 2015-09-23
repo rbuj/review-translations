@@ -61,6 +61,6 @@ fi
 ### Main ###
 ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-web.list
+    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list
 fi
 echo "complete!"
