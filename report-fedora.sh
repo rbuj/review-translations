@@ -23,6 +23,7 @@ BASE_PATH=
 LANG_CODE=
 PROJECT_NAME=
 INPUT_FILE=
+DISABLE_WORDLIST=
 VERBOSE=
 
 function usage {
@@ -32,18 +33,25 @@ function usage {
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo -ne "\nOptional arguments:\n"
+    echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo "   -v, --verbose         Verbose operation"
 }
 
 function fedora_wordlist {
-    if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
-        mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
-    fi
-    WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
     DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-    cat ${WORK_PATH}/wordlist >> ${DICT}
+    if [ -n ${DISABLE_WORDLIST} ]; then
+        if [ -f "${DICT}" ]; then
+            rm -f ${DICT}
+        fi
+    else
+        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
+            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
+        fi
+        WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
+        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
+        cat ${WORK_PATH}/wordlist >> ${DICT}
+    fi
 }
 
 # project_name project_version html_filename
@@ -188,6 +196,9 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
+    --disable-wordlist)
+    DISABLE_WORDLIST="YES"
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -203,6 +214,10 @@ esac
 done
 
 if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
+    usage
+    exit 1
+fi
+if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
     usage
     exit 1
 fi

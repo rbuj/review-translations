@@ -15,6 +15,7 @@
 # ---------------------------------------------------------------------------
 LANG_CODE=
 GENERATE_REPORT=
+DISABLE_WORDLIST=
 INSTALL_TRANS=
 
 function usage {
@@ -24,6 +25,7 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
+    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -h, --help            Display this help and exit"
     echo ""
     echo -ne "[1] https://fedora.zanata.org/version-group/view/upstream\n"
@@ -38,6 +40,9 @@ case $i in
     ;;
     -r|--report)
     GENERATE_REPORT="YES"
+    ;;
+    --disable-wordlist)
+    DISABLE_WORDLIST="YES"
     ;;
     -i|--install)
     INSTALL_TRANS="YES"
@@ -58,9 +63,18 @@ if [ -z ${LANG_CODE} ]; then
     exit 1
 fi
 
+if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+    usage
+    exit 1
+fi
+
 ### Main ###
 ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list
+    if [ -z ${DISABLE_WORDLIST} ]; then
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list
+    else
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-upstream -f=fedora-upstream.list --disable-wordlist
+    fi
 fi
 echo "complete!"

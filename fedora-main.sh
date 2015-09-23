@@ -15,6 +15,7 @@
 # ---------------------------------------------------------------------------
 LANG_CODE=
 GENERATE_REPORT=
+DISABLE_WORDLIST=
 INSTALL_TRANS=
 
 function usage {
@@ -24,6 +25,7 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
+    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
@@ -39,6 +41,9 @@ case $i in
     ;;
     -r|--report)
     GENERATE_REPORT="YES"
+    ;;
+    --disable-wordlist)
+    DISABLE_WORDLIST="YES"
     ;;
     -i|--install)
     INSTALL_TRANS="YES"
@@ -59,10 +64,19 @@ if [ -z ${LANG_CODE} ]; then
     exit 1
 fi
 
+if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+    usage
+    exit 1
+fi
+
 ### Main ###
 ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
+    if [ -z ${DISABLE_WORDLIST} ]; then
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
+    else
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list --disable-wordlist
+    fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
     echo "Installing translations"

@@ -15,6 +15,7 @@
 # ---------------------------------------------------------------------------
 LANG_CODE=
 GENERATE_REPORT=
+DISABLE_WORDLIST=
 
 function usage {
     echo "This script downloads the translations of the projects that belongs to web group [1]."
@@ -23,6 +24,7 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
+    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -h, --help            Display this help and exit"
     echo ""
     echo -ne "[1] https://fedora.zanata.org/version-group/view/web\n"
@@ -37,6 +39,9 @@ case $i in
     ;;
     -r|--report)
     GENERATE_REPORT="YES"
+    ;;
+    --disable-wordlist)
+    DISABLE_WORDLIST="YES"
     ;;
     -h|--help)
     usage
@@ -54,9 +59,18 @@ if [ -z ${LANG_CODE} ]; then
     exit 1
 fi
 
+if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+    usage
+    exit 1
+fi
+
 ### Main ###
 ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
+    if [ -z ${DISABLE_WORDLIST} ]; then
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list
+    else
+        ./report-fedora.sh -l=${LANG_CODE} -p=fedora-web -f=fedora-web.list --disable-wordlist
+    fi
 fi
 echo "complete!"
