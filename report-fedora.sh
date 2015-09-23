@@ -217,10 +217,6 @@ if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; 
     usage
     exit 1
 fi
-if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
-    usage
-    exit 1
-fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 ### Main ###
