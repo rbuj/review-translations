@@ -56,7 +56,7 @@ function report {
     # LANGUAGETOOL
     #########################################
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH}
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
     fi
     cd ${WORK_PATH}
     LANGUAGETOOL=`find . -name 'languagetool-server.jar'`

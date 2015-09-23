@@ -14,10 +14,12 @@
 # more details.
 # ---------------------------------------------------------------------------
 WORK_PATH=
+LANG_CODE=
 
 function usage {
     echo "This script builds LanguageTool in the specified path if there is no languagetool folder."
-    echo "usage : $0 --path=PATH"
+    echo "usage : $0 --path=PATH  -l|--lang=LANG_CODE"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo "   --path=PATH           PATH  to look for"
     echo "   -h, --help            Display this help and exit"
 }
@@ -33,6 +35,8 @@ function build_languagtool {
     echo "languagtool : building"
     cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
+    # remove MORFOLOGIK_RULE_CA_ES rule in Catalan
+    if [ "${LANG_CODE}" == "ca" ] && [ -f "languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java" ]; then sed -i '/MorfologikCatalanSpellerRule/d' languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java; fi
     cd languagetool
     ./build.sh languagetool-standalone clean package -DskipTests
 }
@@ -40,6 +44,10 @@ function build_languagtool {
 for i in "$@"
 do
 case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
     --path=*)
     WORK_PATH="${i#*=}"
     shift # past argument=value
