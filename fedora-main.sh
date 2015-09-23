@@ -62,7 +62,7 @@ fi
 ### Main ###
 ./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
 if [ -n "$GENERATE_REPORT" ]; then
-    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-web.list
+    ./report-fedora.sh -l=${LANG_CODE} -p=fedora-main -f=fedora-main.list
 fi
 if [ -n "$INSTALL_TRANS" ]; then
     echo "Installing translations"
