@@ -44,7 +44,7 @@ function usage {
 
 function fedora_wordlist {
     DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n ${DISABLE_WORDLIST} ]; then
+    if [ -n "${DISABLE_WORDLIST}" ]; then
         if [ -f "${DICT}" ]; then
             rm -f ${DICT}
         fi
@@ -132,7 +132,7 @@ function report {
     #########################################
     # POLOGY
     #########################################
-    if [ ! -d ${WORK_PATH}/pology ]; then
+    if [ ! -d "${WORK_PATH}/pology" ]; then
         ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
     fi
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH

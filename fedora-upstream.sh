@@ -81,16 +81,16 @@ fi
 
 ### Main ###
 GROUP="upstream"
-./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+#./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
 if [ -n "$GENERATE_REPORT" ]; then
-    if [ -z ${DISABLE_WORDLIST} ]; then
-        if [ -z ${LT_SERVER} ] && [ -z ${LT_PORT} ]; then
+    if [ -z "${DISABLE_WORDLIST}" ]; then
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
             ./report-${GROUP}.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
         else
             ./report-${GROUP}.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
         fi
     else
-        if [ -z ${LT_SERVER} ] && [ -z ${LT_PORT} ]; then
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
             ./report-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --disable-wordlist
         else
             ./report-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}

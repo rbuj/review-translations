@@ -40,7 +40,7 @@ function usage {
 
 function download_code {
     cd ${BASE_PATH}
-    if [ ! -d $1 ]; then
+    if [ ! -d "$1" ]; then
         echo -ne "git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     else
@@ -81,7 +81,7 @@ function download {
 
 function fedora_wordlist {
     DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n ${DISABLE_WORDLIST} ]; then
+    if [ -n "${DISABLE_WORDLIST}" ]; then
         if [ -f "${DICT}" ]; then
             rm -f ${DICT}
         fi
@@ -128,7 +128,7 @@ function report {
     #########################################
     # POLOGY
     #########################################
-    if [ ! -d ${WORK_PATH}/pology ]; then
+    if [ ! -d "${WORK_PATH}/pology" ]; then
         ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
     fi
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
@@ -195,11 +195,11 @@ case $i in
 esac
 done
 
-if [ -z ${LANG_CODE} ]; then
+if [ -z "${LANG_CODE}" ]; then
     usage
     exit 1
 fi
-if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi

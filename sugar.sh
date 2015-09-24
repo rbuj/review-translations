@@ -144,7 +144,7 @@ EOF
 }
 
 function install_pology {
-    if [ ! -d ${WORK_PATH}/pology ]; then
+    if [ ! -d "${WORK_PATH}/pology" ]; then
         echo "report : building pology"
         cd ${WORK_PATH}
         svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
@@ -157,7 +157,7 @@ function install_pology {
 
 function fedora_wordlist {
     DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n ${DISABLE_WORDLIST} ]; then
+    if [ -n "${DISABLE_WORDLIST}" ]; then
         if [ -f "${DICT}" ]; then
             rm -f ${DICT}
         fi
@@ -204,7 +204,7 @@ function report {
     #########################################
     # POLOGY
     #########################################
-    if [ ! -d ${WORK_PATH}/pology ]; then
+    if [ ! -d "${WORK_PATH}/pology" ]; then
         ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
     fi
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
@@ -328,11 +328,11 @@ case $i in
 esac
 done
 
-if [ -z ${LANG_CODE} ]; then
+if [ -z "${LANG_CODE}" ]; then
     usage
     exit 1
 fi
-if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi
