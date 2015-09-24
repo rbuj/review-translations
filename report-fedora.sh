@@ -184,7 +184,9 @@ EOF
 </html>
 EOF
     chmod 644 ${HTML_REPORT}
-    kill -9 $LANGUAGETOOL_PID > /dev/null
+    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+        kill -9 $LANGUAGETOOL_PID > /dev/null
+    fi
 }
 
 for i in "$@"
