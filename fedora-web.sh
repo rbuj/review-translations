@@ -65,19 +65,19 @@ case $i in
 esac
 done
 
-if [ -z ${LANG_CODE} ]; then
+if [ -z "${LANG_CODE}" ]; then
     usage
     exit 1
 fi
 
-if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
+if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi
 
 ### Main ###
 GROUP="web"
-#./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then

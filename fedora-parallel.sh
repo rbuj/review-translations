@@ -101,7 +101,7 @@ if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     exit 1
 fi
 
-if [ -n ${GENERATE_REPORT} ]; then
+if [ -n "${GENERATE_REPORT}" ]; then
     #########################################
     # LANGUAGETOOL
     #########################################
@@ -126,7 +126,7 @@ fi
 cd ${WORK_PATH}
 for i in "${!SCRIPTS[@]}"; do
     if [ -n "$GENERATE_REPORT" ]; then
-        if [ -z ${DISABLE_WORDLIST} ]; then
+        if [ -z "${DISABLE_WORDLIST}" ]; then
             tasks["key${i}"]="${SCRIPTS[${i}]} -l=${LANG_CODE} -r --languagetool-server=localhost --languagetool-port=8081"
         else
             tasks["key${i}"]="${SCRIPTS[${i}]} -l=${LANG_CODE} -r --disable-wordlist --languagetool-server=localhost --languagetool-port=8081"
