@@ -234,7 +234,7 @@ if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; 
     usage
     exit 1
 fi
-if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
     LT_EXTERNAL="YES"
 fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
