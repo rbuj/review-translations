@@ -26,6 +26,9 @@ INPUT_FILE=
 DISABLE_WORDLIST=
 VERBOSE=
 
+LT_SERVER=
+LT_PORT=
+
 function usage {
     echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
     echo -ne "\nMandatory arguments:\n"
@@ -103,16 +106,19 @@ function report {
     #########################################
     # LANGUAGETOOL
     #########################################
-    if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
+    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+        if [ ! -d "${WORK_PATH}/languagetool" ]; then
+            ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
+        fi
+        cd ${WORK_PATH}
+        LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+        java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+        LANGUAGETOOL_PID=$!
+        LT_SERVER="localhost"
+        LT_PORT="8081"
     fi
-    cd ${WORK_PATH}
-    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-    LANGUAGETOOL_PID=$!
-
     echo -ne "report : waiting for langtool"
-    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
+    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://${LT_SERVER}:${LT_PORT}); do
         printf '.'
         sleep 1
     done
@@ -198,6 +204,14 @@ case $i in
     ;;
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
+    ;;
+    --languagetool-server=*)
+    LT_SERVER="${i#*=}"
+    shift # past argument=value
+    ;;
+    --languagetool-port=*)
+    LT_PORT="${i#*=}"
+    shift # past argument=value
     ;;
     -v|--verbose)
     VERBOSE="YES"
