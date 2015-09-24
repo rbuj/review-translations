@@ -28,6 +28,7 @@ VERBOSE=
 
 LT_SERVER=
 LT_PORT=
+LT_EXTERNAL=
 
 function usage {
     echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
@@ -106,7 +107,7 @@ function report {
     #########################################
     # LANGUAGETOOL
     #########################################
-    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+    if [ -z "${LT_EXTERNAL}" ]; then
         if [ ! -d "${WORK_PATH}/languagetool" ]; then
             ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
         fi
@@ -184,7 +185,7 @@ EOF
 </html>
 EOF
     chmod 644 ${HTML_REPORT}
-    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+    if [ -z "${LT_EXTERNAL}" ]; then
         kill -9 $LANGUAGETOOL_PID > /dev/null
     fi
 }
@@ -232,6 +233,9 @@ done
 if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
     usage
     exit 1
+fi
+if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+    LT_EXTERNAL="YES"
 fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
