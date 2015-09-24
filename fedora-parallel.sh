@@ -101,7 +101,7 @@ if [ -z ${GENERATE_REPORT} ] && [ -n ${DISABLE_WORDLIST} ]; then
     exit 1
 fi
 
-if [ -z ${GENERATE_REPORT} ]; then
+if [ -n ${GENERATE_REPORT} ]; then
     #########################################
     # LANGUAGETOOL
     #########################################
