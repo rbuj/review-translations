@@ -55,6 +55,12 @@ function install {
         sudo cp ${BASE_PATH}/askbot/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/
         set -
     done
+    echo ""
+    echo "Please read the following steps to complete the installation:"
+    echo "    * Create database for Askbot : http://askbot.org/doc/create-database.html"
+    echo "    * Initial Configuration of Askbot : http://askbot.org/doc/initial-configuration.html"
+    echo "    * ..."
+    echo ""
 }
 
 function download_code {
