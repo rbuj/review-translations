@@ -24,6 +24,7 @@ LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
+DEPLOY_MARIADB=
 
 function usage {
     echo "This script downloads the translation of askbot"
@@ -32,18 +33,79 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   -i, --install         Install translations"
+    echo "   --deploy              Create MariaDB database & user, virtualenv"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
 
+function deploy_mariadb {
+    rpm -q mysql-server mariadb-devel &> /dev/null
+    if [ $? -ne 0 ]; then
+        set -x
+        sudo dnf install -y mysql-server mariadb-devel
+        set -
+    fi
+    set -x
+    sudo systemctl start mariadb.service
+    sudo systemctl enable mariadb.service
+    sudo mysql_secure_installation
+    mysql -u root -p < ${WORK_PATH}/askbot.sql
+    set -
+
+    if [ ! -d "${WORK_PATH}/VirtPyAskboot" ]; then
+        virtualenv --no-site-package ${WORK_PATH}/VirtpyAskboot
+    fi
+    source ${WORK_PATH}/VirtpyAskboot/bin/activate
+
+    pip install mysql-python
+
+    cd ${WORK_PATH}/VirtpyAskboot
+    if [ ! -d "${WORK_PATH}/VirtPyAskboot" ]; then
+        cd ${WORK_PATH}/VirtpyAskboot
+        git clone git://github.com/ASKBOT/askbot-devel.git
+    else
+        cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
+        git pull
+    fi
+
+    cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
+    tx pull -fas
+    python setup.py develop
+
+    cd ${WORK_PATH}/VirtpyAskboot
+    askbot-setup --db-engine=3 --db-name=dbaskbot --db-user=dbaskbootuser --db-password=dbaskbootpassword -n forum
+
+    cd ${WORK_PATH}/VirtpyAskboot/forum
+    echo "${RED}When the script asks you if you want to create a superuser, answer no.${NC}"
+    python manage.py syncdb
+    python manage.py migrate askbot
+    python manage.py migrate django_authopenid
+    python manage.py migrate
+    python manage.py createsuperuser
+
+    cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
+    tx pull -fas
+
+    cd ${WORK_PATH}/VirtpyAskboot/askbot-devel/askbot
+    python ../../forum/manage.py compilemessages
+
+    cd ${WORK_PATH}/VirtpyAskboot/forum
+    sed -i -e "s/LANGUAGE_CODE = 'en'/LANGUAGE_CODE = '${LANG_CODE}'/g" settings.py
+    python manage.py runserver
+
+    set -x
+    echo "drop database dbaskbot;" | mysql -u root -p
+    echo "drop user dbaskbootuser;" | mysql -u root -p
+    set -
+}
+
 function install {
     if [ ! -d "/usr/lib/python2.7/site-packages/askbot" ]; then
-        rpm -q python-devel redhat-rpm-config python-django python-django-debug-toolbar python-mysql python-django-threaded-multihost python-django-openid-auth python-django-south python-django-keyedcache python-recaptcha-client python-html5lib python-django-markdown2 > /dev/null
+        rpm -q python-devel redhat-rpm-config python-virtualenv python-mysql > /dev/null
         if [ $? -ne 0 ]; then
             set -x
-            sudo dnf install -y python-devel redhat-rpm-config python-django python-django-debug-toolbar python-mysql python-django-threaded-multihost python-django-openid-auth python-django-south python-django-keyedcache python-recaptcha-client python-html5lib python-django-markdown2 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+            sudo dnf install -y python-devel redhat-rpm-config python-mysql &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
             set -
         fi
         sudo pip install askbot
@@ -198,8 +260,8 @@ case $i in
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
     ;;
-    -i|--install)
-    INSTALL_TRANS="YES"
+    --deploy)
+    DEPLOY_MARIADB="YES"
     ;;
     -h|--help)
     usage
@@ -226,7 +288,7 @@ download
 if [ -n "$GENERATE_REPORT" ]; then
     report
 fi
-if [ -n "$INSTALL_TRANS" ]; then
-    install
+if [ -n "$DEPLOY_MARIADB" ]; then
+    deploy_mariadb
 fi
 echo "complete!"
