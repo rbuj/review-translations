@@ -32,9 +32,29 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
+    echo "   -i, --install         Install translations"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo ""
+}
+
+function install {
+    if [ ! -d "/usr/lib/python2.7/site-packages/askbot" ]; then
+        rpm -q python-devel redhat-rpm-config python-django python-django-debug-toolbar python-mysql python-django-threaded-multihost python-django-openid-auth python-django-south python-django-keyedcache python-recaptcha-client python-html5lib python-django-markdown2 > /dev/null
+        if [ $? -ne 0 ]; then
+            set -x
+            sudo dnf install -y python-devel redhat-rpm-config python-django python-django-debug-toolbar python-mysql python-django-threaded-multihost python-django-openid-auth python-django-south python-django-keyedcache python-recaptcha-client python-html5lib python-django-markdown2 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+            set -
+        fi
+        sudo pip install askbot
+    fi
+    for file in djangojs django; do
+        set -x
+        sudo rm -f /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.mo /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po
+        sudo msgfmt ${BASE_PATH}/askbot/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po -o /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.mo
+        sudo cp ${BASE_PATH}/askbot/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/
+        set -
+    done
 }
 
 function download_code {
@@ -172,6 +192,9 @@ case $i in
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
     ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
+    ;;
     -h|--help)
     usage
     exit 0
@@ -196,5 +219,8 @@ fi
 download
 if [ -n "$GENERATE_REPORT" ]; then
     report
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    install
 fi
 echo "complete!"

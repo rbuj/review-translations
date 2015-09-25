@@ -95,4 +95,7 @@ if [ -n "$GENERATE_REPORT" ]; then
         fi
     fi
 fi
+if [ -n "$INSTALL_TRANS" ]; then
+    ./install-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+fi
 echo "complete!"
