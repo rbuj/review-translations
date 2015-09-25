@@ -15,6 +15,7 @@ Components (scripts which are used by other scrips):
 * zanata-fedora.sh : downloads the translations of a Fedora group
 
 More scripts:
+* askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * rpm.sh : downloads and tests the translations of RPM package
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
