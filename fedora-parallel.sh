@@ -32,7 +32,6 @@ function usage {
     echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -h, --help            Display this help and exit"
     echo ""
-    echo -ne "[1] https://fedora.zanata.org/version-group/view/web\n"
 }
 
 main () {
@@ -105,15 +104,13 @@ if [ -n "${GENERATE_REPORT}" ]; then
     #########################################
     # LANGUAGETOOL
     #########################################
-    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-        if [ ! -d "${WORK_PATH}/languagetool" ]; then
-            ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
-        fi
-        cd ${WORK_PATH}
-        LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-        java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-        LANGUAGETOOL_PID=$!
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
     fi
+    cd ${WORK_PATH}
+    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+    LANGUAGETOOL_PID=$!
 
     #########################################
     # POLOGY

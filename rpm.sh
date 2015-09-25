@@ -40,7 +40,7 @@ function usage {
 
 function download_code {
     cd ${BASE_PATH}
-    if [ ! -d "$1" ]; then
+    if [ ! -d "${1}" ]; then
         echo -ne "git clone "
         git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     else
