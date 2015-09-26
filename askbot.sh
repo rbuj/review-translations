@@ -25,6 +25,7 @@ GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
 DEPLOY_MARIADB=
+UPDATE_DEPLOY=
 
 function usage {
     echo "This script downloads the translation of askbot"
@@ -34,9 +35,23 @@ function usage {
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --deploy              Create MariaDB database & user, virtualenv"
+    echo "   --update              Update translations in local deployment"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo ""
+}
+
+function update_deploy {
+    source ${WORK_PATH}/VirtpyAskboot/bin/activate
+
+    cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
+    tx pull -fs -l ${LANG_CODE}
+
+    cd ${WORK_PATH}/VirtpyAskboot/askbot-devel/askbot
+    python ../../forum/manage.py compilemessages
+
+    cd ${WORK_PATH}/VirtpyAskboot/forum
+    python manage.py runserver
 }
 
 function deploy_mariadb {
@@ -70,7 +85,7 @@ function deploy_mariadb {
     fi
 
     cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
-    tx pull -fas
+    tx pull -fs -l ${LANG_CODE}
     python setup.py develop
 
     cd ${WORK_PATH}/VirtpyAskboot
@@ -85,7 +100,7 @@ function deploy_mariadb {
     python manage.py createsuperuser
 
     cd ${WORK_PATH}/VirtpyAskboot/askbot-devel
-    tx pull -fas
+    tx pull -fs -l ${LANG_CODE}
 
     cd ${WORK_PATH}/VirtpyAskboot/askbot-devel/askbot
     python ../../forum/manage.py compilemessages
@@ -93,31 +108,6 @@ function deploy_mariadb {
     cd ${WORK_PATH}/VirtpyAskboot/forum
     sed -i -e "s/LANGUAGE_CODE = 'en'/LANGUAGE_CODE = '${LANG_CODE}'/g" settings.py
     python manage.py runserver
-}
-
-function install {
-    if [ ! -d "/usr/lib/python2.7/site-packages/askbot" ]; then
-        rpm -q python-devel redhat-rpm-config python-virtualenv python-mysql > /dev/null
-        if [ $? -ne 0 ]; then
-            set -x
-            sudo dnf install -y python-devel redhat-rpm-config python-mysql &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
-            set -
-        fi
-        sudo pip install askbot
-    fi
-    for file in djangojs django; do
-        set -x
-        sudo rm -f /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.mo /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po
-        sudo msgfmt ${BASE_PATH}/askbot/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po -o /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.mo
-        sudo cp ${BASE_PATH}/askbot/askbot/locale/${LANG_CODE}/LC_MESSAGES/${file}.po /usr/lib/python2.7/site-packages/askbot/locale/${LANG_CODE}/LC_MESSAGES/
-        set -
-    done
-    echo ""
-    echo "Please read the following steps to complete the installation:"
-    echo "    * Create database for Askbot : http://askbot.org/doc/create-database.html"
-    echo "    * Initial Configuration of Askbot : http://askbot.org/doc/initial-configuration.html"
-    echo "    * ..."
-    echo ""
 }
 
 function download_code {
@@ -258,6 +248,9 @@ case $i in
     --deploy)
     DEPLOY_MARIADB="YES"
     ;;
+    --update)
+    UPDATE_DEPLOY="YES"
+    ;;
     -h|--help)
     usage
     exit 0
@@ -283,7 +276,10 @@ download
 if [ -n "$GENERATE_REPORT" ]; then
     report
 fi
-if [ -n "$DEPLOY_MARIADB" ]; then
+if [ -n "$DEPLOY_MARIADB" ] && [ -z "${UPDATE_DEPLOY}" ]; then
     deploy_mariadb
+fi
+if [ -z "$DEPLOY_MARIADB" ] && [ -n "${UPDATE_DEPLOY}" ]; then
+    update_deploy
 fi
 echo "complete!"
