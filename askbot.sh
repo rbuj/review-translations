@@ -74,7 +74,7 @@ function deploy_mariadb {
     python setup.py develop
 
     cd ${WORK_PATH}/VirtpyAskboot
-    askbot-setup --db-engine=3 --db-name=dbaskbot --db-user=dbaskbootuser --db-password=dbaskbootpassword -n forum
+    askbot-setup --db-engine=3 --db-name=dbaskbot --db-user=dbaskbotuser --db-password=dbaskbotpassword -n forum
 
     cd ${WORK_PATH}/VirtpyAskboot/forum
     echo "${RED}When the script asks you if you want to create a superuser, answer no.${NC}"
@@ -93,11 +93,6 @@ function deploy_mariadb {
     cd ${WORK_PATH}/VirtpyAskboot/forum
     sed -i -e "s/LANGUAGE_CODE = 'en'/LANGUAGE_CODE = '${LANG_CODE}'/g" settings.py
     python manage.py runserver
-
-    set -x
-    echo "drop database dbaskbot;" | mysql -u root -p
-    echo "drop user dbaskbootuser;" | mysql -u root -p
-    set -
 }
 
 function install {
