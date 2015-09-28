@@ -16,7 +16,7 @@ firewalld RHEL-7
 gnome-abrt master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gnome-abrt.mo
 gnome-abrt rhel7
 initial-setup master
-initial-setup rhel7
+initial-setup rhel7-branch
 initscripts master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/initscripts.mo
 libpwquality master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libpwquality.mo
 libreport master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libreport.mo
