@@ -44,11 +44,19 @@ function install_trans {
         IFS=':' read -a ADDR <<< "${i//"LOCALE"/${LANG_CODE}}"
         dnf provides ${ADDR[1]} &> /dev/null
         if [ $? -ne 0 ]; then
-            echo -ne "[pakage ${ADDR[1]} was not installed. installing...] "
-            dnf install -y `dnf repoquery -f ${ADDR[1]}` &> /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+            echo -ne "[${ADDR[1]} file was not installed. installing...] "
+            dnf install -y `dnf repoquery -f ${ADDR[1]}` &> /dev/null
+            if [ $? -ne 0 ]; then
+                echo "${RED}[ FAIL ]${NC}"
+            else
+                echo "${GREEN}[ OK ]${NC}"
+                if [ ${#TRANS[@]} -gt 1 ]; then echo -ne "    ${ADDR[1]} "; fi
+                rm -f ${ADDR[1]} && msgfmt ${BASE_PATH}/${1}-${2}/${ADDR[0]} -o ${ADDR[1]} && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+            fi
+        else
+            if [ ${#TRANS[@]} -gt 1 ]; then echo -ne "    ${ADDR[1]} "; fi
+            rm -f ${ADDR[1]} && msgfmt ${BASE_PATH}/${1}-${2}/${ADDR[0]} -o ${ADDR[1]} && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
         fi
-        if [ ${#TRANS[@]} -gt 1 ]; then echo -ne "    ${ADDR[1]} "; fi
-        rm -f ${ADDR[1]} && msgfmt ${BASE_PATH}/${1}-${2}/${ADDR[0]} -o ${ADDR[1]} && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     done
 }
 
