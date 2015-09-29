@@ -16,8 +16,9 @@ Components (scripts which are used by other scrips):
 
 More scripts:
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
+* blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
-* rpm.sh : downloads and tests the translations of RPM package
+* rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 
 Installation on Fedora
