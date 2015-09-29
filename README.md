@@ -10,9 +10,9 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 Components (scripts which are used by other scrips):
 * build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
 * build-pology.sh : builds Pology in the specified path if there is no pology folder
-* install-fedora.sh : installs the translations in the system
-* report-fedora.sh : makes a translation report of a Fedora group
-* zanata-fedora.sh : downloads the translations of a Fedora group
+* install.sh : installs the translations in the system
+* report.sh : makes a translation report of a Fedora group
+* zanata.sh : downloads the translations of a Fedora group
 
 More scripts:
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)

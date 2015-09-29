@@ -16,6 +16,7 @@
 LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
+INSTALL_TRANS=
 
 function usage {
     echo "This script downloads the translations of the blivet-gui project."
@@ -25,6 +26,7 @@ function usage {
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
+    echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
@@ -41,6 +43,9 @@ case $i in
     ;;
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
+    ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
     ;;
     -h|--help)
     usage
@@ -67,9 +72,12 @@ fi
 ./zanata.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list -u=https://translate.zanata.org/zanata/
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
-        ./report-fedora.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list
+        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list
     else
-        ./report-fedora.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list --disable-wordlist
+        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list --disable-wordlist
     fi
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    ./install.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list
 fi
 echo "complete!"

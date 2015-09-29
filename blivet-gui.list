@@ -1,2 +1,2 @@
-blivet-gui f23-branch
+blivet-gui f23-branch F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet-gui.mo
 blivet-gui master
