@@ -26,6 +26,7 @@ function usage {
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -h, --help            Display this help and exit"
+    echo ""
 }
 
 for i in "$@"
