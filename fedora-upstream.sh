@@ -29,6 +29,7 @@ function usage {
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
+    echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
     echo -ne "[1] https://fedora.zanata.org/version-group/view/upstream\n"
@@ -54,6 +55,9 @@ case $i in
     --languagetool-port=*)
     LT_PORT="${i#*=}"
     shift # past argument=value
+    ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
     ;;
     -i|--install)
     INSTALL_TRANS="YES"
@@ -96,5 +100,8 @@ if [ -n "$GENERATE_REPORT" ]; then
             ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
         fi
     fi
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    ./install.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
 fi
 echo "complete!"

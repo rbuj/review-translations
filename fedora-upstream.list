@@ -1,39 +1,39 @@
 cockpit master
-dnf master
-dnf-plugin-system-upgrade master
-dnf-plugins-core master
-dnf-plugins-extras master
-entangle master
-expendable master
+dnf master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf.mo
+dnf-plugin-system-upgrade master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugin-system-upgrade.mo
+dnf-plugins-core master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugins-core.mo
+dnf-plugins-extras master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugins-extras.mo
+entangle master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/entangle.mo
+expendable master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/expendable.mo
 freeipa master
 gfs2-utils master
-gss-ntlmssp master
-hivex master
-ibus head
-ibus-anthy head
-ibus-chewing master
-ibus-input-pad head
-ibus-libpinyin master
-ibus-table 1.9.1
-ibus-typing-booster 1.2.11
-im-chooser master
-imsettings master
-input-pad head
-iok master
-libguestfs master
-libosinfo master
-libvirt-glib master
-libvirt-sandbox master
-oscap-anaconda-addon master
+gss-ntlmssp master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gssntlmssp.mo
+hivex master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/hivex.mo
+ibus head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus10.mo
+ibus-anthy head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-anthy.mo
+ibus-chewing master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-chewing.mo
+ibus-input-pad head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-input-pad.mo
+ibus-libpinyin master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-libpinyin.mo
+ibus-table 1.9.1 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-table.mo
+ibus-typing-booster 1.2.11 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-typing-booster.mo
+im-chooser master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/im-chooser.mo
+imsettings master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/imsettings.mo
+input-pad head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/input-pad.mo
+iok master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/iok.mo
+libguestfs master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libguestfs.mo
+libosinfo master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libosinfo.mo
+libvirt-glib master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-glib.mo
+libvirt-sandbox master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-sandbox.mo
+oscap-anaconda-addon master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/oscap-anaconda-addon.mo
 oscap-anaconda-addon rhel7-branch
-pam_krb5 master
+pam_krb5 master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pam_krb5.mo
 pkinit-nss master
-python-fedora 0.4.0
+python-fedora 0.4.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-fedora.mo
 spacewalk-other master
 spacewalk-frontend master
-sssd master
-storaged storaged
-virt-manager master
-virt-top master
-virt-viewer master
-volume_key master
+sssd master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
+storaged storaged LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
+virt-manager master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-manager.mo
+virt-top master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-top.mo
+virt-viewer master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-viewer.mo
+volume_key master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/volume_key.mo
