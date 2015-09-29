@@ -23,14 +23,16 @@ BASE_PATH=
 LANG_CODE=
 PROJECT_NAME=
 INPUT_FILE=
+BASE_URL=
 VERBOSE=
 
 function usage {
-    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
+    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE -u|--url=URL [ ARGS ... ]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
+    echo "   -u|--url=URL          Base URL of the Zanata server"
     echo -ne "\nOptional arguments:\n"
     echo "   -h, --help            Display this help and exit"
     echo "   -v, --verbose         Verbose operation"
@@ -50,7 +52,7 @@ function project_config {
         cat << EOF > ${ZANATA_FILE}
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
-  <url>https://fedora.zanata.org/</url>
+  <url>${BASE_URL}</url>
   <project>${1}</project>
   <project-version>${2}</project-version>
   <project-type>gettext</project-type>
@@ -105,6 +107,10 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
+    -u=*|--url=*)
+    BASE_URL="${i#*=}"
+    shift # past argument=value
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -119,7 +125,7 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${BASE_URL}" ]; then
     usage
     exit 1
 fi

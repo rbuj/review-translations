@@ -81,7 +81,7 @@ fi
 
 ### Main ###
 GROUP="upstream"
-./zanata-fedora.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+./zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list -u=https://fedora.zanata.org/
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
