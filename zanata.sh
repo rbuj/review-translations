@@ -70,7 +70,7 @@ EOF
 function project_download {
     if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : downloading project translation "; fi
     cd ${BASE_PATH}/${1}-${2}
-    zanata-cli -B pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
+    zanata-cli -B -q pull -l ${LANG_CODE} --pull-type both > /dev/null && echo "${GREEN}[ OK ]${NC}" || exit 1
 }
 
 function download {
