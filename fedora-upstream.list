@@ -31,7 +31,7 @@ pkinit-nss master
 python-fedora 0.4.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-fedora.mo
 spacewalk-other master
 spacewalk-frontend master
-sssd master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
+sssd master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/sssd.mo
 storaged storaged LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
 virt-manager master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-manager.mo
 virt-top master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-top.mo
