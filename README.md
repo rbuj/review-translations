@@ -15,9 +15,12 @@ Components (scripts which are used by other scrips):
 * zanata.sh : downloads the translations of a Fedora group
 
 More scripts:
+* accounts-service.sh : downloads and tests the translations of [accounts-service](http://freedesktop.org/wiki/Software/AccountsService/)
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
+* fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
+* PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 * shared-mime-info.sh : downloads and tests the translations of [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/)
