@@ -10,8 +10,9 @@ fedora-web
 fprintd
 PackageKit
 rpm
-sugar
-VirtpyAskboot
 shared-mime-info
+sugar
+udisks2
+VirtpyAskboot
 zif
 *-report.html
