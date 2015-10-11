@@ -20,6 +20,7 @@ More scripts:
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
+* zif.sh : downloads and tests the translations of [ZIF](https://people.freedesktop.org/~hughsient/zif/). It's now a dead project.
 
 Installation on Fedora
 ----------------------
