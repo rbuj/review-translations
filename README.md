@@ -17,6 +17,7 @@ Components (scripts which are used by other scrips):
 More scripts:
 * accounts-service.sh : downloads and tests the translations of [accounts-service](http://freedesktop.org/wiki/Software/AccountsService/)
 * appstream.sh : downloads and tests the translations of [AppStream](http://www.freedesktop.org/wiki/Distributions/AppStream/)
+* appstream-glib.sh : downloads and tests the translations of [appstream-glib](https://github.com/hughsie/appstream-glib)
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
