@@ -35,7 +35,7 @@ sssd master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/sssd.mo
 storaged storaged LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
 tvtime 1.0.6 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/tvtime.mo
 tvtime 1.0.7 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/tvtime.mo
-v4l-utils rawhide
+v4l-utils 1.8.1
 virt-manager master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-manager.mo
 virt-top master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-top.mo
 virt-viewer master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-viewer.mo
