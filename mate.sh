@@ -206,7 +206,7 @@ function install {
     while read -r p; do
         set -- $p
         set -x
-        sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/{$1}.mo
+        sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${1}.mo
         sudo msgfmt ${BASE_PATH}/${1}/po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${1}.mo
         set -
 
