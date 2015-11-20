@@ -76,7 +76,7 @@ EOF
     while read -r p; do
         set -- $p
         cat << EOF >> ${HTML_REPORT}
-  <li><span class="secno">${COUNTER}</span> <span><a href="#${1}${2}">${1}</a></span></li>
+  <li><span class="secno">${COUNTER}</span> <span><a href="#${1}">${1}</a></span></li>
 EOF
         let "COUNTER++"
     done <${WORK_PATH}/mate.list
@@ -89,8 +89,8 @@ EOF
 function report_project_cotent {
     echo "${1}"
     cat << EOF >> $2
-<h1 id=${1}${2}>${1} ($2)<a href="#toc">[^]</a></h1>
-<h2 id=CheckSpellEc${1}${2}>check-spell-ec <a href="#toc">[^]</a></h2>
+<h1 id=${1}>${1}<a href="#toc">[^]</a></h1>
+<h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
     posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
     cat << EOF >> $2
