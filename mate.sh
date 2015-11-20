@@ -1,0 +1,260 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------
+# Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License at <http://www.gnu.org/licenses/> for
+# more details.
+# ---------------------------------------------------------------------------
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0` # No Color
+
+WORK_PATH=$PWD
+BASE_PATH=${WORK_PATH}/MATE
+
+LANG_CODE=
+GENERATE_REPORT=
+DISABLE_WORDLIST=
+INSTALL_TRANS=
+
+function usage {
+    echo "This script downloads the translation of MATE"
+    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo -ne "\nMandatory arguments:\n"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo -ne "\nOptional arguments:\n"
+    echo "   -r, --report          Generate group report"
+    echo "   --disable-wordlist    Do not use wordlist file"
+    echo "   -i, --install         Install translations"
+    echo "   -h, --help            Display this help and exit"
+    echo ""
+}
+
+function download_code {
+    cd ${BASE_PATH}
+    if [ ! -d "${1}" ]; then
+        echo -ne "git clone "
+        git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    else
+        cd $1
+        echo -ne "git pull "
+        git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+    fi
+}
+
+function fedora_wordlist {
+    DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
+    if [ -n "${DISABLE_WORDLIST}" ]; then
+        if [ -f "${DICT}" ]; then
+            rm -f ${DICT}
+        fi
+    else
+        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
+            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
+        fi
+        WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
+        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
+        cat ${WORK_PATH}/wordlist >> ${DICT}
+    fi
+}
+
+function report_toc {
+    HTML_REPORT=${1}
+    cat << EOF >> ${HTML_REPORT}
+<h1 id=toc>Table of contents</h1>
+<div data-fill-with="table-of-contents"><ul class="toc">
+EOF
+    COUNTER=1
+    while read -r p; do
+        set -- $p
+        cat << EOF >> ${HTML_REPORT}
+  <li><span class="secno">${COUNTER}</span> <span><a href="#${1}${2}">${1}</a></span></li>
+EOF
+        let "COUNTER++"
+    done <${WORK_PATH}/mate.list
+    cat << EOF >> ${HTML_REPORT}
+<ul></div>
+EOF
+}
+
+# project_name html_filename
+function report_project_cotent {
+    echo "${1}"
+    cat << EOF >> $2
+<h1 id=${1}${2}>${1} ($2)<a href="#toc">[^]</a></h1>
+<h2 id=CheckSpellEc${1}${2}>check-spell-ec <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+    cat << EOF >> $2
+<h2 id=CheckRules${1}>check-rules <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+    cat << EOF >> $2
+<h2 id=CheckGrammar${1}>check-grammar <a href="#toc">[^]</a></h2>
+EOF
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+}
+
+function report {
+    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required packages"
+        set -x
+        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
+        set -
+    fi
+    #########################################
+    # LANGUAGETOOL
+    #########################################
+    if [ ! -d "${WORK_PATH}/languagetool" ]; then
+        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
+    fi
+    cd ${WORK_PATH}
+    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+    LANGUAGETOOL_PID=$!
+
+    echo -ne "report : waiting for langtool"
+    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
+        printf '.'
+        sleep 1
+    done
+    if [ $? -ne 0 ]; then
+        echo " ${RED}[ FAIL ]${NC}"
+    else
+        echo " ${GREEN}[ OK ]${NC}"
+    fi
+
+    #########################################
+    # POLOGY
+    #########################################
+    if [ ! -d "${WORK_PATH}/pology" ]; then
+        ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
+    fi
+    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
+    export PATH=${WORK_PATH}/pology/bin:$PATH
+    fedora_wordlist
+
+    HTML_REPORT=${WORK_PATH}/MATE-report.html
+    cat << EOF > ${HTML_REPORT}
+<!DOCTYPE html>
+<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Translation Report</title>
+    <style type="text/css">
+        /* unvisited link */
+        a:link {
+            color: #D0D0D0;
+        }
+
+        /* visited link */
+        a:visited {
+            color: #00FF00;
+        }
+
+        /* mouse over link */
+        a:hover {
+            color: #FF00FF;
+        }
+
+        /* selected link */
+        a:active {
+            color: #0000FF;
+        }
+    </style>
+  </head>
+<body bgcolor="#080808" text="#D0D0D0">
+EOF
+
+    report_toc ${HTML_REPORT}
+    COUNTER=1
+    if [ ! -d "${BASE_PATH}" ]; then
+        mkdir -p "${BASE_PATH}"
+    fi
+    while read -r p; do
+        set -- $p
+        cd ${BASE_PATH}
+        download_code ${1} https://github.com/mate-desktop/${1}.git
+        cd ${BASE_PATH}/${1}
+        tx pull -l ${LANG_CODE} -s -f > /dev/null
+
+        report_project_cotent ${1} ${HTML_REPORT}
+
+    done <${WORK_PATH}/mate.list
+
+    cat << EOF >> ${HTML_REPORT}
+</body>
+</html>
+EOF
+
+    chmod 644 ${HTML_REPORT}
+    kill -9 ${LANGUAGETOOL_PID} > /dev/null
+}
+
+function install {
+    echo -ne "installing translations"
+    set -x
+    while read -r p; do
+        set -- $p
+        set -x
+        sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/{$1}.mo
+        sudo msgfmt ${BASE_PATH}/${1}/po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${1}.mo
+        set -
+
+        let "COUNTER++"
+    done <${WORK_PATH}/mate.list
+}
+
+for i in "$@"
+do
+case $i in
+    -l=*|--lang=*)
+    LANG_CODE="${i#*=}"
+    shift # past argument=value
+    ;;
+    -r|--report)
+    GENERATE_REPORT="YES"
+    ;;
+    --disable-wordlist)
+    DISABLE_WORDLIST="YES"
+    ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
+    ;;
+    -h|--help)
+    usage
+    exit 0
+    ;;
+    *)
+    usage
+    exit 1
+    ;;
+esac
+done
+
+if [ -z "${LANG_CODE}" ]; then
+    usage
+    exit 1
+fi
+if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
+    usage
+    exit 1
+fi
+
+### Main
+if [ -n "$GENERATE_REPORT" ]; then
+    report
+fi
+if [ -n "$INSTALL_TRANS" ]; then
+    install
+fi
+echo "complete!"
