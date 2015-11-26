@@ -19,6 +19,7 @@ NC=`tput sgr0` # No Color
 
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}/MATE
+BASE_PATH_RPM=${WORK_PATH}/MATE/rpm
 
 LANG_CODE=
 GENERATE_REPORT=
@@ -87,7 +88,6 @@ EOF
 
 # project_name html_filename
 function report_project_cotent {
-    echo "${1}"
     cat << EOF >> $2
 <h1 id=${1}>${1}<a href="#toc">[^]</a></h1>
 <h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
@@ -183,6 +183,7 @@ EOF
     while read -r p; do
         set -- $p
         cd ${BASE_PATH}
+        echo -ne "${1}: "
         download_code ${1} https://github.com/mate-desktop/${1}.git
         cd ${BASE_PATH}/${1}
         tx pull -l ${LANG_CODE} -s -f > /dev/null
@@ -201,14 +202,129 @@ EOF
 }
 
 function install {
-    echo -ne "installing translations"
-    set -x
+    echo "installing translations"
+
+    rpm -q fedpkg fedora-packager rpmdevtools &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "installing required packages"
+        set -x
+        sudo dnf install -y fedpkg fedora-packager rpmdevtools
+        set -
+    fi
+
+    if [ ! -d "${BASE_PATH_RPM}" ]; then
+        mkdir -p "${BASE_PATH_RPM}"
+    fi
+
     while read -r p; do
         set -- $p
-        set -x
-        sudo rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${1}.mo
-        sudo msgfmt ${BASE_PATH}/${1}/po/${LANG_CODE}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${1}.mo
-        set -
+        PROJECT=${1}
+
+        if [ -d "${BASE_PATH_RPM}/${PROJECT}" ]; then
+            rm -fr "${BASE_PATH_RPM}/${PROJECT}"
+        fi
+
+        cd "${BASE_PATH_RPM}"
+
+        echo -ne "${PROJECT}: fedpkg clone "
+        fedpkg clone -a -B ${PROJECT} &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        cd ${PROJECT}/f23
+        echo -ne "${PROJECT}: dnf builddep "
+        sudo dnf builddep -y ${PROJECT}.spec &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: fedpkg prep "
+        fedpkg prep &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: path "
+        SRC=$(find . -maxdepth 1 -mindepth 1 -type d ! -name ".*")
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: copy folder "
+        cp -rp ${SRC#*/} ${SRC#*/}p &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: copy trans "
+        cp "${BASE_PATH}/${PROJECT}/po/${LANG_CODE}.po" "${SRC#*/}p/po/" &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: patch "
+        diff -urN "${SRC#*/}" "${SRC#*/}p" > my.patch
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        cp ${PROJECT}.spec ${PROJECT}.spec.ori
+
+        echo -ne "${PROJECT}: spec "
+        sed -i '/^%setup -q*/ a %patch9999 -p1' ${PROJECT}.spec
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        sed -i '1 i Patch9999: my.patch' ${PROJECT}.spec
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: fedpkg local "
+        fedpkg local &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
+
+        echo -ne "${PROJECT}: dnf install "
+        sudo dnf install --nogpgcheck -y */*.rpm &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "${RED}[ FAIL ]${NC}"
+            continue
+        else
+            echo "${GREEN}[ OK ]${NC}"
+        fi
 
         let "COUNTER++"
     done <${WORK_PATH}/mate.list
