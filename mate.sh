@@ -296,8 +296,6 @@ function install {
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue
-        else
-            echo "${GREEN}[ OK ]${NC}"
         fi
 
         sed -i '1 i Patch9999: my.patch' ${PROJECT}.spec
