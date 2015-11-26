@@ -22,6 +22,7 @@ More scripts:
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
+* mate.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * shared-mime-info.sh : downloads and tests the translations of [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/)
