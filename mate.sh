@@ -315,8 +315,15 @@ function install {
             echo "${GREEN}[ OK ]${NC}"
         fi
 
-        echo -ne "${PROJECT}: dnf install "
-        sudo dnf install --nogpgcheck -y */*.rpm &> /dev/null
+        echo -ne "${PROJECT}: dnf "
+        rpm -q "${PROJECT}" &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo -ne "install "
+            sudo dnf install --nogpgcheck -y */*.rpm &> /dev/null
+        else
+            echo -ne "reinstall "
+            sudo dnf reinstall --nogpgcheck -y */*.rpm &> /dev/null
+        fi
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue
