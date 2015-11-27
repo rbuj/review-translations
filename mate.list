@@ -1,8 +1,10 @@
 atril
 caja
+caja-extensions
 engrampa
 eom
 libmatekbd
+libmatemixer
 libmateweather
 marco
 mate-applets
@@ -34,3 +36,4 @@ mate-user-share
 mate-utils
 mozo
 pluma
+python-caja
