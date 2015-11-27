@@ -184,7 +184,7 @@ EOF
         set -- $p
         cd ${BASE_PATH}
         echo -ne "${1}: "
-        download_code ${1} https://github.com/mate-desktop/${1}.git
+        download_code ${1} ${2}
         cd ${BASE_PATH}/${1}
         tx pull -l ${LANG_CODE} -s -f > /dev/null
 
