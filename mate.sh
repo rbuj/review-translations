@@ -379,7 +379,7 @@ if [ -n "$INSTALL_TRANS" ]; then
     # ensure running as root
     if [ "$(id -u)" != "0" ]; then
       cd "${WORK_PATH}"
-      exec sudo "$0" "-i -l=${LANG_CODE}" 
+      exec sudo "$0" "-l=${LANG_CODE}" "-i"
       exit 0
     else
       install
