@@ -376,6 +376,13 @@ if [ -n "$GENERATE_REPORT" ]; then
     report
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    install
+    # ensure running as root
+    if [ "$(id -u)" != "0" ]; then
+      cd "${WORK_PATH}"
+      exec sudo "$0" "-i -l=${LANG_CODE}" 
+      exit 0
+    else
+      install
+    fi
 fi
 echo "complete!"
