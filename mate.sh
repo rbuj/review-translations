@@ -92,15 +92,15 @@ function report_project_cotent {
 <h1 id=${1}>${1}<a href="#toc">[^]</a></h1>
 <h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
     cat << EOF >> $2
 <h2 id=CheckRules${1}>check-rules <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
     cat << EOF >> $2
 <h2 id=CheckGrammar${1}>check-grammar <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=ca\$ ${BASE_PATH}/${1}/ >> $2
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
 }
 
 function report {
