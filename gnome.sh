@@ -267,7 +267,7 @@ function install {
         fi
 
         echo -ne "${PROJECT}: copy trans "
-        cp "${BASE_PATH}/${PROJECT}.po" "${SRC#*/}p/po/" &> /dev/null
+        cp "${BASE_PATH}/${PROJECT}.po" "${SRC#*/}p/po/${LANG_CODE}.po" &> /dev/null
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue
