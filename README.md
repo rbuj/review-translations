@@ -8,8 +8,8 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-parallel.sh : download the translations that belongs to all groups in parallel
 
 Components (scripts which are used by other scrips):
-* build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
-* build-pology.sh : builds Pology in the specified path if there is no pology folder
+* common/build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
+* common/build-pology.sh : builds Pology in the specified path if there is no pology folder
 * common/fedora-version.sh : Get current OS version branch
 * common/install.sh : installs the translations in the system
 * common/report.sh : makes a translation report of a Fedora group
