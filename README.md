@@ -10,6 +10,7 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 Components (scripts which are used by other scrips):
 * build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
 * build-pology.sh : builds Pology in the specified path if there is no pology folder
+* fedora-version.sh : Get current OS version branch
 * install.sh : installs the translations in the system
 * report.sh : makes a translation report of a Fedora group
 * zanata.sh : downloads the translations of a Fedora group
@@ -22,6 +23,7 @@ More scripts:
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
+* gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
 * mate.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
