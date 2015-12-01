@@ -281,6 +281,11 @@ function install {
             echo "${GREEN}[ OK ]${NC}"
         fi
 
+        cd "${SRC#*/}p/po"
+        intltool-update --pot
+        intltool-update --dist ${LANG_CODE}
+        cd "${BASE_PATH_RPM}/${PROJECT}/f23"
+
         echo -ne "${PROJECT}: patch "
         diff -urN "${SRC#*/}" "${SRC#*/}p" > my.patch
         if [ $? -ne 0 ]; then
