@@ -25,6 +25,7 @@ LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
+VERSION=$(${WORK_PATH}/fedora-version.sh)
 
 function usage {
     echo "This script downloads the translation of MATE"
@@ -235,7 +236,7 @@ function install {
             echo "${GREEN}[ OK ]${NC}"
         fi
 
-        cd ${PROJECT}/f23
+        cd "${PROJECT}/${VERSION}"
         echo -ne "${PROJECT}: dnf builddep "
         sudo dnf builddep -y ${PROJECT}.spec &> /dev/null
         if [ $? -ne 0 ]; then
@@ -284,7 +285,7 @@ function install {
         cd "${SRC#*/}p/po"
         intltool-update --pot
         intltool-update --dist ${LANG_CODE}
-        cd "${BASE_PATH_RPM}/${PROJECT}/f23"
+        cd "${BASE_PATH_RPM}/${PROJECT}/${VERSION}"
 
         echo -ne "${PROJECT}: patch "
         diff -urN "${SRC#*/}" "${SRC#*/}p" > my.patch
