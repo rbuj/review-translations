@@ -105,7 +105,7 @@ if [ -n "${GENERATE_REPORT}" ]; then
     # LANGUAGETOOL
     #########################################
     if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        ${WORK_PATH}/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
+        ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
     fi
     cd ${WORK_PATH}
     LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
@@ -116,7 +116,7 @@ if [ -n "${GENERATE_REPORT}" ]; then
     # POLOGY
     #########################################
     if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/build-pology.sh --path=${WORK_PATH}
+        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
     fi
 fi
 
