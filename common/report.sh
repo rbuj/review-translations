@@ -17,8 +17,9 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-WORK_PATH=$PWD
+WORK_PATH=
 BASE_PATH=
+HTML_REPORT=
 
 LANG_CODE=
 PROJECT_NAME=
@@ -36,6 +37,7 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
+    echo "   -w|--workpath=W_PATH  Work PATH folder"
     echo -ne "\nOptional arguments:\n"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
@@ -61,24 +63,22 @@ function fedora_wordlist {
 # project_name project_version html_filename
 function report_project_cotent {
     echo "${1} (${2})"
-    cat << EOF >> $3
+    cat << EOF >> ${HTML_REPORT}
 <h1 id=${1}${2}>${1} ($2)<a href="#toc">[^]</a></h1>
 <h2 id=CheckSpellEc${1}${2}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> $3
-    cat << EOF >> $3
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    cat << EOF >> ${HTML_REPORT}
 <h2 id=CheckRules${1}${2}>check-rules <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> $3
-    cat << EOF >> $3
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    cat << EOF >> ${HTML_REPORT}
 <h2 id=CheckGrammar${1}${2}>check-grammar <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> $3
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
 }
 
-# html_file
 function report_toc {
-    HTML_REPORT=${1}
     cat << EOF >> ${HTML_REPORT}
 <h1 id=toc>Table of contents</h1>
 <div data-fill-with="table-of-contents"><ul class="toc">
@@ -138,7 +138,6 @@ function report {
     export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
     export PATH=${WORK_PATH}/pology/bin:$PATH
 
-    HTML_REPORT=${WORK_PATH}/${PROJECT_NAME}-report.html
     cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
@@ -174,10 +173,10 @@ EOF
     echo "* checking translations..."
     echo "************************************************"
     fedora_wordlist
-    report_toc ${HTML_REPORT}
+    report_toc
     while read -r p; do
         set -- $p
-        report_project_cotent ${1} ${2} ${HTML_REPORT}
+        report_project_cotent ${1} ${2}
     done <${INPUT_FILE}
 
     cat << EOF >> ${HTML_REPORT}
@@ -216,6 +215,10 @@ case $i in
     LT_PORT="${i#*=}"
     shift # past argument=value
     ;;
+    -w=*|--workpath=*)
+    WORK_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -230,7 +233,7 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi
@@ -238,6 +241,7 @@ if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
     LT_EXTERNAL="YES"
 fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
+HTML_REPORT=${WORK_PATH}/${PROJECT_NAME}-report.html
 
 ### Main ###
 report

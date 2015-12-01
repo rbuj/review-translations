@@ -13,12 +13,12 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+WORK_PATH=$PWD
+
 LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
-
-WORK_PATH=$PWD
 
 function usage {
     echo "This script downloads the translations of the blivet-gui project."
@@ -72,15 +72,15 @@ fi
 
 ### Main ###
 LIST="${WORK_PATH}/list/blivet-gui.list"
-./zanata.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -u=https://translate.zanata.org/zanata/
+./common/zanata.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -u=https://translate.zanata.org/zanata/ -w=${WORK_PATH}
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
-        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}"
+        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -w=${WORK_PATH}
     else
-        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" --disable-wordlist
+        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" --disable-wordlist -w=${WORK_PATH}
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./install.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}"
+    ./common//install.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -w=${WORK_PATH}
 fi
 echo "complete!"

@@ -17,7 +17,7 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-WORK_PATH=$PWD
+WORK_PATH=
 BASE_PATH=
 
 LANG_CODE=
@@ -31,6 +31,7 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
+    echo "   -w|--workpath=W_PATH  Work PATH folder"
     echo -ne "\nOptional arguments:\n"
     echo "   -h, --help            Display this help and exit"
     echo "   -v, --verbose         Verbose operation"
@@ -103,6 +104,10 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
+    -w=*|--workpath=*)
+    WORK_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -117,7 +122,7 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi

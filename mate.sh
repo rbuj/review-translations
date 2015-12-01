@@ -26,7 +26,7 @@ LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
-VERSION=$(${WORK_PATH}/fedora-version.sh)
+VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
 function usage {
     echo "This script downloads the translation of MATE"

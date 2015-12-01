@@ -13,6 +13,8 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+WORK_PATH=$PWD
+
 LANG_CODE=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
@@ -20,8 +22,6 @@ INSTALL_TRANS=
 
 LT_SERVER=
 LT_PORT=
-
-WORK_PATH=$PWD
 
 function usage {
     echo "This script downloads the translations of the projects that belongs to upstream group [1]."
@@ -88,23 +88,23 @@ fi
 ### Main ###
 GROUP="upstream"
 LIST="${WORK_PATH}/list/fedora-${GROUP}.list"
-./zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list -u=https://fedora.zanata.org/
+./common/zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list -u=https://fedora.zanata.org/ -w=${WORK_PATH}
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -w=${WORK_PATH}
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     else
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist -w=${WORK_PATH}
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./install.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST}
+    ./common//install.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -w=${WORK_PATH}
 fi
 echo "complete!"
