@@ -20,6 +20,7 @@ NC=`tput sgr0` # No Color
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}/gnome
 BASE_PATH_RPM=${WORK_PATH}/gnome/rpm
+LIST=${WORK_PATH}/list/gnome.list
 
 LANG_CODE=
 GENERATE_REPORT=
@@ -77,7 +78,7 @@ EOF
   <li><span class="secno">${COUNTER}</span> <span><a href="#${1}">${1}</a></span></li>
 EOF
         let "COUNTER++"
-    done <${WORK_PATH}/gnome.list
+    done <${LIST}
     cat << EOF >> ${HTML_REPORT}
 <ul></div>
 EOF
@@ -185,7 +186,7 @@ EOF
 
         report_project_cotent ${1} ${HTML_REPORT}
 
-    done <${WORK_PATH}/gnome.list
+    done <${LIST}
 
     cat << EOF >> ${HTML_REPORT}
 </body>
@@ -332,7 +333,7 @@ function install {
         fi
 
         let "COUNTER++"
-    done <${WORK_PATH}/gnome.list
+    done <${LIST}
 }
 
 for i in "$@"

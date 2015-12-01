@@ -19,6 +19,7 @@ NC=`tput sgr0` # No Color
 
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}/sugar
+LIST=${WORK_PATH}/list/sugar.list
 
 LANG_CODE=
 GENERATE_REPORT=
@@ -70,7 +71,7 @@ function download {
             update_src $1 $3
             download_trans $1 $2
         fi
-    done < sugar.list
+    done < ${LIST}
 }
 
 # project_name rpm
@@ -105,7 +106,7 @@ function install {
             build_code $1
             install_binaries $1
         fi
-    done < sugar.list
+    done < ${LIST}
 }
 
 # section project_name html_file
@@ -271,7 +272,7 @@ EOF
             report_toc_project 2.${COUNTER} ${1} ${HTML_REPORT}
             let "COUNTER++"
         fi
-    done < sugar.list
+    done < ${LIST}
 
     cat << EOF >> ${HTML_REPORT}
   </ul>
@@ -291,7 +292,7 @@ EOF
         if [ $# -ge 3 ]; then
             report_project_cotent ${1} ${BASE_PATH}/${1}/po/${LANG_CODE}.po ${HTML_REPORT}
         fi
-    done < sugar.list
+    done < ${LIST}
 
     cat << EOF >> ${HTML_REPORT}
 </body>

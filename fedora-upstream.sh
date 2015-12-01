@@ -21,6 +21,8 @@ INSTALL_TRANS=
 LT_SERVER=
 LT_PORT=
 
+WORK_PATH=$PWD
+
 function usage {
     echo "This script downloads the translations of the projects that belongs to upstream group [1]."
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
@@ -85,23 +87,24 @@ fi
 
 ### Main ###
 GROUP="upstream"
+LIST="${WORK_PATH}/list/fedora-${GROUP}.list"
 ./zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list -u=https://fedora.zanata.org/
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST}
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
         fi
     else
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --disable-wordlist
+            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
         fi
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./install.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list
+    ./install.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST}
 fi
 echo "complete!"

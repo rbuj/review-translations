@@ -18,6 +18,8 @@ GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
 
+WORK_PATH=$PWD
+
 function usage {
     echo "This script downloads the translations of the blivet-gui project."
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
@@ -69,15 +71,16 @@ if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
 fi
 
 ### Main ###
-./zanata.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list -u=https://translate.zanata.org/zanata/
+LIST="${WORK_PATH}/list/blivet-gui.list"
+./zanata.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -u=https://translate.zanata.org/zanata/
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
-        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list
+        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}"
     else
-        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list --disable-wordlist
+        ./report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" --disable-wordlist
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./install.sh -l=${LANG_CODE} -p=blivet-gui -f=blivet-gui.list
+    ./install.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}"
 fi
 echo "complete!"
