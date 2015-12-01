@@ -72,15 +72,15 @@ fi
 
 ### Main ###
 LIST="${WORK_PATH}/list/blivet-gui.list"
-./common/zanata.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -u=https://translate.zanata.org/zanata/ -w=${WORK_PATH}
+./common/zanata.sh -l=${LANG_CODE} -p=blivet-gui -f=${LIST} -u=https://translate.zanata.org/zanata/ -w=${WORK_PATH}
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
-        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -w=${WORK_PATH}
+        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f=${LIST} -w=${WORK_PATH}
     else
-        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" --disable-wordlist -w=${WORK_PATH}
+        ./common/report.sh -l=${LANG_CODE} -p=blivet-gui -f=${LIST} --disable-wordlist -w=${WORK_PATH}
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./common//install.sh -l=${LANG_CODE} -p=blivet-gui -f="${LIST}" -w=${WORK_PATH}
+    ./common//install.sh -l=${LANG_CODE} -p=blivet-gui -f=${LIST} -w=${WORK_PATH}
 fi
 echo "complete!"

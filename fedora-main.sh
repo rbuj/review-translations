@@ -82,7 +82,7 @@ fi
 ### Main ###
 GROUP="main"
 LIST="${WORK_PATH}/list/fedora-${GROUP}.list"
-./common/zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=fedora-${GROUP}.list -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+./common/zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
