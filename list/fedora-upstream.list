@@ -29,6 +29,7 @@ oscap-anaconda-addon master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/o
 oscap-anaconda-addon rhel7-branch
 pam_krb5 master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pam_krb5.mo
 pkinit-nss master
+pulseaudio 6.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
 python-fedora 0.4.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-fedora.mo
 spacewalk-other master
 spacewalk-frontend master
