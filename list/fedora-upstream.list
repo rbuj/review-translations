@@ -3,6 +3,7 @@ dnf master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf.mo
 dnf-plugin-system-upgrade master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugin-system-upgrade.mo
 dnf-plugins-core master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugins-core.mo
 dnf-plugins-extras master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugins-extras.mo
+docker-anaconda-addon master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/docker-anaconda-addon.mo
 entangle master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/entangle.mo
 expendable master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/expendable.mo
 freeipa master
