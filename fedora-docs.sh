@@ -84,15 +84,15 @@ LIST="${WORK_PATH}/list/fedora-${GROUP}.list"
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -w=${WORK_PATH}
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     else
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist -w=${WORK_PATH}
         else
-            ./report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT}
+            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     fi
 fi
