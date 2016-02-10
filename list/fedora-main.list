@@ -4,6 +4,7 @@ anaconda rhel7-branch
 anaconda rhel6-branch
 anaconda f23-branch F23 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
 anaconda master DEV LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
+audit-viewer default
 authconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/authconfig.mo
 blivet rhel7-branch
 blivet rhel6-branch
@@ -28,6 +29,7 @@ newt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/newt.mo
 passwd password LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/passwd.mo
 pykickstart master
 pykickstart rhel7-branch
+pykickstart pykickstart-2
 python-meh master F23 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
 python-meh rhel7-branch
 selinux master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/policycoreutils.mo
@@ -35,6 +37,7 @@ setroubleshoot master framework/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGE
 system-config-firewall master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-firewall.mo
 system-config-kdump master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-kdump.mo
 system-config-kickstart master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-kickstart.mo
+system-config-kickstart rhel7-branch
 system-config-language master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-language.mo
 system-config-printer master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-printer.mo
 usermode default LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/usermode.mo
