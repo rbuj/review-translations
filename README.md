@@ -23,6 +23,7 @@ More scripts:
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * clipit.sh : downloads and tests the translations of [ClipIt](https://github.com/shantzu/ClipIt)
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
+* colorhug-client : downloads and tests the translations of [colorhug-client](http://www.hughski.com/)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
