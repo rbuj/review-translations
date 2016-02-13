@@ -25,6 +25,7 @@ More scripts:
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
+* fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
 * mate.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
