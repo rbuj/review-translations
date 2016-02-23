@@ -8,7 +8,7 @@ Dimensions http://translate.sugarlabs.org/export/Dimensions/LOCALE.po https://gi
 DotsAndBoxes http://translate.sugarlabs.org/export/DotsAndBoxes/LOCALE.po git://git.sugarlabs.org/dots-and-boxes/mainline.git
 Erikos http://translate.sugarlabs.org/export/Erikos/LOCALE.po https://github.com/walterbender/erikos.git
 Finance http://translate.sugarlabs.org/export/Finance/LOCALE.po https://github.com/godiard/finance-activity.git sugar-finance
-Flip http://translate.sugarlabs.org/export/Flip/LOCALE.po git://git.sugarlabs.org/flip/mainline.git
+Flip http://translate.sugarlabs.org/export/Flip/LOCALE.po https://github.com/walterbender/flip.git
 FollowMeButia http://translate.sugarlabs.org/export/FollowMeButia/LOCALE.po git://git.sugarlabs.org/followmebutia/mainline.git
 FotoToon http://translate.sugarlabs.org/export/FotoToon/LOCALE.po https://github.com/godiard/fototoon-activity.git sugar-fototoon
 FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po git://git.sugarlabs.org/fractionboounce/fractionbounce.git sugar-fractionbounce
