@@ -1,11 +1,14 @@
 Abacus http://translate.sugarlabs.org/export/Abacus/LOCALE.po https://github.com/walterbender/abacus.git sugar-abacus
 AnalyzeJournal http://translate.sugarlabs.org/export/AnalyzeJournal/LOCALE.po https://github.com/walterbender/AnalyzeJournal.git sugar-analyze
 Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po git://git.sugarlabs.org/calculate/mainline.git sugar-calculator
+CardSort http://translate.sugarlabs.org/export/CardSort/LOCALE.po git://git.sugarlabs.org/cardsort/mainline.git
 Chat http://translate.sugarlabs.org/export/Chat/LOCALE.po https://github.com/walterbender/chat.git sugar-chat
 Deducto http://translate.sugarlabs.org/export/Deducto/LOCALE.po https://github.com/walterbender/deducto.git sugar-deducto
 Dimensions http://translate.sugarlabs.org/export/Dimensions/LOCALE.po https://github.com/walterbender/dimensions.git
+DotsAndBoxes http://translate.sugarlabs.org/export/DotsAndBoxes/LOCALE.po git://git.sugarlabs.org/dots-and-boxes/mainline.git
 Erikos http://translate.sugarlabs.org/export/Erikos/LOCALE.po https://github.com/walterbender/erikos.git
 Finance http://translate.sugarlabs.org/export/Finance/LOCALE.po https://github.com/godiard/finance-activity.git sugar-finance
+Flip http://translate.sugarlabs.org/export/Flip/LOCALE.po git://git.sugarlabs.org/flip/mainline.git
 FollowMeButia http://translate.sugarlabs.org/export/FollowMeButia/LOCALE.po git://git.sugarlabs.org/followmebutia/mainline.git
 FotoToon http://translate.sugarlabs.org/export/FotoToon/LOCALE.po https://github.com/godiard/fototoon-activity.git sugar-fototoon
 FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po git://git.sugarlabs.org/fractionboounce/fractionbounce.git sugar-fractionbounce
@@ -14,6 +17,8 @@ GetIABooks http://translate.sugarlabs.org/export/GetIABooks/LOCALE.po git://git.
 ImageViewer http://translate.sugarlabs.org/export/ImageViewer/LOCALE.po https://github.com/godiard/imageviewer-activity.git sugar-imageviewer
 InfoSlicer http://translate.sugarlabs.org/export/InfoSlicer/LOCALE.po https://github.com/walterbender/infoslicer.git sugar-infoslicer
 Jukebox http://translate.sugarlabs.org/export/Jukebox/LOCALE.po https://github.com/godiard/jukebox-activity.git sugar-jukebox
+Jump http://translate.sugarlabs.org/export/Jump/LOCALE.po git://git.sugarlabs.org/jump/mainline.git
+Level http://translate.sugarlabs.org/export/Level/LOCALE.po git://git.sugarlabs.org/level-tool/level-tool.git
 Log http://translate.sugarlabs.org/export/Log/LOCALE.po https://github.com/godiard/log-activity.git sugar-log
 Maze http://translate.sugarlabs.org/export/Maze/LOCALE.po https://github.com/godiard/maze-activity.git sugar-maze
 Measure http://translate.sugarlabs.org/export/Measure/LOCALE.po https://github.com/walterbender/Measure.git sugar-measure
@@ -22,10 +27,12 @@ Paint http://translate.sugarlabs.org/export/Paint/LOCALE.po https://github.com/g
 Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git
 Physics http://translate.sugarlabs.org/export/Physics/LOCALE.po https://github.com/walterbender/physics.git sugar-physics
 Pippy http://translate.sugarlabs.org/export/Pippy/LOCALE.po https://github.com/walterbender/Pippy.git sugar-pippy
+Pukllanapac http://translate.sugarlabs.org/export/Pukllanapac/LOCALE.po git://git.sugarlabs.org/pukllanapac/mainline.git
 Read http://translate.sugarlabs.org/export/Read/LOCALE.po https://github.com/godiard/read-activity.git sugar-read
 ReadETexts http://translate.sugarlabs.org/export/ReadETexts/LOCALE.po git://git.sugarlabs.org/readetexts/mainline.git
 ReadSDComics http://translate.sugarlabs.org/export/ReadSDComics/LOCALE.po git://git.sugarlabs.org/read-sd-comics/mainline.git
 Record http://translate.sugarlabs.org/export/Record/LOCALE.po https://github.com/godiard/record-activity.git sugar-record
+Reflection http://translate.sugarlabs.org/export/Reflection/LOCALE.po git://git.sugarlabs.org/reflection/reflection.git
 Ruler http://translate.sugarlabs.org/export/Ruler/LOCALE.po https://github.com/walterbender/ruler.git sugar-ruler
 Speak http://translate.sugarlabs.org/export/Speak/LOCALE.po https://github.com/walterbender/speak.git sugar-speak
 SugarCommander http://translate.sugarlabs.org/export/SugarCommander/LOCALE.po git://git.sugarlabs.org/sugar-commander/mainline.git
@@ -37,3 +44,4 @@ ViewSlides http://translate.sugarlabs.org/export/ViewSlides/LOCALE.po git://git.
 Web http://translate.sugarlabs.org/export/Web/LOCALE.po git://git.sugarlabs.org/browse/mainline.git sugar-browse
 Words http://translate.sugarlabs.org/export/Words/LOCALE.po https://github.com/godiard/words-activity.git sugar-words
 Write http://translate.sugarlabs.org/export/Write/LOCALE.po https://github.com/godiard/write-activity.git sugar-write
+WriteBooks http://translate.sugarlabs.org/export/WriteBooks/LOCALE.po https://github.com/godiard/write-books-activity.git
