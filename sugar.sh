@@ -342,6 +342,12 @@ if [ ! -d "${BASE_PATH}" ]; then
     mkdir ${BASE_PATH}
 fi
 
+# ensure running as root
+if [ "$(id -u)" != "0" ]; then
+  exec sudo "$0" "$@"
+  exit 0
+fi
+
 ### Main ###
 download
 if [ -n "$GENERATE_REPORT" ]; then
