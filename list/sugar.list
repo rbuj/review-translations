@@ -11,7 +11,7 @@ Finance http://translate.sugarlabs.org/export/Finance/LOCALE.po https://github.c
 Flip http://translate.sugarlabs.org/export/Flip/LOCALE.po https://github.com/walterbender/flip.git sugar-flip
 FollowMeButia http://translate.sugarlabs.org/export/FollowMeButia/LOCALE.po git://git.sugarlabs.org/followmebutia/mainline.git
 FotoToon http://translate.sugarlabs.org/export/FotoToon/LOCALE.po https://github.com/godiard/fototoon-activity.git sugar-fototoon
-FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po git://git.sugarlabs.org/fractionboounce/fractionbounce.git sugar-fractionbounce
+FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po https://github.com/walterbender/fractionbounce.git sugar-fractionbounce
 GetBooks http://translate.sugarlabs.org/export/GetBooks/LOCALE.po https://github.com/godiard/get-books-activity.git
 GetIABooks http://translate.sugarlabs.org/export/GetIABooks/LOCALE.po git://git.sugarlabs.org/get-internet-archive-books/mainline.git sugar-getiabooks
 ImageViewer http://translate.sugarlabs.org/export/ImageViewer/LOCALE.po https://github.com/godiard/imageviewer-activity.git sugar-imageviewer
@@ -28,6 +28,7 @@ Paint http://translate.sugarlabs.org/export/Paint/LOCALE.po https://github.com/g
 Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git
 Physics http://translate.sugarlabs.org/export/Physics/LOCALE.po https://github.com/walterbender/physics.git sugar-physics
 Pippy http://translate.sugarlabs.org/export/Pippy/LOCALE.po https://github.com/walterbender/Pippy.git sugar-pippy
+Portfolio http://translate.sugarlabs.org/export/Portfolio/LOCALE.po https://github.com/walterbender/portfolio.git sugar-portfolio
 Pukllanapac http://translate.sugarlabs.org/export/Pukllanapac/LOCALE.po git://git.sugarlabs.org/pukllanapac/mainline.git sugar-pukllanapac
 Read http://translate.sugarlabs.org/export/Read/LOCALE.po https://github.com/godiard/read-activity.git sugar-read
 ReadETexts http://translate.sugarlabs.org/export/ReadETexts/LOCALE.po git://git.sugarlabs.org/readetexts/mainline.git
