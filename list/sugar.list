@@ -25,7 +25,7 @@ Measure http://translate.sugarlabs.org/export/Measure/LOCALE.po https://github.c
 Memorize http://translate.sugarlabs.org/export/Memorize/LOCALE.po https://github.com/godiard/memorize-activity.git sugar-memorize
 Nutrition http://translate.sugarlabs.org/export/Nutrition/LOCALE.po https://github.com/walterbender/nutrition.git sugar-nutrition
 Paint http://translate.sugarlabs.org/export/Paint/LOCALE.po https://github.com/godiard/paint-activity.git sugar-paint
-Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git
+Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git sugar-paths
 Physics http://translate.sugarlabs.org/export/Physics/LOCALE.po https://github.com/walterbender/physics.git sugar-physics
 Pippy http://translate.sugarlabs.org/export/Pippy/LOCALE.po https://github.com/walterbender/Pippy.git sugar-pippy
 Portfolio http://translate.sugarlabs.org/export/Portfolio/LOCALE.po https://github.com/walterbender/portfolio.git sugar-portfolio
