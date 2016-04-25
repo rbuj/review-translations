@@ -14,6 +14,7 @@ FotoToon http://translate.sugarlabs.org/export/FotoToon/LOCALE.po https://github
 FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po https://github.com/walterbender/fractionbounce.git sugar-fractionbounce
 GetBooks http://translate.sugarlabs.org/export/GetBooks/LOCALE.po https://github.com/godiard/get-books-activity.git
 GetIABooks http://translate.sugarlabs.org/export/GetIABooks/LOCALE.po git://git.sugarlabs.org/get-internet-archive-books/mainline.git sugar-getiabooks
+Implode http://translate.sugarlabs.org/export/Implode/LOCALE.po https://github.com/quozl/implode-activity sugar-implode
 ImageViewer http://translate.sugarlabs.org/export/ImageViewer/LOCALE.po https://github.com/godiard/imageviewer-activity.git sugar-imageviewer
 InfoSlicer http://translate.sugarlabs.org/export/InfoSlicer/LOCALE.po https://github.com/walterbender/infoslicer.git sugar-infoslicer
 Jukebox http://translate.sugarlabs.org/export/Jukebox/LOCALE.po https://github.com/godiard/jukebox-activity.git sugar-jukebox
