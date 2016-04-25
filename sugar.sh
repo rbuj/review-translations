@@ -66,7 +66,6 @@ function download {
     done
 
     echo -ne "olpc-switch-desktop "; curl -s -S http://translate.sugarlabs.org/export/OLPC_switch_desktop/${LANG_CODE}/${LANG_CODE}.po > ${BASE_PATH}/olpc-switch-desktop.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-    echo -ne "sugar-xoeditor "; curl -s -S http://translate.sugarlabs.org/export/XoEditor/${LANG_CODE}.po > ${BASE_PATH}/sugar-xoeditor.po  && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 
     while read -r p; do
         set -- ${p//"LOCALE"/${LANG_CODE}}
@@ -97,7 +96,7 @@ function install_binaries {
 }
 
 function install {
-    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop sugar-xoeditor; do
+    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop; do
         echo -ne "${PROJECT} : installing translation "
         rm -f /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${PROJECT}.mo
         msgfmt ${BASE_PATH}/${PROJECT}.po -o /usr/share/locale/${LANG_CODE}/LC_MESSAGES/${PROJECT}.mo && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
@@ -256,7 +255,7 @@ EOF
     echo "************************************************"
 
     COUNTER=1
-    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop sugar-xoeditor; do
+    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop; do
         report_toc_project 2.${COUNTER} ${PROJECT} ${HTML_REPORT}
         let "COUNTER++"
     done
@@ -284,7 +283,7 @@ EOF
 <h1 id="Sucrose">Sucrose</h1>
 EOF
 
-    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop sugar-xoeditor; do
+    for PROJECT in sugar sugar-toolkit-gtk3 olpc-switch-desktop; do
         report_project_cotent ${PROJECT} ${BASE_PATH}/${PROJECT}.po ${HTML_REPORT}
     done
 

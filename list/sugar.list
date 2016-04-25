@@ -52,3 +52,4 @@ Web http://translate.sugarlabs.org/export/Web/LOCALE.po git://git.sugarlabs.org/
 Words http://translate.sugarlabs.org/export/Words/LOCALE.po https://github.com/godiard/words-activity.git sugar-words
 Write http://translate.sugarlabs.org/export/Write/LOCALE.po https://github.com/godiard/write-activity.git sugar-write
 WriteBooks http://translate.sugarlabs.org/export/WriteBooks/LOCALE.po https://github.com/godiard/write-books-activity.git
+XoEditor http://translate.sugarlabs.org/export/XoEditor/LOCALE.po https://github.com/walterbender/xocolors.git sugar-xoeditor
