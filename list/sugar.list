@@ -23,6 +23,7 @@ Log http://translate.sugarlabs.org/export/Log/LOCALE.po https://github.com/godia
 Maze http://translate.sugarlabs.org/export/Maze/LOCALE.po https://github.com/godiard/maze-activity.git sugar-maze
 Measure http://translate.sugarlabs.org/export/Measure/LOCALE.po https://github.com/walterbender/Measure.git sugar-measure
 Memorize http://translate.sugarlabs.org/export/Memorize/LOCALE.po https://github.com/godiard/memorize-activity.git sugar-memorize
+Moon http://translate.sugarlabs.org/export/Moon/LOCALE.po https://github.com/godiard/moon-activity.git sugar-moon
 Nutrition http://translate.sugarlabs.org/export/Nutrition/LOCALE.po https://github.com/walterbender/nutrition.git sugar-nutrition
 Paint http://translate.sugarlabs.org/export/Paint/LOCALE.po https://github.com/godiard/paint-activity.git sugar-paint
 Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git sugar-paths
