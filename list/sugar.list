@@ -1,5 +1,6 @@
 Abacus http://translate.sugarlabs.org/export/Abacus/LOCALE.po https://github.com/walterbender/abacus.git sugar-abacus
 AnalyzeJournal http://translate.sugarlabs.org/export/AnalyzeJournal/LOCALE.po https://github.com/walterbender/AnalyzeJournal.git sugar-analyze
+Annotate http://translate.sugarlabs.org/export/Annotate/LOCALE.po https://github.com/aguzubiaga/sugar-annotate.git
 Arithmetic http://translate.sugarlabs.org/export/Arithmetic/LOCALE.po git://git.sugarlabs.org/arithmetic/mainline.git
 Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po git://git.sugarlabs.org/calculate/mainline.git sugar-calculator
 CardSort http://translate.sugarlabs.org/export/CardSort/LOCALE.po git://git.sugarlabs.org/cardsort/mainline.git
