@@ -34,6 +34,7 @@ Pukllanapac http://translate.sugarlabs.org/export/Pukllanapac/LOCALE.po git://gi
 Read http://translate.sugarlabs.org/export/Read/LOCALE.po https://github.com/godiard/read-activity.git sugar-read
 ReadETexts http://translate.sugarlabs.org/export/ReadETexts/LOCALE.po git://git.sugarlabs.org/readetexts/mainline.git
 ReadSDComics http://translate.sugarlabs.org/export/ReadSDComics/LOCALE.po git://git.sugarlabs.org/read-sd-comics/mainline.git
+Recall http://translate.sugarlabs.org/export/Recall/LOCALE.po https://github.com/walterbender/recall.git sugar-recall
 Record http://translate.sugarlabs.org/export/Record/LOCALE.po https://github.com/godiard/record-activity.git sugar-record
 Reflection http://translate.sugarlabs.org/export/Reflection/LOCALE.po git://git.sugarlabs.org/reflection/reflection.git
 Ruler http://translate.sugarlabs.org/export/Ruler/LOCALE.po https://github.com/walterbender/ruler.git sugar-ruler

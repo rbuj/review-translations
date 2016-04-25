@@ -66,7 +66,7 @@ function download {
     done
 
     echo -ne "olpc-switch-desktop "; curl -s -S http://translate.sugarlabs.org/export/OLPC_switch_desktop/${LANG_CODE}/${LANG_CODE}.po > ${BASE_PATH}/olpc-switch-desktop.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
-    echo -ne "sugar-xoeditor "; curl -s -S http://translate.sugarlabs.org/export/XoEditor/${LANG_CODE}.po ${BASE_PATH}/sugar-xoeditor.po  && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+    echo -ne "sugar-xoeditor "; curl -s -S http://translate.sugarlabs.org/export/XoEditor/${LANG_CODE}.po > ${BASE_PATH}/sugar-xoeditor.po  && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 
     while read -r p; do
         set -- ${p//"LOCALE"/${LANG_CODE}}
