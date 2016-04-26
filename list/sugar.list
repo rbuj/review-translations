@@ -45,7 +45,9 @@ Recall http://translate.sugarlabs.org/export/Recall/LOCALE.po https://github.com
 Record http://translate.sugarlabs.org/export/Record/LOCALE.po https://github.com/godiard/record-activity.git sugar-record
 Reflection http://translate.sugarlabs.org/export/Reflection/LOCALE.po git://git.sugarlabs.org/reflection/reflection.git
 Ruler http://translate.sugarlabs.org/export/Ruler/LOCALE.po https://github.com/walterbender/ruler.git sugar-ruler
+SimpleGraph http://translate.sugarlabs.org/export/SimpleGraph/LOCALE.po https://github.com/aguzubiaga/chart.git
 Speak http://translate.sugarlabs.org/export/Speak/LOCALE.po https://github.com/walterbender/speak.git sugar-speak
+StarChart http://translate.sugarlabs.org/export/StarChart/LOCALE.po https://github.com/walterbender/starchart sugar-starchart
 StopWatch http://translate.sugarlabs.org/export/StopWatch/LOCALE.po git://dev.laptop.org/activities/stopwatch sugar-stopwatch
 Story http://translate.sugarlabs.org/export/Story/LOCALE.po https://github.com/walterbender/story.git sugar-story
 SugarCommander http://translate.sugarlabs.org/export/SugarCommander/LOCALE.po git://git.sugarlabs.org/sugar-commander/mainline.git
