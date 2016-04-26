@@ -2,7 +2,7 @@ Abacus http://translate.sugarlabs.org/export/Abacus/LOCALE.po https://github.com
 AnalyzeJournal http://translate.sugarlabs.org/export/AnalyzeJournal/LOCALE.po https://github.com/walterbender/AnalyzeJournal.git sugar-analyze
 Annotate http://translate.sugarlabs.org/export/Annotate/LOCALE.po https://github.com/aguzubiaga/sugar-annotate.git
 Arithmetic http://translate.sugarlabs.org/export/Arithmetic/LOCALE.po git://git.sugarlabs.org/arithmetic/mainline.git
-Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po git://git.sugarlabs.org/calculate/mainline.git sugar-calculator
+Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po https://github.com/godiard/sugarlabs-calculate.git sugar-calculator
 Calendario http://translate.sugarlabs.org/export/Calendario/LOCALE.po https://github.com/germanrs/calendario.git sugar-calendario
 CardSort http://translate.sugarlabs.org/export/CardSort/LOCALE.po git://git.sugarlabs.org/cardsort/mainline.git
 Chat http://translate.sugarlabs.org/export/Chat/LOCALE.po https://github.com/walterbender/chat.git sugar-chat
