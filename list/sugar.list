@@ -23,6 +23,7 @@ GetIABooks http://translate.sugarlabs.org/export/GetIABooks/LOCALE.po git://git.
 Implode http://translate.sugarlabs.org/export/Implode/LOCALE.po https://github.com/quozl/implode-activity sugar-implode
 ImageViewer http://translate.sugarlabs.org/export/ImageViewer/LOCALE.po https://github.com/godiard/imageviewer-activity.git sugar-imageviewer
 InfoSlicer http://translate.sugarlabs.org/export/InfoSlicer/LOCALE.po https://github.com/walterbender/infoslicer.git sugar-infoslicer
+JigsawPuzzle http://translate.sugarlabs.org/export/Jigsaw-Puzzle/LOCALE.po git://git.sugarlabs.org/jigsaw-puzzle-branch/mainline.git
 Jukebox http://translate.sugarlabs.org/export/Jukebox/LOCALE.po https://github.com/godiard/jukebox-activity.git sugar-jukebox
 Jump http://translate.sugarlabs.org/export/Jump/LOCALE.po git://git.sugarlabs.org/jump/mainline.git
 Level http://translate.sugarlabs.org/export/Level/LOCALE.po git://git.sugarlabs.org/level-tool/level-tool.git
