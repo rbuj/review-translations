@@ -59,7 +59,7 @@ TurtleArt http://translate.sugarlabs.org/export/TurtleArt/LOCALE.po https://gith
 TurtleArtExtras http://translate.sugarlabs.org/export/TurtleArtExtras/LOCALE.po git://git.sugarlabs.org/turtleart-extras/turtleart-extras.git
 TypingTurtle http://translate.sugarlabs.org/export/TypingTurtle/LOCALE.po https://github.com/godiard/typing-turtle-activity.git sugar-typing-turtle
 ViewSlides http://translate.sugarlabs.org/export/ViewSlides/LOCALE.po git://git.sugarlabs.org/viewslides/mainline.git sugar-view-slides
-Web http://translate.sugarlabs.org/export/Web/LOCALE.po git://git.sugarlabs.org/browse/mainline.git sugar-browse
+Web http://translate.sugarlabs.org/export/Web/LOCALE.po https://github.com/sugarlabs/browse-activity.git sugar-browse
 Words http://translate.sugarlabs.org/export/Words/LOCALE.po https://github.com/godiard/words-activity.git sugar-words
 Write http://translate.sugarlabs.org/export/Write/LOCALE.po https://github.com/godiard/write-activity.git sugar-write
 WriteBooks http://translate.sugarlabs.org/export/WriteBooks/LOCALE.po https://github.com/godiard/write-books-activity.git
