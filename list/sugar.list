@@ -3,6 +3,7 @@ AnalyzeJournal http://translate.sugarlabs.org/export/AnalyzeJournal/LOCALE.po ht
 Annotate http://translate.sugarlabs.org/export/Annotate/LOCALE.po https://github.com/aguzubiaga/sugar-annotate.git
 Arithmetic http://translate.sugarlabs.org/export/Arithmetic/LOCALE.po git://git.sugarlabs.org/arithmetic/mainline.git
 Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po git://git.sugarlabs.org/calculate/mainline.git sugar-calculator
+Calendario http://translate.sugarlabs.org/export/Calendario/LOCALE.po https://github.com/germanrs/calendario.git sugar-calendario
 CardSort http://translate.sugarlabs.org/export/CardSort/LOCALE.po git://git.sugarlabs.org/cardsort/mainline.git
 Chat http://translate.sugarlabs.org/export/Chat/LOCALE.po https://github.com/walterbender/chat.git sugar-chat
 ClassroomBroadcast http://translate.sugarlabs.org/export/ClassroomBroadcast/LOCALE.po  git://git.sugarlabs.org/classroombroadcast/classroombroadcast.git
@@ -34,6 +35,7 @@ Paint http://translate.sugarlabs.org/export/Paint/LOCALE.po https://github.com/g
 Paths http://translate.sugarlabs.org/export/Paths/LOCALE.po https://github.com/walterbender/paths.git sugar-paths
 Physics http://translate.sugarlabs.org/export/Physics/LOCALE.po https://github.com/walterbender/physics.git sugar-physics
 Pippy http://translate.sugarlabs.org/export/Pippy/LOCALE.po https://github.com/walterbender/Pippy.git sugar-pippy
+Pointillism http://translate.sugarlabs.org/export/Pointillism/LOCALE.po https://github.com/AlanJAS/pointillism.git
 Portfolio http://translate.sugarlabs.org/export/Portfolio/LOCALE.po https://github.com/walterbender/portfolio.git sugar-portfolio
 Pukllanapac http://translate.sugarlabs.org/export/Pukllanapac/LOCALE.po git://git.sugarlabs.org/pukllanapac/mainline.git sugar-pukllanapac
 Read http://translate.sugarlabs.org/export/Read/LOCALE.po https://github.com/godiard/read-activity.git sugar-read
@@ -57,3 +59,4 @@ Words http://translate.sugarlabs.org/export/Words/LOCALE.po https://github.com/g
 Write http://translate.sugarlabs.org/export/Write/LOCALE.po https://github.com/godiard/write-activity.git sugar-write
 WriteBooks http://translate.sugarlabs.org/export/WriteBooks/LOCALE.po https://github.com/godiard/write-books-activity.git
 XoEditor http://translate.sugarlabs.org/export/XoEditor/LOCALE.po https://github.com/walterbender/xocolors.git sugar-xoeditor
+Yupana http://translate.sugarlabs.org/export/Yupana/LOCALE.po https://github.com/walterbender/yupana.git sugar-yupana
