@@ -2,6 +2,7 @@ Abacus http://translate.sugarlabs.org/export/Abacus/LOCALE.po https://github.com
 AnalyzeJournal http://translate.sugarlabs.org/export/AnalyzeJournal/LOCALE.po https://github.com/walterbender/AnalyzeJournal.git sugar-analyze
 Annotate http://translate.sugarlabs.org/export/Annotate/LOCALE.po https://github.com/aguzubiaga/sugar-annotate.git
 Arithmetic http://translate.sugarlabs.org/export/Arithmetic/LOCALE.po git://git.sugarlabs.org/arithmetic/mainline.git
+Bridge http://translate.sugarlabs.org/export/Bridge/LOCALE.po https://github.com/ezequielpereira/Bridge.git
 Calculate http://translate.sugarlabs.org/export/Calculate/LOCALE.po https://github.com/godiard/sugarlabs-calculate.git sugar-calculator
 Calendario http://translate.sugarlabs.org/export/Calendario/LOCALE.po https://github.com/germanrs/calendario.git sugar-calendario
 CardSort http://translate.sugarlabs.org/export/CardSort/LOCALE.po git://git.sugarlabs.org/cardsort/mainline.git
@@ -9,12 +10,14 @@ Chat http://translate.sugarlabs.org/export/Chat/LOCALE.po https://github.com/wal
 ClassroomBroadcast http://translate.sugarlabs.org/export/ClassroomBroadcast/LOCALE.po git://git.sugarlabs.org/classroombroadcast/classroombroadcast.git
 Clock http://translate.sugarlabs.org/export/Clock/LOCALE.po https://github.com/godiard/clock-activity.git sugar-clock
 Colors http://translate.sugarlabs.org/export/Colors/LOCALE.po git://git.sugarlabs.org/colors/mainline.git
+Convert http://translate.sugarlabs.org/export/Convert/LOCALE.po https://github.com/walterbender/convert.git
 Deducto http://translate.sugarlabs.org/export/Deducto/LOCALE.po https://github.com/walterbender/deducto.git sugar-deducto
 Dimensions http://translate.sugarlabs.org/export/Dimensions/LOCALE.po https://github.com/walterbender/dimensions.git
 DotsAndBoxes http://translate.sugarlabs.org/export/DotsAndBoxes/LOCALE.po git://git.sugarlabs.org/dots-and-boxes/mainline.git
 Erikos http://translate.sugarlabs.org/export/Erikos/LOCALE.po https://github.com/walterbender/erikos.git
 Finance http://translate.sugarlabs.org/export/Finance/LOCALE.po https://github.com/godiard/finance-activity.git sugar-finance
 Flip http://translate.sugarlabs.org/export/Flip/LOCALE.po https://github.com/walterbender/flip.git sugar-flip
+Flipsticks http://translate.sugarlabs.org/export/Flipsticks/LOCALE.po git://git.sugarlabs.org/flipsticks/mainline.git sugar-flipsticks
 FollowMeButia http://translate.sugarlabs.org/export/FollowMeButia/LOCALE.po git://git.sugarlabs.org/followmebutia/mainline.git
 FotoToon http://translate.sugarlabs.org/export/FotoToon/LOCALE.po https://github.com/godiard/fototoon-activity.git sugar-fototoon
 FractionBounce http://translate.sugarlabs.org/export/FractionBounce/LOCALE.po https://github.com/walterbender/fractionbounce.git sugar-fractionbounce
