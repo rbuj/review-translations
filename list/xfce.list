@@ -1,0 +1,17 @@
+exo git://git.xfce.org/xfce/exo
+garcon git://git.xfce.org/xfce/garcon
+libxfce4ui git://git.xfce.org/xfce/libxfce4ui
+libxfce4util git://git.xfce.org/xfce/libxfce4util
+thunar git://git.xfce.org/xfce/thunar
+thunar-archive-plugin git://git.xfce.org/thunar-plugins/thunar-archive-plugin
+thunar-media-tags-plugin git://git.xfce.org/thunar-plugins/thunar-media-tags-plugin
+thunar-shares-plugin git://git.xfce.org/thunar-plugins/thunar-shares-plugin
+thunar-vcs-plugin git://git.xfce.org/thunar-plugins/thunar-vcs-plugin
+thunar-volman git://git.xfce.org/xfce/thunar-volman
+tumbler git://git.xfce.org/xfce/tumbler
+xfce4-appfinder git://git.xfce.org/xfce/xfce4-appfinder
+xfce4-panel git://git.xfce.org/xfce/xfce4-panel
+xfce4-session git://git.xfce.org/xfce/xfce4-session
+xfce4-settings git://git.xfce.org/xfce/xfce4-settings
+xfdesktop git://git.xfce.org/xfce/xfdesktop
+xfwm4 git://git.xfce.org/xfce/xfwm4
