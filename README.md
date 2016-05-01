@@ -34,6 +34,7 @@ More scripts:
 * shared-mime-info.sh : downloads and tests the translations of [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 * udisks2.sh : downloads and tests the translations of [udisks2](http://www.freedesktop.org/wiki/Software/udisks/)
+* xfce.sh : downloads and tests the translations of [xfce](http://www.xfce.org/)
 * yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/)
 * yumex-dnf.sh : downloads and tests the translations of [yumex-dnf](http://www.yumex.dk/)
 * zif.sh : downloads and tests the translations of [ZIF](https://people.freedesktop.org/~hughsient/zif/). It's now a dead project.
