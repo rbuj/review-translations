@@ -20,6 +20,7 @@ xfburn git://git.xfce.org/apps/xfburn
 xfce4-appfinder git://git.xfce.org/xfce/xfce4-appfinder
 xfce4-battery-plugin git://git.xfce.org/panel-plugins/xfce4-battery-plugin
 xfce4-calculator-plugin git://git.xfce.org/panel-plugins/xfce4-calculator-plugin
+xfce4-cellmodem-plugin git://git.xfce.org/panel-plugins/xfce4-cellmodem-plugin
 xfce4-clipman-plugin git://git.xfce.org/panel-plugins/xfce4-clipman-plugin
 xfce4-cpufreq-plugin git://git.xfce.org/panel-plugins/xfce4-cpufreq-plugin
 xfce4-cpugraph-plugin git://git.xfce.org/panel-plugins/xfce4-cpugraph-plugin
@@ -31,6 +32,7 @@ xfce4-eyes-plugin git://git.xfce.org/panel-plugins/xfce4-eyes-plugin
 xfce4-fsguard-plugin git://git.xfce.org/panel-plugins/xfce4-fsguard-plugin
 xfce4-genmon-plugin git://git.xfce.org/panel-plugins/xfce4-genmon-plugin
 xfce4-hardware-monitor-plugin git://git.xfce.org/panel-plugins/xfce4-hardware-monitor-plugin
+xfce4-indicator-plugin git://git.xfce.org/panel-plugins/xfce4-indicator-plugin
 xfce4-mailwatch-plugin git://git.xfce.org/panel-plugins/xfce4-mailwatch-plugin
 xfce4-mixer git://git.xfce.org/apps/xfce4-mixer
 xfce4-mount-plugin git://git.xfce.org/panel-plugins/xfce4-mount-plugin
@@ -41,6 +43,8 @@ xfce4-notifyd git://git.xfce.org/apps/xfce4-notifyd
 xfce4-panel git://git.xfce.org/xfce/xfce4-panel
 xfce4-places-plugin git://git.xfce.org/panel-plugins/xfce4-places-plugin
 xfce4-power-manager git://git.xfce.org/xfce/xfce4-power-manager
+xfce4-radio-plugin git://git.xfce.org/panel-plugins/xfce4-radio-plugin
+xfce4-rss-plugin git://git.xfce.org/panel-plugins/xfce4-rss-plugin
 xfce4-screenshooter git://git.xfce.org/apps/xfce4-screenshooter
 xfce4-session git://git.xfce.org/xfce/xfce4-session
 xfce4-settings git://git.xfce.org/xfce/xfce4-settings
@@ -51,14 +55,18 @@ xfce4-taskmanager git://git.xfce.org/apps/xfce4-taskmanager
 xfce4-terminal git://git.xfce.org/apps/xfce4-terminal
 xfce4-timer-plugin git://git.xfce.org/panel-plugins/xfce4-timer-plugin
 xfce4-time-out-plugin git://git.xfce.org/panel-plugins/xfce4-time-out-plugin
+xfce4-trigger-launcher git://git.xfce.org/panel-plugins/xfce4-trigger-launcher
 xfce4-verve-plugin git://git.xfce.org/panel-plugins/xfce4-verve-plugin
 xfce4-volstatus-icon git://git.xfce.org/apps/xfce4-volstatus-icon
 xfce4-volumed git://git.xfce.org/apps/xfce4-volumed
 xfce4-wavelan-plugin git://git.xfce.org/panel-plugins/xfce4-wavelan-plugin
 xfce4-weather-plugin git://git.xfce.org/panel-plugins/xfce4-weather-plugin
+xfce4-websearch-plugin git://git.xfce.org/panel-plugins/xfce4-websearch-plugin
 xfce4-whiskermenu-plugin git://git.xfce.org/panel-plugins/xfce4-whiskermenu-plugin
+xfce4-xfapplet-plugin git://git.xfce.org/panel-plugins/xfce4-xfapplet-plugin
 xfce4-xkb-plugin git://git.xfce.org/panel-plugins/xfce4-xkb-plugin
 xfdashboard git://git.xfce.org/apps/xfdashboard
 xfdesktop git://git.xfce.org/xfce/xfdesktop
+xfmedia-remote-plugin git://git.xfce.org/panel-plugins/xfmedia-remote-plugin
 xfmpc git://git.xfce.org/apps/xfmpc
 xfwm4 git://git.xfce.org/xfce/xfwm4
