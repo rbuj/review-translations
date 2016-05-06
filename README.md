@@ -25,6 +25,7 @@ More scripts:
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
 * colorhug-client : downloads and tests the translations of [colorhug-client](http://www.hughski.com/)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
+* exaile.sh: downloads and tests the translations of [exaile](http://www.exaile.org/)
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
