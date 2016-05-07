@@ -65,6 +65,7 @@ xfce4-websearch-plugin git://git.xfce.org/panel-plugins/xfce4-websearch-plugin
 xfce4-whiskermenu-plugin git://git.xfce.org/panel-plugins/xfce4-whiskermenu-plugin
 xfce4-xfapplet-plugin git://git.xfce.org/panel-plugins/xfce4-xfapplet-plugin
 xfce4-xkb-plugin git://git.xfce.org/panel-plugins/xfce4-xkb-plugin
+xfce4-xmms-plugin git://git.xfce.org/panel-plugins/xfce4-xmms-plugin
 xfdashboard git://git.xfce.org/apps/xfdashboard
 xfdesktop git://git.xfce.org/xfce/xfdesktop
 xfmedia-remote-plugin git://git.xfce.org/panel-plugins/xfmedia-remote-plugin
