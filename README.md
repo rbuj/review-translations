@@ -24,6 +24,7 @@ More scripts:
 * clipit.sh : downloads and tests the translations of [ClipIt](https://github.com/shantzu/ClipIt)
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
 * colorhug-client : downloads and tests the translations of [colorhug-client](http://www.hughski.com/)
+* compiz.sh: downloads and tests the translations of [Compiz](http://www.compiz.org/)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * exaile.sh: downloads and tests the translations of [exaile](http://www.exaile.org/)
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
