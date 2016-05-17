@@ -20,6 +20,7 @@ More scripts:
 * appstream.sh : downloads and tests the translations of [AppStream](http://www.freedesktop.org/wiki/Distributions/AppStream/)
 * appstream-glib.sh : downloads and tests the translations of [appstream-glib](https://github.com/hughsie/appstream-glib)
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
+* audacity.sh : downloads and tests the translations of [audacity] (http://www.audacityteam.org/)
 * blivet-gui.sh : downloads and tests the translations of [blivet-gui](https://github.com/rhinstaller/blivet-gui)
 * clipit.sh : downloads and tests the translations of [ClipIt](https://github.com/shantzu/ClipIt)
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
