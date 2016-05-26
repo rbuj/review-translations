@@ -299,7 +299,7 @@ if [ ! -d "${BASE_PATH}" ]; then
     mkdir -p "${BASE_PATH}"
 fi
 if [ -n "$GENERATE_REPORT" ]; then
-#    download
+    download
     report
 fi
 if [ -n "$INSTALL_TRANS" ]; then
