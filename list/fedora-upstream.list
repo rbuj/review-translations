@@ -26,7 +26,7 @@ libosinfo master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libosinfo.mo
 libvirt master
 libvirt-glib master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-glib.mo
 libvirt-sandbox master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-sandbox.mo
-oscap-anaconda-addon master F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/oscap-anaconda-addon.mo
+oscap-anaconda-addon master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/oscap-anaconda-addon.mo
 oscap-anaconda-addon rhel7-branch
 pam_krb5 master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pam_krb5.mo
 pkinit-nss master

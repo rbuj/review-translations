@@ -1,26 +1,26 @@
-abrt master F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/abrt.mo
+abrt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/abrt.mo
 abrt rhel7
 anaconda rhel7-branch
 anaconda rhel6-branch
 anaconda f24-branch F24 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
-anaconda master DEV LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
+anaconda master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
 audit-viewer default
 authconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/authconfig.mo
 blivet rhel7-branch
 blivet rhel6-branch
 blivet f24-branch F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
-blivet master DEV LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
+blivet master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
 chkconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/chkconfig.mo
 comps master
-firewalld master F24 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/firewalld.mo
+firewalld master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/firewalld.mo
 firewalld RHEL-7
-gnome-abrt master F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gnome-abrt.mo
+gnome-abrt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/gnome-abrt.mo
 gnome-abrt rhel7
 initial-setup master
 initial-setup rhel7-branch
 initscripts master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/initscripts.mo
 libpwquality master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libpwquality.mo
-libreport master F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libreport.mo
+libreport master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libreport.mo
 libreport rhel7
 libuser default LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libuser.mo
 liveusb-creator master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/liveusb-creator.mo
@@ -30,7 +30,7 @@ passwd password LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/passwd.mo
 pykickstart master
 pykickstart rhel7-branch
 pykickstart pykickstart-2
-python-meh master F24 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
+python-meh master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
 python-meh rhel7-branch
 selinux master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/policycoreutils.mo
 setroubleshoot master framework/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot.mo;plugins/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot-plugins.mo
