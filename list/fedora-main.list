@@ -32,6 +32,7 @@ pykickstart rhel7-branch
 pykickstart pykickstart-2
 python-meh master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
 python-meh rhel7-branch
+retrace-server master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/retrace-server.mo
 selinux master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/policycoreutils.mo
 setroubleshoot master framework/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot.mo;plugins/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot-plugins.mo
 system-config-firewall master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/system-config-firewall.mo
