@@ -28,8 +28,9 @@ function build_languagtool {
     rpm -q maven &> /dev/null
     if [ $? -ne 0 ]; then
         echo "languagtool : installing required packages"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-        sudo dnf install -y maven
+        if [ "$VERSION_AUX[${VERSION_AUX[@]}]" == "(Rawhide)" ]; then sudo dnf install -y maven --nogpgcheck; else sudo dnf install -y maven; fi
         set -
     fi
     echo "languagtool : building"

@@ -23,6 +23,9 @@ if [ -f "/etc/fedora-release" ]; then
         "Fedora release 24 (Twenty Four)")
         VERSION="f24"
         ;;
+        "Fedora release 25 (Rawhide)")
+        VERSION="f25"
+        ;;
     esac
 fi
 echo "${VERSION}"

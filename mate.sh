@@ -109,8 +109,9 @@ function report {
     rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
+        if [ "$VERSION_AUX[${VERSION_AUX[@]}]" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
         set -
     fi
     #########################################
@@ -239,7 +240,7 @@ function install {
 
         cd "${PROJECT}/${VERSION}"
         echo -ne "${PROJECT}: dnf builddep "
-        sudo dnf builddep -y ${PROJECT}.spec &> /dev/null
+        sudo dnf builddep -y ${PROJECT}.spec --nogpgcheck --allowerasing &> /dev/null
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue

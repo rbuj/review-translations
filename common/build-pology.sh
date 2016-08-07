@@ -26,8 +26,9 @@ function build_pology {
     rpm -q cmake subversion python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "pology : installing required packages"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-        sudo dnf install -y cmake subversion python-enchant enchant-aspell
+        if [ "$VERSION_AUX[${VERSION_AUX[@]}]" == "(Rawhide)" ]; then sudo dnf install -y cmake subversion python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y cmake subversion python-enchant enchant-aspell; fi
         set -
     fi
     echo "pology : building"
