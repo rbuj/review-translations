@@ -102,7 +102,7 @@ function report {
         echo "report : installing required packages"
         VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-	if [ "$VERSION_AUX[${VERSION_AUX[@]}]" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
+	if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
         set -
     fi
     #########################################

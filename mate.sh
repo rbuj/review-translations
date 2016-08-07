@@ -106,12 +106,12 @@ EOF
 }
 
 function report {
-    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell transifex-client &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
         VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-        if [ "$VERSION_AUX[${VERSION_AUX[@]}]" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
+        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell transifex-client --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell transifex-client; fi
         set -
     fi
     #########################################
@@ -210,8 +210,9 @@ function install {
     rpm -q fedpkg fedora-packager rpmdevtools &> /dev/null
     if [ $? -ne 0 ]; then
         echo "installing required packages"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
         set -x
-        sudo dnf install -y fedpkg fedora-packager rpmdevtools
+        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y fedpkg fedora-packager rpmdevtools --nogpgcheck; else sudo dnf install -y fedpkg fedora-packager rpmdevtools; fi
         set -
     fi
 
