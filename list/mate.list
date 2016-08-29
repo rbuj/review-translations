@@ -1,40 +1,40 @@
-atril https://github.com/mate-desktop/atril.git
-blueman https://github.com/blueman-project/blueman.git
-caja https://github.com/mate-desktop/caja.git
-caja-extensions https://github.com/mate-desktop/caja-extensions.git
-engrampa https://github.com/mate-desktop/engrampa.git
-eom https://github.com/mate-desktop/eom.git
-galculator https://github.com/galculator/galculator.git
-libmatekbd https://github.com/mate-desktop/libmatekbd.git
-libmatemixer https://github.com/mate-desktop/libmatemixer.git
-libmateweather https://github.com/mate-desktop/libmateweather.git
-marco https://github.com/mate-desktop/marco.git
-mate-applets https://github.com/mate-desktop/mate-applets.git
-mate-backgrounds https://github.com/mate-desktop/mate-backgrounds.git
-mate-bluetooth https://github.com/mate-desktop/mate-bluetooth.git
-mate-calc https://github.com/mate-desktop/mate-calc.git
-mate-control-center https://github.com/mate-desktop/mate-control-center.git
-mate-desktop https://github.com/mate-desktop/mate-desktop.git
-mate-dialogs https://github.com/mate-desktop/mate-dialogs.git
-mate-indicator-applet https://github.com/mate-desktop/mate-indicator-applet.git
-mate-keyring https://github.com/mate-desktop/mate-keyring.git
-mate-media https://github.com/mate-desktop/mate-media.git
-mate-menus https://github.com/mate-desktop/mate-menus.git
-mate-netbook https://github.com/mate-desktop/mate-netbook.git
-mate-netspeed https://github.com/mate-desktop/mate-netspeed.git
-mate-notification-daemon https://github.com/mate-desktop/mate-notification-daemon.git
-mate-panel https://github.com/mate-desktop/mate-panel.git
-mate-polkit https://github.com/mate-desktop/mate-polkit.git
-mate-power-manager https://github.com/mate-desktop/mate-power-manager.git
-mate-screensaver https://github.com/mate-desktop/mate-screensaver.git
-mate-sensors-applet https://github.com/mate-desktop/mate-sensors-applet.git
-mate-session-manager https://github.com/mate-desktop/mate-session-manager.git
-mate-settings-daemon https://github.com/mate-desktop/mate-settings-daemon.git
-mate-system-monitor https://github.com/mate-desktop/mate-system-monitor.git
-mate-terminal https://github.com/mate-desktop/mate-terminal.git
-mate-themes https://github.com/mate-desktop/mate-themes.git
-mate-user-share https://github.com/mate-desktop/mate-user-share.git
-mate-utils https://github.com/mate-desktop/mate-utils.git
-mozo https://github.com/mate-desktop/mozo.git
-pluma https://github.com/mate-desktop/pluma.git
-python-caja https://github.com/mate-desktop/python-caja.git
+atril MATE atril
+blueman MATE blueman
+caja MATE caja
+caja-extensions MATE caja-extensions
+engrampa MATE engrampa
+eom MATE eom
+galculator MATE galculator
+libmatekbd MATE libmatekbd
+libmatemixer MATE libmatemixer
+libmateweather MATE libmateweather
+marco MATE marco
+mate-applets MATE mate-applets
+mate-backgrounds MATE mate-backgrounds
+mate-bluetooth MATE mate-bluetooth
+mate-calc MATE mate-calc
+mate-control-center MATE mate-control-center
+mate-desktop MATE mate-desktop
+mate-dialogs MATE mate-dialogs
+mate-indicator-applet MATE mate-indicator-applet
+mate-keyring MATE mate-keyring
+mate-media MATE mate-media
+mate-menus MATE mate-menus
+mate-netbook MATE mate-netbook
+mate-netspeed MATE mate-netspeed
+mate-notification-daemon MATE mate-notification-daemon
+mate-panel MATE mate-panel
+mate-polkit MATE mate-polkit
+mate-power-manager MATE mate-power-manager
+mate-screensaver MATE mate-screensaver
+mate-sensors-applet MATE mate-sensors-applet
+mate-session-manager MATE mate-session-manager
+mate-settings-daemon MATE mate-settings-daemon
+mate-system-monitor MATE mate-system-monitor
+mate-terminal MATE mate-terminal
+mate-themes MATE mate-themes
+mate-user-share MATE mate-user-share
+mate-utils MATE mate-utils
+mozo MATE mozo
+pluma MATE pluma
+python-caja MATE python-caja
