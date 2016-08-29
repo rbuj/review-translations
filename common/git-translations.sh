@@ -191,7 +191,7 @@ EOF
         set -- $p
         cd ${BASE_PATH}
         echo -ne "${1}: "
-        #download_code ${1} ${2}
+        download_code ${1} ${2}
         cd ${BASE_PATH}/${1}
         report_project_cotent ${1} ${HTML_REPORT}
 
