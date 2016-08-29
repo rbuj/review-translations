@@ -30,6 +30,7 @@ More scripts:
 * exaile.sh: downloads and tests the translations of [exaile](http://www.exaile.org/)
 * fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
+* geany.sh : downloads and tests the translations of [geany](http://www.geany.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
 * mate.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
