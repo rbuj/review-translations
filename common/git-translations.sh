@@ -24,6 +24,7 @@ PROJECT_NAME=
 INPUT_FILE=
 
 LANG_CODE=
+ALL_LANGS=
 
 GENERATE_REPORT=
 DISABLE_WORDLIST=
@@ -31,9 +32,9 @@ INSTALL_TRANS=
 
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
-    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo "    usage : $0 [ARGS]"
     echo -ne "\nMandatory arguments:\n"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file"
@@ -76,6 +77,9 @@ case $i in
     LANG_CODE="${i#*=}"
     shift # past argument=value
     ;;
+    -a)
+    ALL_LANGS="YES"
+    ;;
     -p=*|--project=*)
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
@@ -108,12 +112,27 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+    usage
+    exit 1
+fi
+
+if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
+
+if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
     usage
     exit 1
 fi
 
 if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
+    usage
+    exit 1
+fi
+
+if [ -n "${GENERATE_REPORT}" ] && [ -n "${ALL_LANGS}" ]; then
     usage
     exit 1
 fi
@@ -133,6 +152,10 @@ if [ -n "$GENERATE_REPORT" ]; then
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    if [ -n "${ALL_LANGS}" ]; then
+        ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    else
+        ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    fi
 fi
 echo "complete!"

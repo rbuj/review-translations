@@ -24,6 +24,7 @@ PROJECT_NAME=
 INPUT_FILE=
 
 LANG_CODE=
+ALL_LANGS=
 
 GENERATE_REPORT=
 DISABLE_WORDLIST=
@@ -33,7 +34,7 @@ function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
     echo -ne "\nMandatory arguments:\n"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file"
@@ -58,8 +59,11 @@ file_filter = po/<lang>.po
 EOF
     fi
     cd ${BASE_PATH}/${1}
-    tx pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
-#    tx pull -a &> /dev/null
+    if [ -n "${ALL_LANGS}" ]; then
+        tx pull -a > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
+    else
+        tx pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
+    fi
 }
 
 function download {
@@ -83,6 +87,9 @@ case $i in
     -l=*|--lang=*)
     LANG_CODE="${i#*=}"
     shift # past argument=value
+    ;;
+    -a)
+    ALL_LANGS="YES"
     ;;
     -p=*|--project=*)
     PROJECT_NAME="${i#*=}"
@@ -116,15 +123,30 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi
+
+if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
+
+if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
+
 if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi
 
+if [ -n "${GENERATE_REPORT}" ] && [ -n "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
 
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
@@ -141,6 +163,10 @@ if [ -n "$GENERATE_REPORT" ]; then
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    if [ -n "${ALL_LANGS}" ]; then
+        ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    else
+        ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    fi
 fi
 echo "complete!"
