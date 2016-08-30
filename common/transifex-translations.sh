@@ -30,13 +30,10 @@ DISABLE_WORDLIST=
 INSTALL_TRANS=
 
 function usage {
-    echo "This script downloads the translation from transifex"
+    echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
-    echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
-    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
-    echo "   -w|--workpath=W_PATH  Work PATH folder"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file"
@@ -415,3 +412,4 @@ if [ -n "$INSTALL_TRANS" ]; then
       install
     fi
 fi
+echo "complete!"
