@@ -10,9 +10,11 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 Components (scripts which are used by other scrips):
 * common/build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
 * common/build-pology.sh : builds Pology in the specified path if there is no pology folder
-* common/fedora-version.sh : get current OS version branch
+* common/fedora-version.sh : gets the branch from the OS version
+* common/fedpkg-install.sh : patches and installs the project related packages with new translations
 * common/git-translations.sh : handles the translations from git
 * common/install.sh : installs the translations in the system
+* common/pology-languagetool-report.sh : generate report files
 * common/report.sh : makes a translation report of a Fedora group
 * common/transifex-translations.sh : handles the translations from transifex
 * common/zanata.sh : downloads the translations of a Fedora group
