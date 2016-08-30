@@ -13,7 +13,9 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+GROUP=$(basename ${0} .sh)
 WORK_PATH=$PWD
+LIST="${WORK_PATH}/list/${GROUP}.list"
 
 LANG_CODE=
 GENERATE_REPORT=
@@ -78,21 +80,19 @@ if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
 fi
 
 ### Main ###
-GROUP="web"
-LIST="${WORK_PATH}/list/fedora-${GROUP}.list"
-./common/zanata.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+./common/zanata.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -z "${DISABLE_WORDLIST}" ]; then
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} -w=${WORK_PATH}
+            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -w=${WORK_PATH}
         else
-            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     else
         if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist -w=${WORK_PATH}
+            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --disable-wordlist -w=${WORK_PATH}
         else
-            ./common/report.sh -l=${LANG_CODE} -p=fedora-${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
         fi
     fi
 fi

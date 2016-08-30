@@ -1,6 +1,6 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
+# Copyright 2016, Robert Buj <rbuj@fedoraproject.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,9 +13,13 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-GROUP=$(basename ${0} .sh)
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+NC=`tput sgr0` # No Color
+
+PROJECT_NAME=$(basename ${0} .sh)
 WORK_PATH=$PWD
-LIST="${WORK_PATH}/list/${GROUP}.list"
+LIST=${WORK_PATH}/list/${PROJECT_NAME}.list
 
 LANG_CODE=
 GENERATE_REPORT=
@@ -23,18 +27,20 @@ DISABLE_WORDLIST=
 INSTALL_TRANS=
 
 function usage {
-    echo "This script downloads the translations of the projects that belongs to main group [1]."
+    echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
+    echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
-    echo -ne "[1] https://fedora.zanata.org/version-group/view/main\n"
 }
+
+echo $PROJECT_NAME
+exit
 
 for i in "$@"
 do
@@ -48,14 +54,6 @@ case $i in
     ;;
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
-    ;;
-    --languagetool-server=*)
-    LT_SERVER="${i#*=}"
-    shift # past argument=value
-    ;;
-    --languagetool-port=*)
-    LT_PORT="${i#*=}"
-    shift # past argument=value
     ;;
     -i|--install)
     INSTALL_TRANS="YES"
@@ -75,30 +73,20 @@ if [ -z "${LANG_CODE}" ]; then
     usage
     exit 1
 fi
-
 if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi
 
-### Main ###
-./common/zanata.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+### Main
 if [ -n "$GENERATE_REPORT" ]; then
-    if [ -z "${DISABLE_WORDLIST}" ]; then
-        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -w=${WORK_PATH}
-        else
-            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-        fi
+    if [ "$DISABLE_WORDLIST" == "YES" ]; then
+        ./common/transifex-translations.sh -r -l=${LANG_CODE} --disable-wordlist -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH}
     else
-        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --disable-wordlist -w=${WORK_PATH}
-        else
-            ./common/report.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-        fi
+        ./common/transifex-translations.sh -r -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH}
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./common//install.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -w=${WORK_PATH}
+    ./common/transifex-translations.sh -i -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH}
 fi
 echo "complete!"

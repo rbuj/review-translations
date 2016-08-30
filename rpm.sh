@@ -17,7 +17,7 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-PROJECT_NAME=rpm
+PROJECT_NAME=$(basename ${0} .sh)
 WORK_PATH=$PWD
 LIST=${WORK_PATH}/list/${PROJECT_NAME}.list
 
