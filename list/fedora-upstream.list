@@ -16,7 +16,7 @@ ibus-chewing master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-chewing.
 ibus-input-pad head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-input-pad.mo
 ibus-libpinyin master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-libpinyin.mo
 ibus-table 1.9.1 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-table.mo
-ibus-typing-booster 1.2.11 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-typing-booster.mo
+ibus-typing-booster master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/ibus-typing-booster.mo
 im-chooser master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/im-chooser.mo
 imsettings master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/imsettings.mo
 input-pad head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/input-pad.mo
