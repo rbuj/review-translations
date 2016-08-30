@@ -67,15 +67,15 @@ function report_project_cotent {
 <h1 id=${1}${2}>${1} ($2)<a href="#toc">[^]</a></h1>
 <h2 id=CheckSpellEc${1}${2}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
     cat << EOF >> ${HTML_REPORT}
 <h2 id=CheckRules${1}${2}>check-rules <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
     cat << EOF >> ${HTML_REPORT}
 <h2 id=CheckGrammar${1}${2}>check-grammar <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
 }
 
 function report_toc {
