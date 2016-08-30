@@ -133,7 +133,6 @@ function install {
 
         cd "${SRC#*/}p/po"
         intltool-update --pot
-        intltool-update --dist ${LANG_CODE}
         if [ -n "${ALL_LANGS}" ]; then
             for FILE in $(ls *.po); do intltool-update --dist $(basename $FILE .po); done
         else
