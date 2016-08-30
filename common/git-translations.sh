@@ -55,6 +55,9 @@ function download_code {
 }
 
 function download {
+    echo "************************************************"
+    echo "* downloading translations..."
+    echo "************************************************"
     if [ ! -d "${BASE_PATH}" ]; then
         mkdir -p "${BASE_PATH}"
     fi
@@ -124,9 +127,9 @@ VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 download
 if [ -n "$GENERATE_REPORT" ]; then
     if [ -n "${DISABLE_WORDLIST}" ]; then
-        ${WORK_PATH}/common//pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+        ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
     else
-        ${WORK_PATH}/common//pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
+        ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then

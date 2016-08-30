@@ -39,7 +39,9 @@ function usage {
 }
 
 function install {
-    echo "installing translations"
+    echo "************************************************"
+    echo "* installing translations..."
+    echo "************************************************"
     VERSION_AUX=( $(cat /etc/fedora-release) )
 
     rpm -q fedpkg fedora-packager rpmdevtools &> /dev/null
@@ -217,7 +219,7 @@ VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 # ensure running as root
 if [ "$(id -u)" != "0" ]; then
   cd "${WORK_PATH}"
-  exec sudo "$0" "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "-i"
+  exec sudo "$0" "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
   exit 0
 else
   install

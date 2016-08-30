@@ -94,6 +94,9 @@ EOF
 }
 
 function report {
+    echo "************************************************"
+    echo "* checking translations..."
+    echo "************************************************"
     rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
