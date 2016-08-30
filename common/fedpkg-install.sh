@@ -114,8 +114,8 @@ function install {
         fi
 
         echo -ne "${PROJECT}: copy trans "
-#        cp "${BASE_PATH}/${PROJECT}/po/${LANG_CODE}.po" "${SRC#*/}p/po/" &> /dev/null
-        echo "cp -fu ${BASE_PATH}/${PROJECT}/po/*.po ${BASE_PATH_RPM}/${PROJECT}/${VERSION}/${SRC#*/}p/po/" | sh &> /dev/null
+        cp "${BASE_PATH}/${PROJECT}/po/${LANG_CODE}.po" "${SRC#*/}p/po/" &> /dev/null
+#        echo "cp -fu ${BASE_PATH}/${PROJECT}/po/*.po ${BASE_PATH_RPM}/${PROJECT}/${VERSION}/${SRC#*/}p/po/" | sh &> /dev/null
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue
@@ -125,8 +125,8 @@ function install {
 
         cd "${SRC#*/}p/po"
         intltool-update --pot
-        #intltool-update --dist ${LANG_CODE}
-        for FILE in $(ls *.po); do intltool-update --dist $(basename $FILE .po); done
+        intltool-update --dist ${LANG_CODE}
+#        for FILE in $(ls *.po); do intltool-update --dist $(basename $FILE .po); done
         cd "${BASE_PATH_RPM}/${PROJECT}/${VERSION}"
 
         echo -ne "${PROJECT}: patch "
