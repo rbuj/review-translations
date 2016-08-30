@@ -54,133 +54,7 @@ function download_code {
     fi
 }
 
-function fedora_wordlist {
-    DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n "${DISABLE_WORDLIST}" ]; then
-        if [ -f "${DICT}" ]; then
-            rm -f ${DICT}
-        fi
-    else
-        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
-            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
-        fi
-        WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
-        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-        cat ${WORK_PATH}/wordlist >> ${DICT}
-    fi
-}
-
-function report_toc {
-    HTML_REPORT=${1}
-    cat << EOF >> ${HTML_REPORT}
-<h1 id=toc>Table of contents</h1>
-<div data-fill-with="table-of-contents"><ul class="toc">
-EOF
-    COUNTER=1
-    while read -r p; do
-        set -- $p
-        cat << EOF >> ${HTML_REPORT}
-  <li><span class="secno">${COUNTER}</span> <span><a href="#${1}">${1}</a></span></li>
-EOF
-        let "COUNTER++"
-    done <${LIST}
-    cat << EOF >> ${HTML_REPORT}
-<ul></div>
-EOF
-}
-
-# project_name html_filename
-function report_project_cotent {
-    cat << EOF >> $2
-<h1 id=${1}>${1}<a href="#toc">[^]</a></h1>
-<h2 id=CheckSpellEc${1}>check-spell-ec <a href="#toc">[^]</a></h2>
-EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
-    cat << EOF >> $2
-<h2 id=CheckRules${1}>check-rules <a href="#toc">[^]</a></h2>
-EOF
-    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
-    cat << EOF >> $2
-<h2 id=CheckGrammar${1}>check-grammar <a href="#toc">[^]</a></h2>
-EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}/ >> $2
-}
-
-function report {
-    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        VERSION_AUX=( $(cat /etc/fedora-release) )
-        set -x
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
-        set -
-    fi
-    #########################################
-    # LANGUAGETOOL
-    #########################################
-    if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
-    fi
-    cd ${WORK_PATH}
-    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-    LANGUAGETOOL_PID=$!
-
-    echo -ne "report : waiting for langtool"
-    until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do
-        printf '.'
-        sleep 1
-    done
-    if [ $? -ne 0 ]; then
-        echo " ${RED}[ FAIL ]${NC}"
-    else
-        echo " ${GREEN}[ OK ]${NC}"
-    fi
-
-    #########################################
-    # POLOGY
-    #########################################
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
-    fi
-    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-    export PATH=${WORK_PATH}/pology/bin:$PATH
-    fedora_wordlist
-
-    HTML_REPORT=${WORK_PATH}/${PROJECT_NAME}-report.html
-    cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Translation Report</title>
-    <style type="text/css">
-        /* unvisited link */
-        a:link {
-            color: #D0D0D0;
-        }
-
-        /* visited link */
-        a:visited {
-            color: #00FF00;
-        }
-
-        /* mouse over link */
-        a:hover {
-            color: #FF00FF;
-        }
-
-        /* selected link */
-        a:active {
-            color: #0000FF;
-        }
-    </style>
-  </head>
-<body bgcolor="#080808" text="#D0D0D0">
-EOF
-
-    report_toc ${HTML_REPORT}
-    COUNTER=1
+function download {
     if [ ! -d "${BASE_PATH}" ]; then
         mkdir -p "${BASE_PATH}"
     fi
@@ -189,18 +63,7 @@ EOF
         cd ${BASE_PATH}
         echo -ne "${1}: "
         download_code ${1} ${2}
-        cd ${BASE_PATH}/${1}
-        report_project_cotent ${1} ${HTML_REPORT}
-
     done <${LIST}
-
-    cat << EOF >> ${HTML_REPORT}
-</body>
-</html>
-EOF
-
-    chmod 644 ${HTML_REPORT}
-    kill -9 ${LANGUAGETOOL_PID} > /dev/null
 }
 
 for i in "$@"
@@ -258,10 +121,15 @@ LIST=${INPUT_FILE}
 VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
 ### Main
+download
 if [ -n "$GENERATE_REPORT" ]; then
-    report
+    if [ -n "${DISABLE_WORDLIST}" ]; then
+        ${WORK_PATH}/common//pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    else
+        ${WORK_PATH}/common//pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
+    fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "-i"
+    ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
 fi
 echo "complete!"

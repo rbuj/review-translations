@@ -32,7 +32,6 @@ function usage {
     echo "    usage : $0 [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
-    echo "   -i, --install         Install translations"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo "   -w|--workpath=W_PATH  Work PATH folder"
@@ -195,9 +194,6 @@ case $i in
     WORK_PATH="${i#*=}"
     shift # past argument=value
     ;;
-    -i|--install)
-    INSTALL_TRANS="YES"
-    ;;
     -h|--help)
     usage
     exit 0
@@ -209,7 +205,7 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] || [ -z "$INSTALL_TRANS" ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi
