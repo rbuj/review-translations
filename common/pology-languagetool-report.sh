@@ -25,7 +25,6 @@ INPUT_FILE=
 
 LANG_CODE=
 
-GENERATE_REPORT=
 DISABLE_WORDLIST=
 
 function usage {
@@ -223,11 +222,6 @@ esac
 done
 
 if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
-    usage
-    exit 1
-fi
-
-if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi

@@ -25,8 +25,6 @@ INPUT_FILE=
 
 LANG_CODE=
 
-INSTALL_TRANS=
-
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : $0 [ARGS]"
