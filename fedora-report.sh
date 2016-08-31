@@ -13,13 +13,15 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-HTML_REPORT="index.html"
-declare -A scripts=( "fedora-main" "fedora-upstream" "fedora-web" )
+declare -A PROJECT_NAMES=( "fedora-main" "fedora-upstream" "fedora-web" )
 declare -A locales= ( "ca" "de" "el" "es" "fr" "gl" "it" "nl" "pt" "ru" )
 declare -A header=( ["fedora-main"]="Fedora Websites" ["fedora-upstream"]="Fedora Upstream" ["fedora-web"]="Fedora Websites" )
 declare -A languages=( ["ca"]="Catalan" ["de"]="German" ["el"]="Greek" ["es"]="Spanish" ["fr"]="French" ["gl"]="Galician" ["it"]="Italian" ["nl"]="Dutch" ["pt"]="Portuguese" ["ru"]="Russian" )
+WORK_PATH=$PWD
 
-for SCRIPT in ${scripts[@]}; do
+for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
+BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
+HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html>
@@ -59,7 +61,7 @@ figure figcaption {
 </head>
 <body>
 
-<h1>${header[${SCRIPT}]}</h1>
+<h1>${header[${PROJECT_NAME}]}</h1>
 <h2>spelling and grammar report</h2>
 <table>
   <tr>
@@ -70,26 +72,27 @@ figure figcaption {
   </tr>
 EOF
 for LOCALE in ${locales[@]}; do
-    ./${SCRIPT}.sh -l=$LOCALE -r --disable-wordlist;
-    mv ${SCRIPT}-report.html ${SCRIPT}-report.${LOCALE}.html;
-    gzip ${SCRIPT}-report.${LOCALE}.html
+    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist;
+    mv ${WORK_PATH}/${PROJECT_NAME}-report.html ${WORK_PATH}/${PROJECT_NAME}-report.${LOCALE}.html;
+    cd ${WORK_PATH}
+    gzip ${PROJECT_NAME}-report.${LOCALE}.html
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><A HREF="fedora-web-report.${LOCALE}.html.gz">${languages[${LOCALE}]}</A></td>
-    <td>${$(du -h ${SCRIPT}-report.${LOCALE}.html.gz | cut -f1)}</td>
-    <td>${$(md5sum ${SCRIPT}-report.${LOCALE}.html.gz)}</td>
+    <td><A HREF="${PROJECT_NAME}.${LOCALE}.html.gz">${languages[${LOCALE}]}</A></td>
+    <td>${$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)}</td>
+    <td>${$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)}</td>
   </tr>
 EOF
 done
 cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
-  <img src="/img/fedora-web-msg.png" alt="Messages">
+  <img src="${PROJECT_NAME}-msg.png" alt="Messages">
   <figcaption style="text-align: center;">Fig.1 - Messages.</figcaption>
 </figure>
 <figure>
-  <img src="/img/fedora-web-w.png" alt="Words">
+  <img src="${PROJECT_NAME}-w.png" alt="Words">
   <figcaption style="text-align: center;">Fig.1 - Words.</figcaption>
 </figure>
 <br/>${$(LC_ALL=en.utf8 date '+%B %d, %Y')}.
@@ -97,9 +100,8 @@ cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
-chmod 644 index.html
-scp -i ~/.ssh/id_rsa index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${SCRIPT}-report
-scp -i ~/.ssh/id_rsa *.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${SCRIPT}-report
-rm -f *.gz
+chmod 644 ${HTML_REPORT}
+${WORK_PATH}/common/project-stats.sh -p=${PROJECT_NAME} -w=${WORK_PATH}
+cp ${BASE_PATH}/${PROJECT_NAME}-msg.png ${WORK_PATH}
+cp ${BASE_PATH}/${PROJECT_NAME}-w.png ${WORK_PATH}
 done
-rm -f indedx.html

@@ -33,7 +33,7 @@ STATS=
 
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
-    echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
+    echo "    usage : ./${PROJECT_NAME}.sh [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
@@ -186,6 +186,6 @@ if [ -n "$INSTALL_TRANS" ]; then
     fi
 fi
 if [ -n "$STATS" ]; then
-    ${WORK_PATH}/common/project-stats.sh "-p=${PROJECT_NAME}" "-w=${WORK_PATH}"
+    ${WORK_PATH}/common/pology-stats.sh "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
 fi
 echo "complete!"

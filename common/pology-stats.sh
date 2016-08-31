@@ -17,12 +17,15 @@ declare -A LOCALES
 WORK_PATH=
 BASE_PATH=
 PROJECT_NAME=
+INPUT_FILE=
+declare -i WIDTH=0
 
 function usage {
     echo "Creates translations stats of ${PROJECT_NAME}"
     echo "    usage : $0 [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
+    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo "   -w|--workpath=W_PATH  Work PATH folder"
     echo -ne "\nOptional arguments:\n"
     echo "   -h, --help            Display this help and exit"
@@ -37,15 +40,18 @@ function populate_db {
        rm -f ${BASE_PATH}/${PROJECT_NAME}.db
    fi
    sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  "create table n (id INTEGER PRIMARY KEY, 'filename' TEXT, 'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
-   for FILE in $(find ${BASE_PATH} -name *.po); do
-      stdbuf -oL posieve stats $FILE |
-      while read -r p; do
-         set -- $p
-            if [ "${1}" != "-" ];then
-               echo "sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  \"insert into n ('filename','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${FILE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
-            fi
+   while read -r p; do
+      set -- $p
+      for FILE in $(find ${BASE_PATH}/${1} -name *.po); do
+         stdbuf -oL posieve stats --include-name=$(basename $FILE .po)\$ $(dirname $FILE) |
+         while read -r p; do
+            set -- $p
+               if [ "${1}" != "-" ];then
+                  echo "sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  \"insert into n ('filename','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${FILE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
+               fi
+         done
       done
-   done
+   done <${INPUT_FILE}
    echo "${BASE_PATH}/${PROJECT_NAME}.db"
 }
 
@@ -66,12 +72,14 @@ function png_stat_msg {
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
 
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.png"\n'\
-      'set term png\n'\
-      'set boxwidth 1\n'\
+      'set term png size '$WIDTH',720 noenhanced\n'\
+      'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
       'set style histogram rowstacked\n'\
-      'set key outside horizontal center bottom\n'\
+      'set key outside horizontal center bottom font ",10"\n'\
+      'set ylabel "messages"\n'\
+      'set xtics rotate font ",10"\n'\
       'plot "'${BASE_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
    chmod 644 "${BASE_PATH}/${PROJECT_NAME}-msg.png"
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.png"
@@ -94,12 +102,14 @@ function png_stat_w {
    echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
 
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-w.png"\n'\
-      'set term png\n'\
-      'set boxwidth 1\n'\
+      'set term png size '$WIDTH',720 noenhanced\n'\
+      'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
       'set style histogram rowstacked\n'\
-      'set key outside horizontal center bottom\n'\
+      'set key outside horizontal center bottom font ",10"\n'\
+      'set ylabel "words"\n'\
+      'set xtics rotate font ",10"\n'\
       'plot "'${BASE_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
    chmod 644 "${BASE_PATH}/${PROJECT_NAME}-w.png"
    echo "${BASE_PATH}/${PROJECT_NAME}-w.png"
@@ -110,6 +120,10 @@ do
 case $i in
     -p=*|--project=*)
     PROJECT_NAME="${i#*=}"
+    shift # past argument=value
+    ;;
+    -f=*|--file=*)
+    INPUT_FILE="${i#*=}"
     shift # past argument=value
     ;;
     -w=*|--workpath=*)
@@ -127,7 +141,7 @@ case $i in
 esac
 done
 
-if [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi
@@ -136,6 +150,7 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
+WIDTH=$((100+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*24))))
 
 rpm -q gnuplot sqlite &> /dev/null
 if [ $? -ne 0 ]; then

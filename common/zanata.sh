@@ -21,15 +21,16 @@ WORK_PATH=
 BASE_PATH=
 
 LANG_CODE=
+ALL_LANGS=
 PROJECT_NAME=
 INPUT_FILE=
 BASE_URL=
 VERBOSE=
 
 function usage {
-    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE -u|--url=URL [ ARGS ... ]"
+    echo "usage : $0 [ARGS]"
     echo -ne "\nMandatory arguments:\n"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
+    echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales)"
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo "   -w|--workpath=W_PATH  Work PATH folder"
@@ -71,7 +72,11 @@ EOF
 function project_download {
     if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : downloading project translation "; fi
     cd ${BASE_PATH}/${1}-${2}
-    zanata-cli -B -q pull -l ${LANG_CODE} --pull-type trans > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
+    if [ -z "${ALL_LANGS}" ] && [ -n "${STATS}" ]; then
+        zanata-cli -B -q pull -l ${LANG_CODE} --pull-type trans > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
+    else
+        zanata-cli -B -q pull --pull-type trans > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
+    fi
 }
 
 function download {
@@ -100,6 +105,9 @@ case $i in
     -l=*|--lang=*)
     LANG_CODE="${i#*=}"
     shift # past argument=value
+    ;;
+    -a)
+    ALL_LANGS="YES"
     ;;
     -f=*|--file=*)
     INPUT_FILE="${i#*=}"
@@ -131,10 +139,21 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${BASE_URL}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${BASE_URL}" ] || [ -z "${WORK_PATH}" ]; then
     usage
     exit 1
 fi
+
+if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
+
+if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
+    usage
+    exit 1
+fi
+
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 ### Main ###

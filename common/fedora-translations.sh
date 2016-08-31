@@ -1,6 +1,6 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Copyright 2016, Robert Buj <rbuj@fedoraproject.org>
+# Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,63 +13,34 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
+PROJECT_NAME==
 WORK_PATH=
-BASE_PATH=
-
-PROJECT_NAME=
 INPUT_FILE=
 
 LANG_CODE=
 ALL_LANGS=
-
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
 STATS=
 
+LT_SERVER=
+LT_PORT=
+
 function usage {
-    echo "This script downloads the translation of ${PROJECT_NAME}"
+    echo "This script downloads the translations of the projects that belongs to ${PROJECT_NAME}."
     echo "    usage : ./${PROJECT_NAME}.sh [ARGS]"
     echo -ne "\nMandatory arguments:\n"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   --disable-wordlist    Do not use wordlist file"
-    echo "   -i, --install         Install translations"
+    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
+    if [ "${PROJECT_NAME}" != "fedora-web" ]; then
+        echo "   -i, --install         Install translations"
+    fi
     echo "   -s, --stats           Stats for translated messages and words (requires -a)"
     echo "   -h, --help            Display this help and exit"
     echo ""
-}
-
-function download_code {
-    cd ${BASE_PATH}
-    if [ ! -d "${1}" ]; then
-        echo -ne "git clone "
-        git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-    else
-        cd $1
-        echo -ne "git pull "
-        git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-    fi
-}
-
-function download {
-    echo "************************************************"
-    echo "* downloading translations..."
-    echo "************************************************"
-    if [ ! -d "${BASE_PATH}" ]; then
-        mkdir -p "${BASE_PATH}"
-    fi
-    while read -r p; do
-        set -- $p
-        cd ${BASE_PATH}
-        echo -ne "${1}: "
-        download_code ${1} ${2}
-    done <${LIST}
 }
 
 for i in "$@"
@@ -94,17 +65,25 @@ case $i in
     WORK_PATH="${i#*=}"
     shift # past argument=value
     ;;
+    -i|--install)
+    INSTALL_TRANS="YES"
+    ;;
+    -s|--stats)
+    STATS="YES"
+    ;;
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
     --disable-wordlist)
     DISABLE_WORDLIST="YES"
     ;;
-    -i|--install)
-    INSTALL_TRANS="YES"
+    --languagetool-server=*)
+    LT_SERVER="${i#*=}"
+    shift # past argument=value
     ;;
-    -s|--stats)
-    STATS="YES"
+    --languagetool-port=*)
+    LT_PORT="${i#*=}"
+    shift # past argument=value
     ;;
     -h|--help)
     usage
@@ -142,33 +121,46 @@ if [ -n "${GENERATE_REPORT}" ] && [ -n "${ALL_LANGS}" ]; then
     exit 1
 fi
 
+if [ "${PROJECT_NAME}" == "fedora-web" ] && [ -n "${INSTALL_TRANS}" ]; then
+    usage
+    exit 1
+fi
+
 if [ -z "${ALL_LANGS}" ] && [ -n "${STATS}" ]; then
     usage
     exit 1
 fi
 
-BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
-BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
-LIST=${INPUT_FILE}
-VERSION=$(${WORK_PATH}/common/fedora-version.sh)
-
-### Main
-download
+### Main ###
+if [ -n "${ALL_LANGS}" ]; then
+    ${WORK_PATH}/common/zanata.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+else
+    ${WORK_PATH}/common/zanata.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+fi
 if [ -n "$GENERATE_REPORT" ]; then
-    if [ -n "${DISABLE_WORDLIST}" ]; then
-        ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    if [ -z "${DISABLE_WORDLIST}" ]; then
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+        else
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+        fi
     else
-        ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH}
+        else
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+        fi
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    if [ -n "${ALL_LANGS}" ]; then
-        ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    if [ "${PROJECT_NAME}" != "fedora-web" ]; then
+        ${WORK_PATH}/common/install.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
     else
-        ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+        usage
+        exit 1
     fi
 fi
 if [ -n "$STATS" ]; then
-    ${WORK_PATH}/common/pology-stats.sh "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+    ${WORK_PATH}/common/stats.sh "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}"
 fi
 echo "complete!"
