@@ -97,6 +97,7 @@ cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
 EOF
+chmod 644 index.html
 scp -i ~/.ssh/id_rsa index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${SCRIPT}-report
 scp -i ~/.ssh/id_rsa *.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${SCRIPT}-report
 rm -f *.gz

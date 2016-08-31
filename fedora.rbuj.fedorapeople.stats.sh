@@ -1,4 +1,18 @@
 #!/bin/bash
+# ---------------------------------------------------------------------------
+# Copyright 2016, Robert Buj <rbuj@fedoraproject.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License at <http://www.gnu.org/licenses/> for
+# more details.
+# ---------------------------------------------------------------------------
 
 export PYTHONPATH=${PWD}/pology:$PYTHONPATH
 export PATH=${PWD}/pology/bin:$PATH
@@ -67,6 +81,13 @@ function png_stat_w {
       'set key outside horizontal center bottom\n'\
       'plot "'${pattern}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
 }
+
+rpm -q gnuplot sqlite &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "download : installing required packages"
+    VERSION_AUX=( $(cat /etc/fedora-release) )
+    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite --nogpgcheck; else sudo dnf install -y gnuplot sqlite; fi
+fi
 
 populate_db
 
