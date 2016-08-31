@@ -29,6 +29,7 @@ ALL_LANGS=
 GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
+STATS=
 
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
@@ -39,6 +40,7 @@ function usage {
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -i, --install         Install translations"
+    echo "   -s, --stats           Stats for translated messages and words (requires -a)"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
@@ -118,6 +120,9 @@ case $i in
     -i|--install)
     INSTALL_TRANS="YES"
     ;;
+    -s|--stats)
+    STATS="YES"
+    ;;
     -h|--help)
     usage
     exit 0
@@ -154,6 +159,11 @@ if [ -n "${GENERATE_REPORT}" ] && [ -n "${ALL_LANGS}" ]; then
     exit 1
 fi
 
+if [ -z "${ALL_LANGS}" ] && [ -n "${STATS}" ]; then
+    usage
+    exit 1
+fi
+
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
 LIST=${INPUT_FILE}
@@ -174,5 +184,8 @@ if [ -n "$INSTALL_TRANS" ]; then
     else
         ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
     fi
+fi
+if [ -n "$STATS" ]; then
+    ${WORK_PATH}/common/project-stats.sh "-p=${PROJECT_NAME}" "-w=${WORK_PATH}"
 fi
 echo "complete!"
