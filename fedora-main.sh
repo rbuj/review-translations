@@ -99,6 +99,6 @@ if [ -n "$GENERATE_REPORT" ]; then
     fi
 fi
 if [ -n "$INSTALL_TRANS" ]; then
-    ./common//install.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -w=${WORK_PATH}
+    ./common/install.sh -l=${LANG_CODE} -p=${GROUP} -f=${LIST} -w=${WORK_PATH}
 fi
 echo "complete!"
