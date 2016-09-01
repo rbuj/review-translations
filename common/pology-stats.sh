@@ -39,15 +39,16 @@ function populate_db {
    if [ -f "${BASE_PATH}/${PROJECT_NAME}.db" ]; then
        rm -f ${BASE_PATH}/${PROJECT_NAME}.db
    fi
-   sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  "create table n (id INTEGER PRIMARY KEY, 'filename' TEXT, 'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
-   while read -r p; do
-      set -- $p
-      for FILE in $(find ${BASE_PATH}/${1} -name *.po); do
-         stdbuf -oL posieve stats --include-name=$(basename $FILE .po)\$ $(dirname $FILE) |
-         while read -r p; do
-            set -- $p
+   sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  "create table n (id INTEGER PRIMARY KEY, 'project' TEXT, 'locale' TEXT, 'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
+   while read -r f; do
+      set -- $f
+      COMPONENT=${1}
+      for LOCALE in ${LOCALES[@]}; do
+         stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${1} |
+         while read -r o; do
+            set -- $o
                if [ "${1}" != "-" ];then
-                  echo "sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  \"insert into n ('filename','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${FILE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
+                  echo "sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  \"insert into n ('project','locale','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${COMPONENT}"','"${LOCALE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
                fi
          done
       done
@@ -64,9 +65,9 @@ function png_stat_msg {
    fi
 
    for LOCALE in ${LOCALES[@]}; do
-      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='translated'";)
-      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='untranslated'";)
+      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='translated'";)
+      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='fuzzy'";)
+      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='untranslated'";)
       if [ "${translated}" != "0" ]; then
           echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
       fi
@@ -96,9 +97,9 @@ function png_stat_w {
    fi
 
    for LOCALE in ${LOCALES[@]}; do
-      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='translated'";)
-      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='untranslated'";)
+      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='translated'";)
+      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='fuzzy'";)
+      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='untranslated'";)
       if [ "${translated}" != "0" ]; then
           echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
       fi
