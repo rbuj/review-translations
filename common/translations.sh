@@ -17,7 +17,6 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-WORK_PATH=
 BASE_PATH=
 
 PROJECT_NAME=
@@ -49,92 +48,100 @@ function usage {
 }
 
 ###################################################################################
-# git
-###################################################################################
-
-function download_code_git {
-    cd ${BASE_PATH}
-    if [ ! -d "${1}" ]; then
-        echo -ne "git clone "
-        git clone $2 $1 &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-    else
-        cd $1
-        echo -ne "git pull "
-        git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
-    fi
-}
-
-function download_code_transifex {
-    cd ${BASE_PATH}
-    if [ ! -f "${1}/.tx/config" ]; then
-        mkdir -p ${1}/.tx
-        cat << EOF > ${1}/.tx/config
-[main]
-host = https://www.transifex.com
-
-[${2}.${3}]
-source_file = po/${3}.pot
-source_lang = en
-type = PO
-file_filter = po/<lang>.po
-EOF
-    fi
-    cd ${BASE_PATH}/${1}
-    if [ -n "${ALL_LANGS}" ]; then
-        tx pull -a > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
-    else
-        tx pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
-    fi
-}
 
 function download {
-case $TRANSLATION_TYPE in
-    fedora)
-        if [ -n "${ALL_LANGS}" ]; then
-            ${WORK_PATH}/common/zanata.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
-        else
-            ${WORK_PATH}/common/zanata.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
-        fi
-    ;;
-    git)
-        echo "************************************************"
-        echo "* downloading translations..."
-        echo "************************************************"
-        if [ ! -d "${BASE_PATH}" ]; then
-            mkdir -p "${BASE_PATH}"
-        fi
-        while read -r p; do
-            set -- $p
-            cd ${BASE_PATH}
-            echo -ne "${1}: "
-            download_code_git ${1} ${2}
-        done <${INPUT_FILE}
-    ;;
-    transifex)
-        rpm -q transifex-client &> /dev/null
-        if [ $? -ne 0 ]; then
-            echo "download : installing required packages"
-            VERSION_AUX=( $(cat /etc/fedora-release) )
-            if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y transifex-client --nogpgcheck; else sudo dnf install -y transifex-client; fi
-        fi
-        echo "************************************************"
-        echo "* downloading translations..."
-        echo "************************************************"
-        if [ ! -d "${BASE_PATH}" ]; then
-            mkdir -p "${BASE_PATH}"
-        fi
-        while read -r p; do
-            set -- $p
-            cd ${BASE_PATH}
-            echo -ne "${3}: "
-            download_code_transifex ${1} ${2} ${3}
-        done <${INPUT_FILE}
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-esac
+    if [ -n "${ALL_LANGS}" ]; then
+        case $TRANSLATION_TYPE in
+            fedora)
+                ${WORK_PATH}/common/download-zanata.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+            ;;
+            git|transifex)
+                ${WORK_PATH}/common/download-${$TRANSLATION_TYPE}.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+            ;;
+            *)
+                usage
+                exit 1
+            ;;
+        esac
+    else
+        case $TRANSLATION_TYPE in
+            fedora)
+                ${WORK_PATH}/common/download-zanata.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
+            ;;
+            git|transifex)
+                ${WORK_PATH}/common/download-${$TRANSLATION_TYPE}.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+            ;;
+            *)
+                usage
+                exit 1
+            ;;
+        esac
+    fi
+}
+
+###################################################################################
+
+function install {
+    case $TRANSLATION_TYPE in
+        fedora)
+            if [ "${PROJECT_NAME}" != "fedora-web" ]; then
+                ${WORK_PATH}/common/install.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+            else
+                usage
+                exit 1
+            fi
+        ;;
+        git|transifex)
+            if [ -n "${ALL_LANGS}" ]; then
+                ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+            else
+                ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+            fi
+        ;;
+        *)
+            usage
+            exit 1
+        ;;
+    esac
+}
+
+###################################################################################
+
+function report {
+    case $TRANSLATION_TYPE in
+        fedora)
+            if [ -z "${DISABLE_WORDLIST}" ]; then
+                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+                else
+                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+                fi
+            else
+                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH}
+                else
+                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
+                fi
+            fi
+	;;
+	git|transifex)
+            if [ -n "${DISABLE_WORDLIST}" ]; then
+                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
+            else
+                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
+            fi
+	;;
+	*)
+            usage
+            exit 1
+        ;;
+    esac
+}
+
+###################################################################################
+
+function stats {
+    ${WORK_PATH}/common/stats.sh "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}" "-t=${TRANSLATION_TYPE}"
 }
 
 ###################################################################################
@@ -199,6 +206,8 @@ case $i in
 esac
 done
 
+###################################################################################
+
 if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] || [ -z "${TRANSLATION_TYPE}" ]; then
     usage
     exit 1
@@ -229,59 +238,22 @@ if [ -z "${ALL_LANGS}" ] && [ -n "${STATS}" ]; then
     exit 1
 fi
 
-BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
-VERSION=$(${WORK_PATH}/common/fedora-version.sh)
+###################################################################################
 
 if [ "${DOWNLOAD}" == "YES" ]; then
     download
 fi
 
-case $TRANSLATION_TYPE in
-    git|transifex)
-        if [ -n "$GENERATE_REPORT" ]; then
-            if [ -n "${DISABLE_WORDLIST}" ]; then
-                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
-            else
-                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}" "--disable-wordlist"
-            fi
-        fi
-        if [ -n "$INSTALL_TRANS" ]; then
-            if [ -n "${ALL_LANGS}" ]; then
-                ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
-            else
-                ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${LIST}" "-w=${WORK_PATH}"
-            fi
-        fi
-    ;;
-    fedora)
-        if [ -n "$GENERATE_REPORT" ]; then
-            if [ -z "${DISABLE_WORDLIST}" ]; then
-                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
-                else
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-                fi
-            else
-                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH}
-                else
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-                fi
-            fi
-        fi
-        if [ -n "$INSTALL_TRANS" ]; then
-            if [ "${PROJECT_NAME}" != "fedora-web" ]; then
-                ${WORK_PATH}/common/install.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
-            else
-                usage
-	        exit 1
-            fi
-        fi
-    ;;
-esac
+if [ -n "$GENERATE_REPORT" ]; then
+    report
+fi
+
+if [ -n "$INSTALL_TRANS" ]; then
+    install
+fi
 
 if [ -n "$STATS" ]; then
-    ${WORK_PATH}/common/stats.sh "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}" "-t=${TRANSLATION_TYPE}"
+    stats
 fi
 
 echo "complete!"
