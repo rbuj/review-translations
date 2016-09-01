@@ -15,7 +15,7 @@
 # ---------------------------------------------------------------------------
 WORK_PATH=$PWD
 
-SCRIPTS=(./fedora-docs.sh ./fedora-main.sh ./fedora-upstream.sh ./fedora-web.sh)
+SCRIPTS=(./fedora-docs.sh ./fedora-main.sh ./fedora-upstream.sh ./fedora-web.sh ./fedora-rhel.sh)
 declare -A tasks
 LANG_CODE=
 GENERATE_REPORT=
