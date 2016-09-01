@@ -154,7 +154,7 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
-WIDTH=$((100+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*24))))
+WIDTH=$((100+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*12))))
 
 rpm -q gnuplot sqlite &> /dev/null
 if [ $? -ne 0 ]; then
