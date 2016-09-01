@@ -13,10 +13,10 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -A PROJECT_NAMES=( "fedora-main" "fedora-upstream" "fedora-web" )
-declare -A locales= ( "ca" "de" "el" "es" "fr" "gl" "it" "nl" "pt" "ru" )
-declare -A header=( ["fedora-main"]="Fedora Websites" ["fedora-upstream"]="Fedora Upstream" ["fedora-web"]="Fedora Websites" )
-declare -A languages=( ["ca"]="Catalan" ["de"]="German" ["el"]="Greek" ["es"]="Spanish" ["fr"]="French" ["gl"]="Galician" ["it"]="Italian" ["nl"]="Dutch" ["pt"]="Portuguese" ["ru"]="Russian" )
+declare -a PROJECT_NAMES=( fedora-main fedora-upstream fedora-web )
+declare -a locales=( ca de el es fr gl it nl pt ru )
+declare -A header=( [fedora-main]="Fedora Websites" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" )
+declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
 
 for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
@@ -101,7 +101,7 @@ cat << EOF >> ${HTML_REPORT}
 </html>
 EOF
 chmod 644 ${HTML_REPORT}
-${WORK_PATH}/common/project-stats.sh -p=${PROJECT_NAME} -w=${WORK_PATH}
+${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
 cp ${BASE_PATH}/${PROJECT_NAME}-msg.png ${WORK_PATH}
 cp ${BASE_PATH}/${PROJECT_NAME}-w.png ${WORK_PATH}
 done
