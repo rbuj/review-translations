@@ -26,13 +26,14 @@ im-chooser master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/im-chooser.mo
 imsettings master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/imsettings.mo
 input-pad head LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/input-pad.mo
 iok master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/iok.mo
+libbytesize master
 libguestfs master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libguestfs.mo
 libosinfo master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libosinfo.mo
 libvirt master
 libvirt-glib master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-glib.mo
 libvirt-sandbox master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/libvirt-sandbox.mo
 oscap-anaconda-addon master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/oscap-anaconda-addon.mo
-oscap-anaconda-addon rhel7-branch
+osinfo-db-tools master
 pam_krb5 master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pam_krb5.mo
 pkinit-nss master
 pulseaudio master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
