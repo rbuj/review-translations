@@ -17,4 +17,4 @@ GROUP=$(basename ${0} .sh)
 WORK_PATH=$PWD
 LIST="${WORK_PATH}/list/${GROUP}.list"
 
-./common/fedora-translations.sh -p=${GROUP} -f=${LIST} -w=${WORK_PATH} $@
+./common/translations.sh -p=${GROUP} -f=${LIST} -w=${WORK_PATH} -t="fedora" $@

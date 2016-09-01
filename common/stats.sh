@@ -18,6 +18,7 @@ WORK_PATH=
 BASE_PATH=
 PROJECT_NAME=
 INPUT_FILE=
+TRANSLATION_TYPE=
 declare -i WIDTH=0
 
 function usage {
@@ -27,6 +28,7 @@ function usage {
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo "   -w|--workpath=W_PATH  Work PATH folder"
+    echo "   -t|--type=TYPE        TYPE of translation sorce one of fedora, git, transifex"
     echo -ne "\nOptional arguments:\n"
     echo "   -h, --help            Display this help and exit"
     echo ""
@@ -42,7 +44,20 @@ function populate_db {
    sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  "create table n (id INTEGER PRIMARY KEY, 'project' TEXT, 'locale' TEXT,'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
    while read -r f; do
       set -- $f
-      COMPONENT="${1}-${2}"
+      COMPONENT=
+      case $TRANSLATION_TYPE in
+         fedora)
+            COMPONENT="${1}-${2}"
+         ;;
+         git|transifex)
+            COMPONENT="${1}"
+         ;;
+         *)
+            usage
+            exit 1
+         ;;
+      esac
+
       for LOCALE in ${LOCALES[@]}; do
          stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${1}-${2} |
          while read -r o; do
@@ -135,6 +150,10 @@ case $i in
     WORK_PATH="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--type=*)
+    TRANSLATION_TYPE="${i#*=}"
+    shift # past argument=value
+    ;;
     -h|--help)
     usage
     exit 0
@@ -146,7 +165,7 @@ case $i in
 esac
 done
 
-if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] || [ -z "${TRANSLATION_TYPE}" ]; then
     usage
     exit 1
 fi

@@ -17,4 +17,5 @@ PROJECT_NAME=$(basename ${0} .sh)
 WORK_PATH=$PWD
 LIST=${WORK_PATH}/list/${PROJECT_NAME}.list
 
-./common/transifex-translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} $@
+./common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t="transifex" $@
+
