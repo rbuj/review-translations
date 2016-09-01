@@ -56,7 +56,7 @@ function download {
                 ${WORK_PATH}/common/download-zanata.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
             ;;
             git|transifex)
-                ${WORK_PATH}/common/download-${$TRANSLATION_TYPE}.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+                ${WORK_PATH}/common/download-${TRANSLATION_TYPE}.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
             ;;
             *)
                 usage
@@ -69,7 +69,7 @@ function download {
                 ${WORK_PATH}/common/download-zanata.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -u=https://fedora.zanata.org/ -w=${WORK_PATH}
             ;;
             git|transifex)
-                ${WORK_PATH}/common/download-${$TRANSLATION_TYPE}.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+                ${WORK_PATH}/common/download-${TRANSLATION_TYPE}.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
             ;;
             *)
                 usage
