@@ -1,4 +1,9 @@
+appstream-glib master
+blivet-gui f25-branch
+certmonger master
+classified-ads 0.10rc1
 cockpit master
+cracklib master
 dnf master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf.mo
 dnf-plugin-system-upgrade master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugin-system-upgrade.mo
 dnf-plugins-core master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/dnf-plugins-core.mo
@@ -30,14 +35,13 @@ oscap-anaconda-addon master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/oscap
 oscap-anaconda-addon rhel7-branch
 pam_krb5 master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pam_krb5.mo
 pkinit-nss master
-pulseaudio 6.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
+pulseaudio master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
 python-fedora 0.4.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-fedora.mo
 spacewalk-other master
 spacewalk-frontend master
 sssd master po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/sssd.mo
 storaged storaged LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/storaged.mo
-tvtime 1.0.6 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/tvtime.mo
-tvtime 1.0.7 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/tvtime.mo
+tvtime 1.0.9 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/tvtime.mo
 v4l-utils 1.8.1 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/v4l-utils.mo
 virt-manager master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-manager.mo
 virt-top master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/virt-top.mo

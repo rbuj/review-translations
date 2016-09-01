@@ -10,6 +10,7 @@ initial-setup rhel7-branch
 libreport rhel6
 libreport rhel7
 oscap-anaconda-addon rhel7-branch
+pulseaudio 6.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
 pykickstart rhel7-branch
 python-meh rhel7-branch
 rhel-comps master
