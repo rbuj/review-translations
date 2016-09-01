@@ -80,10 +80,11 @@ for LOCALE in ${locales[@]}; do
   <tr>
     <td>${LOCALE}</td>
     <td><A HREF="${PROJECT_NAME}.${LOCALE}.html.gz">${languages[${LOCALE}]}</A></td>
-    <td>${$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)}</td>
-    <td>${$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)}</td>
+    <td>$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)</td>
+    <td>$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)</td>
   </tr>
 EOF
+exit
 done
 cat << EOF >> ${HTML_REPORT}
 </table>
