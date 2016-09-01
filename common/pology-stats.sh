@@ -67,7 +67,9 @@ function png_stat_msg {
       translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='translated'";)
       fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='fuzzy'";)
       untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where filename like '%${LOCALE}.po' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
+      if [ "${translated}" != "0" ]; then
+          echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
+      fi
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
 
@@ -97,7 +99,9 @@ function png_stat_w {
       translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='translated'";)
       fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='fuzzy'";)
       untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where filename like '%${LOCALE}.po' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
+      if [ "${translated}" != "0" ]; then
+          echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
+      fi
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
 
