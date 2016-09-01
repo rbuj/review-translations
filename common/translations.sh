@@ -31,6 +31,7 @@ GENERATE_REPORT=
 DISABLE_WORDLIST=
 INSTALL_TRANS=
 STATS=
+DOWNLOAD="YES"
 
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
@@ -42,6 +43,7 @@ function usage {
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -i, --install         Install translations"
     echo "   -s, --stats           Stats for translated messages and words (requires -a)"
+    echo "   -n                    Do not download the translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
@@ -183,6 +185,9 @@ case $i in
     LT_PORT="${i#*=}"
     shift # past argument=value
     ;;
+    -n)
+    DOWNLOAD="NO"
+    ;;
     -h|--help)
     usage
     exit 0
@@ -227,7 +232,9 @@ fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
-download
+if [ "${DOWNLOAD}" == "YES" ]; then
+    download
+fi
 
 case $TRANSLATION_TYPE in
     git|transifex)
