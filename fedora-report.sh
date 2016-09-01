@@ -19,9 +19,24 @@ declare -A header=( [fedora-main]="Fedora Websites" [fedora-upstream]="Fedora Up
 declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
 
+echo "***************************************"
+echo "* downloading translations ..."
+echo "***************************************"
+for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
+    cd ${WORK_PATH}
+    for LOCALE in ${locales[@]}; do
+        ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE;
+    done
+done
+
+echo "***************************************"
+echo "* reports ..."
+echo "***************************************"
 for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+cd ${WORK_PATH}
+rm -f ${WORK_PATH}/${PROJECT_NAME}.*.html.gz ${WORK_PATH}/${PROJECT_NAME}.*.html
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html>
@@ -72,9 +87,10 @@ figure figcaption {
   </tr>
 EOF
 for LOCALE in ${locales[@]}; do
-    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist;
+    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n;
     mv ${WORK_PATH}/${PROJECT_NAME}-report.html ${WORK_PATH}/${PROJECT_NAME}-report.${LOCALE}.html;
     cd ${WORK_PATH}
+    rm -f ${PROJECT_NAME}-report.${LOCALE}.html.gz
     gzip ${PROJECT_NAME}-report.${LOCALE}.html
     cat << EOF >> ${HTML_REPORT}
   <tr>
@@ -84,25 +100,34 @@ for LOCALE in ${locales[@]}; do
     <td>$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)</td>
   </tr>
 EOF
-exit
 done
 cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
-  <img src="${PROJECT_NAME}-msg.png" alt="Messages">
+  <img src="/img/${PROJECT_NAME}-msg.png" alt="Messages">
   <figcaption style="text-align: center;">Fig.1 - Messages.</figcaption>
 </figure>
 <figure>
-  <img src="${PROJECT_NAME}-w.png" alt="Words">
+  <img src="/img/${PROJECT_NAME}-w.png" alt="Words">
   <figcaption style="text-align: center;">Fig.1 - Words.</figcaption>
 </figure>
-<br/>${$(LC_ALL=en.utf8 date '+%B %d, %Y')}.
+<br/>$(LC_ALL=en.utf8 date)
 <br/><br/>&copy; 2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
 </body>
 </html>
 EOF
 chmod 644 ${HTML_REPORT}
 ${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
-cp ${BASE_PATH}/${PROJECT_NAME}-msg.png ${WORK_PATH}
-cp ${BASE_PATH}/${PROJECT_NAME}-w.png ${WORK_PATH}
+rm -f ${WORK_PATH}/${PROJECT_NAME}-msg.png; cp ${BASE_PATH}/${PROJECT_NAME}-msg.png ${WORK_PATH}
+rm -f ${WORK_PATH}/${PROJECT_NAME}-w.png; cp ${BASE_PATH}/${PROJECT_NAME}-w.png ${WORK_PATH}
+done
+
+echo "***************************************"
+echo "* uploading ..."
+echo "***************************************"
+for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
+    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-msg.png rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/img
+    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-w.png rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/img
+    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}.*.html.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 done
