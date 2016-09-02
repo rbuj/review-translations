@@ -13,33 +13,22 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -a PROJECT_NAMES=( fedora-main fedora-upstream fedora-web )
+declare -a PROJECT_NAMES=( compiz-reloaded fedora-docs fedora-main fedora-rhel fedora-upstream fedora-web MATE XFCE )
 declare -a locales=( ca de el es fr gl it nl pt ru )
-declare -A header=( [fedora-main]="Fedora Main" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" )
+declare -A header=( [fedora-main]="Fedora Main" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" [fedora-rhel]="Fedora RHEL" [fedora-docs]="Fedora Documentation" [MATE]="MATE Desktop Environment" [XFCE]="XFCE Desktop Environment" [compiz-reloaded]="Compiz Reloaded (Compiz 0.8.x)" )
 declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
-
-echo "***************************************"
-echo "* downloading translations ..."
-echo "***************************************"
-for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
-    cd ${WORK_PATH}
-    for LOCALE in ${locales[@]}; do
-        ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE;
-    done
-done
 
 echo "***************************************"
 echo "* reports ..."
 echo "***************************************"
 for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
+${WORK_PATH}/${PROJECT_NAME}.sh -a;
 HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
-cd ${WORK_PATH}
-rm -f ${WORK_PATH}/${PROJECT_NAME}.*.html.gz ${WORK_PATH}/${PROJECT_NAME}.*.html
 cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>${header[${PROJECT_NAME}]}</title>
 <style>
@@ -96,7 +85,7 @@ for LOCALE in ${locales[@]}; do
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><A HREF="${PROJECT_NAME}.${LOCALE}.html.gz">${languages[${LOCALE}]}</A></td>
+    <td><a href="${PROJECT_NAME}.${LOCALE}.html.gz">${languages[${LOCALE}]}</a></td>
     <td>$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)</td>
     <td>$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)</td>
   </tr>
@@ -127,12 +116,9 @@ cat << EOF >> ${HTML_REPORT}
 </html>
 EOF
 chmod 644 ${HTML_REPORT}
-done
-
 echo "***************************************"
 echo "* uploading ..."
 echo "***************************************"
-for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
-    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}.*.html.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
-    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
+scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-report.*.html.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 done
