@@ -89,7 +89,7 @@ function png_stat_msg {
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
 
-   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total'" | wc -c)*12))
+   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(result) from (select sum(msg) as result from n where state='total' group by locale)" | wc -c)*10))
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -122,7 +122,7 @@ function png_stat_w {
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
 
-   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total'" | wc -c)*12))
+   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(result) from (select sum(w_or) as result from n where state='total' group by locale)" | wc -c)*10))
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-w.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
