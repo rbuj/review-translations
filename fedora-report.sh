@@ -96,11 +96,11 @@ cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-msg.png)" alt="Messages">
-  <figcaption style="text-align: center;">Fig.1 - Messages.</figcaption>
+  <figcaption>Fig.1 - Messages.</figcaption>
 </figure>
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-w.png)" alt="Words">
-  <figcaption style="text-align: center;">Fig.2 - Words.</figcaption>
+  <figcaption>Fig.2 - Words.</figcaption>
 </figure>
 <br>$(LC_ALL=en.utf8 date)
 <br><br>&copy; 2015-2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
