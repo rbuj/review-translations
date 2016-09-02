@@ -59,7 +59,7 @@ function populate_db {
       esac
 
       for LOCALE in ${LOCALES[@]}; do
-         stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${1}-${2} |
+         stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${COMPONENT} |
          while read -r o; do
             set -- $o
                if [ "${1}" != "-" ];then
