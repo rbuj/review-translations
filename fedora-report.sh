@@ -15,7 +15,7 @@
 # ---------------------------------------------------------------------------
 declare -a PROJECT_NAMES=( fedora-main fedora-upstream fedora-web )
 declare -a locales=( ca de el es fr gl it nl pt ru )
-declare -A header=( [fedora-main]="Fedora Websites" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" )
+declare -A header=( [fedora-main]="Fedora Main" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" )
 declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
 
@@ -41,6 +41,7 @@ cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html>
 <head>
+<title>${header[${PROJECT_NAME}]}</title>
 <style>
 table {
     font-family: arial, sans-serif;
@@ -101,33 +102,37 @@ for LOCALE in ${locales[@]}; do
   </tr>
 EOF
 done
+${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
 cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
-  <img src="/img/${PROJECT_NAME}-msg.png" alt="Messages">
+  <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-msg.png)" alt="Messages">
   <figcaption style="text-align: center;">Fig.1 - Messages.</figcaption>
 </figure>
 <figure>
-  <img src="/img/${PROJECT_NAME}-w.png" alt="Words">
-  <figcaption style="text-align: center;">Fig.1 - Words.</figcaption>
+  <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-w.png)" alt="Words">
+  <figcaption style="text-align: center;">Fig.2 - Words.</figcaption>
 </figure>
-<br/>$(LC_ALL=en.utf8 date)
-<br/><br/>&copy; 2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
+<br>$(LC_ALL=en.utf8 date)
+<br><br>&copy; 2015-2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
+<br><br>
+    Copyright (C) $(LC_ALL=en.utf8 date '+%Y') Robert Antoni Buj Gelonch.
+    Permission is granted to copy, distribute and/or modify this document
+    under the terms of the GNU Free Documentation License, Version 1.3
+    or any later version published by the Free Software Foundation;
+    with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+    A copy of the license is included in the section entitled "GNU
+    Free Documentation License".
 </body>
 </html>
 EOF
 chmod 644 ${HTML_REPORT}
-${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
-rm -f ${WORK_PATH}/${PROJECT_NAME}-msg.png; cp ${BASE_PATH}/${PROJECT_NAME}-msg.png ${WORK_PATH}
-rm -f ${WORK_PATH}/${PROJECT_NAME}-w.png; cp ${BASE_PATH}/${PROJECT_NAME}-w.png ${WORK_PATH}
 done
 
 echo "***************************************"
 echo "* uploading ..."
 echo "***************************************"
 for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
-    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-msg.png rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/img
-    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-w.png rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/img
     scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}.*.html.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
     scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 done

@@ -89,8 +89,9 @@ function png_stat_msg {
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
 
+   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total'" | wc -c)*12))
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.png"\n'\
-      'set term png size '$WIDTH',720 noenhanced\n'\
+      'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
@@ -121,8 +122,9 @@ function png_stat_w {
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
 
+   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total'" | wc -c)*12))
    echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-w.png"\n'\
-      'set term png size '$WIDTH',720 noenhanced\n'\
+      'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
@@ -174,7 +176,7 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
-WIDTH=$((100+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*12))))
+WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
 
 rpm -q gnuplot sqlite &> /dev/null
 if [ $? -ne 0 ]; then
