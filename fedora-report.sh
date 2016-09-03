@@ -117,7 +117,7 @@ INPUT_FILE="${WORK_PATH}/list/${PROJECT_NAME}.list"
 for PACKAGE in $(cat $INPUT_FILE | cut -d ' ' -f1 | sort -u); do
   cat << EOF >> ${HTML_REPORT}
   <tr>
-    <td>${PACKAGE}</td>
+    <td nowrap>${PACKAGE}</td>
     <td>$(dnf repoquery -q --queryformat "%{description}" $PACKAGE)</td>
   </tr>
 EOF
