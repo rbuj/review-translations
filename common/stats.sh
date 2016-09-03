@@ -72,7 +72,7 @@ function populate_db {
 }
 
 function png_stat_msg {
-   WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
+   WIDTH=$((110+$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
    echo "************************************************"
    echo "* message stats..."
    echo "************************************************"
@@ -80,13 +80,11 @@ function png_stat_msg {
       rm -f ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
    fi
 
-   for LOCALE in ${LOCALES[@]}; do
+   for LOCALE in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
       translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='translated'";)
       fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='fuzzy'";)
       untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='untranslated'";)
-      if [ "${translated}" != "0" ]; then
-          echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
-      fi
+      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
 
@@ -141,7 +139,7 @@ function png_stat_msg_locale {
 }
 
 function png_stat_w {
-   WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
+   WIDTH=$((110+$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
    echo "************************************************"
    echo "* word stats..."
    echo "************************************************"
@@ -149,13 +147,11 @@ function png_stat_w {
       rm -f ${BASE_PATH}/${PROJECT_NAME}-w.tsv
    fi
 
-   for LOCALE in ${LOCALES[@]}; do
+   for LOCALE in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
       translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='translated'";)
       fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='fuzzy'";)
       untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='untranslated'";)
-      if [ "${translated}" != "0" ]; then
-          echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
-      fi
+      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
    done
    echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
 
