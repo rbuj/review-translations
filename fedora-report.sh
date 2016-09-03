@@ -126,6 +126,9 @@ cat << EOF >> ${HTML_REPORT}
 </table>
 EOF
 fi
+cat << EOF >> ${HTML_REPORT}
+<br>
+EOF
 
 for LOCALE in ${locales[@]}; do
 if [ -f "${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
