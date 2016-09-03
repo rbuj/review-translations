@@ -85,7 +85,7 @@ for LOCALE in ${locales[@]}; do
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><a href="${PROJECT_NAME}.${LOCALE}.html.gz">${languages[${LOCALE}]}</a></td>
+    <td><a href="${PROJECT_NAME}-report.${LOCALE}.html.gz">${languages[${LOCALE}]}</a></td>
     <td>$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)</td>
     <td>$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)</td>
   </tr>
