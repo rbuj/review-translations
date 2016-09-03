@@ -72,6 +72,7 @@ function populate_db {
 }
 
 function png_stat_msg {
+   WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
    echo "************************************************"
    echo "* message stats..."
    echo "************************************************"
@@ -104,7 +105,43 @@ function png_stat_msg {
    echo "${BASE_PATH}/${PROJECT_NAME}-msg.png"
 }
 
+function png_stat_msg_locale {
+   LOCALE="${1}"
+   WIDTH=$((260+$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(result) from (select distinct project as result from n where locale='${LOCALE}')")*14))))
+
+   echo "************************************************"
+   echo "* message stats..."
+   echo "************************************************"
+   if [ -f "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv" ]; then
+      rm -f ${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+   fi
+
+   for COMPONENT in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select distinct project from n where locale='${LOCALE}'";); do
+      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='translated' and project='$COMPONENT'";)
+      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='fuzzy' and project='$COMPONENT'";)
+      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='untranslated' and project='$COMPONENT'";)
+      echo "${COMPONENT} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+   done
+   echo "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
+
+   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total' and locale='${LOCALE}'" | wc -c)*10))
+   echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
+      'set term png size '$(($WIDTH+$LEGEND))',720 noenhanced\n'\
+      'set boxwidth 0.8\n'\
+      'set title "locale: '${LOCALE}'"\n'\
+      'set style fill solid 1.00 border 0\n'\
+      'set style data histogram\n'\
+      'set style histogram rowstacked\n'\
+      'set key outside right vertical font ",10"\n'\
+      'set ylabel "messages"\n'\
+      'set xtics rotate font ",10"\n'\
+      'plot "'${BASE_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
+   chmod 644 "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+   echo "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+}
+
 function png_stat_w {
+   WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
    echo "************************************************"
    echo "* word stats..."
    echo "************************************************"
@@ -176,7 +213,6 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
-WIDTH=$((110+$(($(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u | wc -l)*14))))
 
 rpm -q gnuplot sqlite &> /dev/null
 if [ $? -ne 0 ]; then
@@ -188,3 +224,7 @@ fi
 populate_db
 png_stat_msg
 png_stat_w
+
+for LOCALE in ${LOCALES[@]}; do
+    png_stat_msg_locale $LOCALE
+done

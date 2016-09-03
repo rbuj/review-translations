@@ -127,6 +127,17 @@ cat << EOF >> ${HTML_REPORT}
 EOF
 fi
 
+for LOCALE in ${locales[@]}; do
+if [ -f "${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
+FILE="${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png"
+cat << EOF >> ${HTML_REPORT}
+<figure>
+  <img src="data:image/png;base64,$(base64 -w 0 ${FILE})" alt="Messages">
+</figure>
+EOF
+fi
+done
+
 cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
 <br><br>&copy; 2015-2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
