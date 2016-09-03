@@ -13,9 +13,9 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -a PROJECT_NAMES=( compiz-reloaded fedora-docs fedora-main fedora-rhel fedora-upstream fedora-web MATE XFCE )
+declare -a PROJECT_NAMES=( audacious compiz-reloaded fedora-main fedora-rhel fedora-upstream fedora-web rpm MATE XFCE )
 declare -a locales=( ca de el es fr gl it nl pt ru )
-declare -A header=( [fedora-main]="Fedora Main" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" [fedora-rhel]="Fedora RHEL" [fedora-docs]="Fedora Documentation" [MATE]="MATE Desktop Environment" [XFCE]="XFCE Desktop Environment" [compiz-reloaded]="Compiz Reloaded (Compiz 0.8.x)" )
+declare -A header=( [audacious]="Audacious - An Advanced Audio Player" [fedora-main]="Fedora Main" [fedora-rhel]="Fedora RHEL" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" [fedora-docs]="Fedora Documentation" [MATE]="MATE Desktop Environment" [rpm]="RPM Software Management" [XFCE]="XFCE Desktop Environment" [compiz-reloaded]="Compiz Reloaded (Compiz 0.8.x)" )
 declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
 
@@ -96,12 +96,38 @@ cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-msg.png)" alt="Messages">
-  <figcaption>Fig.1 - Messages.</figcaption>
+  <figcaption>Fig.1 - Global translation - message stats by language.</figcaption>
 </figure>
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${BASE_PATH}/${PROJECT_NAME}-w.png)" alt="Words">
-  <figcaption>Fig.2 - Words.</figcaption>
+  <figcaption>Fig.2 - Global translation - word stats by language.</figcaption>
 </figure>
+EOF
+
+if [ "${PROJECT_NAME}" != "fedora-web" ] && [ "${PROJECT_NAME}" != "fedora-rhel" ]; then
+cat << EOF >> ${HTML_REPORT}
+<h2>Package List</h2>
+<table>
+  <tr>
+    <th>Package Name</th>
+    <th>Description</th>
+  </tr>
+EOF
+INPUT_FILE="${WORK_PATH}/list/${PROJECT_NAME}.list"
+for PACKAGE in $(cat $INPUT_FILE | cut -d ' ' -f1 | sort -u); do
+  cat << EOF >> ${HTML_REPORT}
+  <tr>
+    <td>${PACKAGE}</td>
+    <td>$(dnf repoquery -q --queryformat "%{description}" $PACKAGE)</td>
+  </tr>
+EOF
+done
+cat << EOF >> ${HTML_REPORT}
+</table>
+EOF
+fi
+
+cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
 <br><br>&copy; 2015-2016 Robert Antoni Buj Gelonch - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
 <br><br>
