@@ -13,26 +13,25 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -a PROJECT_NAMES=( audacious compiz-reloaded fedora-main fedora-rhel fedora-upstream fedora-web geany MATE rpm XFCE )
 declare -a locales=( ca de el es fr gl it nl pt ru )
-declare -A header=( [audacious]="Audacious - An Advanced Audio Player" [compiz-reloaded]="Compiz Reloaded (Compiz 0.8.x)" [fedora-main]="Fedora Main" [fedora-rhel]="Fedora RHEL" [fedora-upstream]="Fedora Upstream" [fedora-web]="Fedora Websites" [fedora-docs]="Fedora Documentation" [geany]="Geany Text Editor" [MATE]="MATE Desktop Environment" [rpm]="RPM Software Management" [XFCE]="XFCE Desktop Environment" )
 declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
 WORK_PATH=$PWD
+PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
 DB_PATH="${WORK_PATH}/fedora-report.db"
-NEW_DB=
 
 ########################################################
 
-# PROJECT_NAME
+# PROJECT_NAME TITLE
 function start_report_index_html {
     PROJECT_NAME=${1}
+    TITLE=${2}
     HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>${header[${PROJECT_NAME}]}</title>
+<title>${TITLE}</title>
 <style>
 table {
     font-family: arial, sans-serif;
@@ -68,7 +67,7 @@ figure figcaption {
 </head>
 <body>
 
-<h1>${header[${PROJECT_NAME}]}</h1>
+<h1>${TITLE}</h1>
 <h2>spelling and grammar report</h2>
 <table>
   <tr>
@@ -155,9 +154,10 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME
+# PROJECT_NAME LIST
 function report_package_table {
     PROJECT_NAME=${1}
+    LIST=${2}
     HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     if [ "${PROJECT_NAME}" != "fedora-web" ] && [ "${PROJECT_NAME}" != "fedora-rhel" ]; then
@@ -169,8 +169,7 @@ function report_package_table {
     <th>Description</th>
   </tr>
 EOF
-        INPUT_FILE="${WORK_PATH}/list/${PROJECT_NAME}.list"
-        for PACKAGE in $(cat $INPUT_FILE | cut -d ' ' -f1 | sort -u); do
+        for PACKAGE in $(cat $LIST | cut -d ' ' -f1 | sort -u); do
             cat << EOF >> ${HTML_REPORT}
   <tr>
     <td nowrap>${PACKAGE}</td>
@@ -220,17 +219,17 @@ EOF
 # PROJECT_NAME
 function update_db() {
     PROJECT_NAME=${1}
-    LOCALES=$(find ${WORK_PATH}/${PROJECT_NAME} -name *.po -exec basename {} .po \; | sort -u)
+    LOCALES=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec basename {} .po \; | sort -u)
     declare -i date_file
     declare -i date_report
 
     sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_projects (id INTEGER PRIMARY KEY AUTOINCREMENT, 'project' TEXT NOT NULL UNIQUE, 'date_file' INTEGER DEFAULT 0, 'date_report' INTEGER DEFAULT 0);"
     sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_locales (id INTEGER PRIMARY KEY AUTOINCREMENT, 'locale' TEXT NOT NULL UNIQUE);"
-    sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_updates (id INTEGER PRIMARY KEY AUTOINCREMENT, 'id_project' INTEGER, 'id_locale' INTEGER, 'date_file' INTEGER DEFAULT 0, 'date_report' INTEGER DEFAULT 0, UNIQUE(id_project, id_locale) ON CONFLICT IGNORE);"
+    sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_updates (id INTEGER PRIMARY KEY AUTOINCREMENT, 'id_project' INTEGER, 'id_locale' INTEGER, 'date_file' INTEGER DEFAULT 0, 'date_report' INTEGER DEFAULT 0, UNIQUE(id_project, id_locale) ON CONFLICT IGNORE, FOREIGN KEY(id_project) REFERENCES t_projects(id), FOREIGN KEY(id_locale) REFERENCES t_locales(id));"
 
     # add the project in t_projects table if not exists, and update date_file field (PO_FILE latest modification)
     sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_projects (project) VALUES ('${PROJECT_NAME}');"
-    date_file=$(find ${WORK_PATH}/${PROJECT_NAME} -name *.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+    date_file=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
     id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
     sqlite3 ${DB_PATH} "UPDATE t_projects SET date_file = ${date_file} WHERE id = ${id_project};"
 
@@ -240,7 +239,7 @@ function update_db() {
             # add the locale in t_locales if not exists
             sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_locales (locale) VALUES ('${LOCALE}');"
             # get required fiels for updating t_updates
-            date_file_t_updates=$(find ${WORK_PATH}/${PROJECT_NAME} -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+            date_file_t_updates=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             # add the update in t_projects table if not exists, and update date_file field (PO_FILE latest modification)
             sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_updates (id_project,id_locale,date_file) VALUES (${id_project},${id_locale},${date_file_t_updates});"
@@ -255,7 +254,8 @@ echo "* reports ..."
 echo "***************************************"
 declare -i date_file
 declare -i date_report
-for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
+for PROJECT_NAME in ${PROJECTS[@]}; do
+    source ${WORK_PATH}/conf/audacious.conf
     echo "* project: ${PROJECT_NAME}"
     download_all_translations ${PROJECT_NAME}
     update_db ${PROJECT_NAME}
@@ -265,7 +265,7 @@ for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
 
     if [ "$date_report" -lt "$date_file" ]; then
-        start_report_index_html ${PROJECT_NAME}
+        start_report_index_html ${PROJECT_NAME} ${TITLE}
         for LOCALE in ${locales[@]}; do
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_project = ${id_project} AND id_locale = ${id_locale};")
@@ -279,7 +279,7 @@ for PROJECT_NAME in ${PROJECT_NAMES[@]}; do
             fi
         done
         create_report_stats ${PROJECT_NAME}
-        report_package_table ${PROJECT_NAME}
+        report_package_table ${PROJECT_NAME} ${LIST}
         add_locale_stats ${PROJECT_NAME}
         end_report_index_html ${PROJECT_NAME}
         chmod 644 ${WORK_PATH}/${PROJECT_NAME}-index.html

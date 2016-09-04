@@ -1,6 +1,6 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Copyright 2016, Robert Buj <rbuj@fedoraproject.org>
+# Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,8 +13,6 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-PROJECT_NAME=$(basename ${0} .sh)
-WORK_PATH=$PWD
-LIST=${WORK_PATH}/list/${PROJECT_NAME}.list
+source ${PWD}/conf/$(basename ${0} .sh).conf
 
-./common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t="git" $@
+${PWD}/common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t=${TYPE} $@
