@@ -254,8 +254,8 @@ echo "* reports ..."
 echo "***************************************"
 declare -i date_file
 declare -i date_report
-for PROJECT_NAME in ${PROJECTS[@]}; do
-    source ${WORK_PATH}/conf/audacious.conf
+for PROJECT in ${PROJECTS[@]}; do
+    source ${WORK_PATH}/conf/${PROJECT}.conf
     echo "* project: ${PROJECT_NAME}"
     download_all_translations ${PROJECT_NAME}
     update_db ${PROJECT_NAME}
