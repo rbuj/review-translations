@@ -16,6 +16,7 @@ fedora-report.db
 fedora-rhel
 fedora-upstream
 fedora-web
+freedesktop
 fwupd
 geany
 gnome
@@ -25,7 +26,6 @@ sugar
 VirtpyAskboot
 XFCE
 yumex
-yumex-dnf
 zif
 *-report.html
 *-index.html

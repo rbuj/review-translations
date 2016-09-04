@@ -43,8 +43,7 @@ More scripts:
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 * XFCE.sh : downloads and tests the translations of [xfce](http://www.xfce.org/)
-* yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/)
-* yumex-dnf.sh : downloads and tests the translations of [yumex-dnf](http://www.yumex.dk/)
+* yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/) and [yumex-dnf](http://www.yumex.dk/)
 * zif.sh : downloads and tests the translations of [ZIF](https://people.freedesktop.org/~hughsient/zif/). It's now a dead project.
 
 Installation on Fedora
