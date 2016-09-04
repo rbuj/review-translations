@@ -24,7 +24,6 @@ Components (scripts which are used by other scrips):
 * common/zanata.sh : downloads the translations from zanata
 
 More scripts:
-* accounts-service.sh : downloads and tests the translations of [accounts-service](http://freedesktop.org/wiki/Software/AccountsService/)
 * appstream.sh : downloads and tests the translations of [AppStream](http://www.freedesktop.org/wiki/Distributions/AppStream/)
 * appstream-glib.sh : downloads and tests the translations of [appstream-glib](https://github.com/hughsie/appstream-glib)
 * askbot.sh : downloads and tests the translations of [askbot](https://askbot.com/) which is used in [Ask Fedora](https://ask.fedoraproject.org)
@@ -36,16 +35,13 @@ More scripts:
 * compiz-reloaded.sh: downloads and tests the translations of [Compiz](http://www.compiz.org/)
 * deploy.sh : a deployment example for publishing the reports in a local apache server
 * exaile.sh: downloads and tests the translations of [exaile](http://www.exaile.org/)
-* fprintd.sh : downloads and tests the translations of [fprintd](http://www.freedesktop.org/wiki/Software/fprint/)
+* freedesktop.sh : downloads and tests the translations of [accounts-service](http://freedesktop.org/wiki/Software/AccountsService/), [fprintd](http://www.freedesktop.org/wiki/Software/fprint/), [PackageKit](http://www.freedesktop.org/software/PackageKit/), [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/) and [udisks2](http://www.freedesktop.org/wiki/Software/udisks/)
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
 * geany.sh : downloads and tests the translations of [geany](http://www.geany.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
 * MATE.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
-* PackageKit.sh : downloads and tests the translations of [PackageKit](http://www.freedesktop.org/software/PackageKit/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
-* shared-mime-info.sh : downloads and tests the translations of [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
-* udisks2.sh : downloads and tests the translations of [udisks2](http://www.freedesktop.org/wiki/Software/udisks/)
 * XFCE.sh : downloads and tests the translations of [xfce](http://www.xfce.org/)
 * yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/)
 * yumex-dnf.sh : downloads and tests the translations of [yumex-dnf](http://www.yumex.dk/)

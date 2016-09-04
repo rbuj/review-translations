@@ -1,0 +1,5 @@
+accounts-service accounts-service accounts-service-pot
+fprintd fprintd fprintd-po-fprintd-pot
+PackageKit packagekit master
+shared-mime-info shared-mime-info efault-po-shared-mime-info-pot_0
+udisks2 udisks udisks2master

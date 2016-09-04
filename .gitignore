@@ -1,6 +1,5 @@
 languagetool
 pology
-accounts-service
 appstream
 appstream-glib
 askbot
@@ -17,16 +16,12 @@ fedora-report.db
 fedora-rhel
 fedora-upstream
 fedora-web
-fprintd
 fwupd
 geany
 gnome
 MATE
-PackageKit
 rpm
-shared-mime-info
 sugar
-udisks2
 VirtpyAskboot
 XFCE
 yumex
