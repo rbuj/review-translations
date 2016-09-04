@@ -13,6 +13,8 @@ compiz-reloaded
 exaile
 fedora-docs
 fedora-main
+fedora-report.db
+fedora-rhel
 fedora-upstream
 fedora-web
 fprintd
@@ -32,6 +34,4 @@ yumex-dnf
 zif
 *-report.html
 *-index.html
-*-w.png
-*-msg.png
 *.html.gz
