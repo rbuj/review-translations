@@ -23,6 +23,7 @@ HTML_REPORT=
 
 LANG_CODE=
 PROJECT_NAME=
+TRANSLATION_TYPE=
 INPUT_FILE=
 DISABLE_WORDLIST=
 VERBOSE=
@@ -38,6 +39,7 @@ function usage {
     echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
     echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
     echo "   -w|--workpath=W_PATH  Work PATH folder"
+    echo "   -t|--type=TYPE        TYPE of translation sorce one of fedora, git, transifex"
     echo -ne "\nOptional arguments:\n"
     echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
@@ -62,20 +64,39 @@ function fedora_wordlist {
 
 # project_name project_version html_filename
 function report_project_cotent {
-    echo "${1} (${2})"
+    COMPONENT=
+    HTML_ID=
+    case $TRANSLATION_TYPE in
+        fedora)
+            COMPONENT="${1}-${2}"
+            HTML_PART_ID="${1}${2}"
+            HTML_H1="${1} ($2)"
+            echo "${1} (${2})"
+        ;;
+        git|transifex)
+            COMPONENT="${1}"
+            HTML_PART_ID="${1}"
+            HTML_H1="${1}"
+            echo "${1}"
+       ;;
+       *)
+            usage
+            exit 1
+       ;;
+    esac
     cat << EOF >> ${HTML_REPORT}
-<h1 id=${1}${2}>${1} ($2)<a href="#toc">[^]</a></h1>
-<h2 id=CheckSpellEc${1}${2}>check-spell-ec <a href="#toc">[^]</a></h2>
+<h1 id=${HTML_PART_ID}>${HTML_H1}<a href="#toc">[^]</a></h1>
+<h2 id=CheckSpellEc${HTML_PART_ID}>check-spell-ec <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
     cat << EOF >> ${HTML_REPORT}
-<h2 id=CheckRules${1}${2}>check-rules <a href="#toc">[^]</a></h2>
+<h2 id=CheckRules${HTML_PART_ID}>check-rules <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-rules -s lang:${LANG_CODE} -s showfmsg --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
     cat << EOF >> ${HTML_REPORT}
-<h2 id=CheckGrammar${1}${2}>check-grammar <a href="#toc">[^]</a></h2>
+<h2 id=CheckGrammar${HTML_PART_ID}>check-grammar <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${1}-${2}/ >> ${HTML_REPORT}
+    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
 }
 
 function report_toc {
@@ -86,8 +107,22 @@ EOF
     COUNTER=1
     while read -r p; do
         set -- $p
+        case $TRANSLATION_TYPE in
+            fedora)
+                HTML_PART_ID="${1}${2}"
+                HTML_H1="${1} ($2)"
+            ;;
+            git|transifex)
+                HTML_PART_ID="${1}"
+                HTML_H1="${1}"
+           ;;
+           *)
+               usage
+               exit 1
+           ;;
+    esac
         cat << EOF >> ${HTML_REPORT}
-  <li><span class="secno">${COUNTER}</span> <span><a href="#${1}${2}">${1} (${2})</a></span></li>
+  <li><span class="secno">${COUNTER}</span> <span><a href="#${HTML_PART_ID}">${HTML_H1}</a></span></li>
 EOF
         let "COUNTER++"
     done <${INPUT_FILE}
@@ -177,7 +212,18 @@ EOF
     report_toc
     while read -r p; do
         set -- $p
-        report_project_cotent ${1} ${2}
+        case $TRANSLATION_TYPE in
+            fedora)
+                report_project_cotent ${1} ${2}
+            ;;
+	    git|transifex)
+                report_project_cotent ${1}
+            ;;
+            *)
+                usage
+                exit 1
+            ;;
+        esac
     done <${INPUT_FILE}
 
     cat << EOF >> ${HTML_REPORT}
@@ -220,6 +266,10 @@ case $i in
     WORK_PATH="${i#*=}"
     shift # past argument=value
     ;;
+    -t=*|--type=*)
+    TRANSLATION_TYPE="${i#*=}"
+    shift # past argument=value
+    ;;
     -v|--verbose)
     VERBOSE="YES"
     ;;
@@ -234,7 +284,7 @@ case $i in
 esac
 done
 
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
+if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] || [ -z "${TRANSLATION_TYPE}" ]; then
     usage
     exit 1
 fi

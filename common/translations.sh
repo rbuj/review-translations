@@ -32,6 +32,9 @@ INSTALL_TRANS=
 STATS=
 DOWNLOAD="YES"
 
+LT_SERVER=
+LT_PORT=
+
 function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : ./${PROJECT_NAME}.sh [ARGS]"
@@ -102,34 +105,19 @@ function install {
 ###################################################################################
 
 function report {
-    case $TRANSLATION_TYPE in
-        fedora)
-            if [ -z "${DISABLE_WORDLIST}" ]; then
-                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
-                else
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-                fi
-            else
-                if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH}
-                else
-                    ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH}
-                fi
-            fi
-	;;
-	git|transifex)
-            if [ -n "${DISABLE_WORDLIST}" ]; then
-                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}"
-            else
-                ${WORK_PATH}/common/pology-languagetool-report.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}" "--disable-wordlist"
-            fi
-	;;
-	*)
-            usage
-            exit 1
-        ;;
-    esac
+    if [ -z "${DISABLE_WORDLIST}" ]; then
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
+        else
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
+        fi
+    else
+        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
+        else
+            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
+        fi
+    fi
 }
 
 ###################################################################################

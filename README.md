@@ -18,10 +18,9 @@ Components (scripts which are used by other scrips):
 * common/fedora-version.sh : gets the branch from the OS version
 * common/fedpkg-install.sh : patches and installs the project related packages with new translations
 * common/install.sh : installs the translations in the system
-* common/pology-languagetool-report.sh : generate report files
 * common/stats.sh : creates images for word and message translation status for all languages
 * common/translations.sh : handles the translations
-* common/report.sh : makes a translation report of a Fedora group
+* common/report.sh : makes a translation report of a translation group
 * common/zanata.sh : downloads the translations from zanata
 
 More scripts:
