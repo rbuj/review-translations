@@ -23,8 +23,8 @@ DB_PATH="${WORK_PATH}/fedora-report.db"
 
 # PROJECT_NAME TITLE
 function start_report_index_html {
-    PROJECT_NAME=${1}
-    TITLE=${2}
+    PROJECT_NAME="$1"
+    TITLE="$2"
     HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cat << EOF > ${HTML_REPORT}
@@ -154,13 +154,14 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME LIST
+# PROJECT_NAME LIST DOCUMENT
 function report_package_table {
     PROJECT_NAME=${1}
     LIST=${2}
+    DOCUMENT=${3}
     HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
-    if [ "${PROJECT_NAME}" != "fedora-web" ] && [ "${PROJECT_NAME}" != "fedora-rhel" ]; then
+    if [ "${DOCUMENT}" == "NO" ]; then
         cat << EOF >> ${HTML_REPORT}
 <h2>Package List</h2>
 <table>
@@ -179,6 +180,19 @@ EOF
         done
         cat << EOF >> ${HTML_REPORT}
 </table>
+EOF
+    else
+        cat << EOF >> ${HTML_REPORT}
+<h2>Document List</h2>
+  <ul>
+EOF
+        for PACKAGE in $(cat $LIST | cut -d ' ' -f1 | sort -u); do
+            cat << EOF >> ${HTML_REPORT}
+    <li>${PACKAGE}</li>
+EOF
+        done
+        cat << EOF >> ${HTML_REPORT}
+  </ul>
 EOF
     fi
     cat << EOF >> ${HTML_REPORT}
@@ -265,7 +279,7 @@ for PROJECT in ${PROJECTS[@]}; do
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
 
     if [ "$date_report" -lt "$date_file" ]; then
-        start_report_index_html ${PROJECT_NAME} ${TITLE}
+        start_report_index_html "${PROJECT_NAME}" "${TITLE}"
         for LOCALE in ${locales[@]}; do
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_project = ${id_project} AND id_locale = ${id_locale};")
@@ -279,7 +293,7 @@ for PROJECT in ${PROJECTS[@]}; do
             fi
         done
         create_report_stats ${PROJECT_NAME}
-        report_package_table ${PROJECT_NAME} ${LIST}
+        report_package_table ${PROJECT_NAME} ${LIST} ${DOCUMENT}
         add_locale_stats ${PROJECT_NAME}
         end_report_index_html ${PROJECT_NAME}
         chmod 644 ${WORK_PATH}/${PROJECT_NAME}-index.html
