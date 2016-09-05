@@ -1,6 +1,6 @@
-almanah https://l10n.gnome.org/POT/almanah.master/almanah.master.
-dia https://l10n.gnome.org/POT/dia.master/dia.master.
-ekiga https://l10n.gnome.org/POT/ekiga.master/ekiga.master.
-gnome-software https://l10n.gnome.org/POT/gnome-software.master/gnome-software.master.
-gthumb https://l10n.gnome.org/POT/gthumb.master/gthumb.master.
-vinagre https://l10n.gnome.org/POT/vinagre.master/vinagre.master.
+almanah git://git.gnome.org/almanah
+dia git://git.gnome.org/dia
+ekiga git://git.gnome.org/ekiga
+gnome-software git://git.gnome.org/gnome-software
+gthumb git://git.gnome.org/gthumb
+vinagre git://git.gnome.org/vinagre
