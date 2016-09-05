@@ -22,6 +22,7 @@ BASE_PATH=
 PROJECT_NAME=
 INPUT_FILE=
 TRANSLATION_TYPE=
+DOCUMENT="NO"
 
 LANG_CODE=
 ALL_LANGS=
@@ -43,7 +44,9 @@ function usage {
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
     echo "   --disable-wordlist    Do not use wordlist file"
-    echo "   -i, --install         Install translations"
+    if [ "${DOCUMENT}" == "NO" ]; then
+        echo "   -i, --install         Install translations"
+    fi
     echo "   -s, --stats           Stats for translated messages and words (requires -a)"
     echo "   -n                    Do not download the translations"
     echo "   -h, --help            Display this help and exit"
@@ -154,6 +157,10 @@ case $i in
     TRANSLATION_TYPE="${i#*=}"
     shift # past argument=value
     ;;
+    -d=*|--document=*)
+    DOCUMENT="${i#*=}"
+    shift # past argument=value
+    ;;
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
@@ -230,7 +237,7 @@ if [ -n "$GENERATE_REPORT" ]; then
     report
 fi
 
-if [ -n "$INSTALL_TRANS" ]; then
+if [ -n "$INSTALL_TRANS" ] && [ "${DOCUMENT}" == "NO" ]; then
     install
 fi
 

@@ -15,4 +15,4 @@
 # ---------------------------------------------------------------------------
 source ${PWD}/conf/$(basename ${0} .sh).conf
 
-${PWD}/common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t=${TYPE} $@
+${PWD}/common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t=${TYPE} -d=${DOCUMENT} $@

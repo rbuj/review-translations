@@ -13,8 +13,6 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-GROUP=$(basename ${0} .sh)
-WORK_PATH=$PWD
-LIST="${WORK_PATH}/list/${GROUP}.list"
+source ${PWD}/conf/$(basename ${0} .sh).conf
 
-./common/translations.sh -p=${GROUP} -f=${LIST} -w=${WORK_PATH} -t="fedora" $@
+${PWD}/common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t=${TYPE} -d=${DOCUMENT} $@
