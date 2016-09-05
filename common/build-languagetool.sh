@@ -38,6 +38,8 @@ function build_languagtool {
     git clone https://github.com/languagetool-org/languagetool.git
     # remove MORFOLOGIK_RULE_CA_ES rule in Catalan
     if [ "${LANG_CODE}" == "ca" ] && [ -f "languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java" ]; then sed -i '/MorfologikCatalanSpellerRule/d' languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java; fi
+    # remove MORFOLOGIK_RULE_PL_PL rule in Polish
+    if [ "${LANG_CODE}" == "pl" ] && [ -f "languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java" ]; then sed -i '/MorfologikPolishSpellerRule/d' languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java; fi
     cd languagetool
     ./build.sh languagetool-standalone clean package -DskipTests
 }
