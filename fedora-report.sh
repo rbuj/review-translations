@@ -21,11 +21,8 @@ DB_PATH="${WORK_PATH}/fedora-report.db"
 
 ########################################################
 
-# PROJECT_NAME TITLE
 function start_report_index_html {
-    PROJECT_NAME="$1"
-    TITLE="$2"
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
@@ -82,10 +79,8 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME
 function end_report_index_html {
-    PROJECT_NAME=${1}
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
@@ -105,37 +100,31 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME LOCALE DATE
+# LOCALE DATE
 function locale_report {
-    PROJECT_NAME=${1}
-    LOCALE=${2}
-    DATE=${3}
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local LOCALE=${1}
+    local DATE=${2}
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n;
-    mv ${WORK_PATH}/${PROJECT_NAME}-report.html ${WORK_PATH}/${PROJECT_NAME}-report.${LOCALE}.html;
-    rm -f ${WORK_PATH}/${PROJECT_NAME}-report.${LOCALE}.html.gz
-    cd ${WORK_PATH}
-    gzip ${PROJECT_NAME}-report.${LOCALE}.html
-    scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-report.${LOCALE}.html.gz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+    cd ${REPORT_PATH}
+    scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.tgz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><a href="${PROJECT_NAME}-report.${LOCALE}.html.gz">${languages[${LOCALE}]}</a></td>
+    <td><a href="${PROJECT_NAME}-report-${LOCALE}.tgz">${languages[${LOCALE}]}</a></td>
     <td nowrap>$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
-    <td>$(du -h ${PROJECT_NAME}-report.${LOCALE}.html.gz | cut -f1)</td>
-    <td>$(md5sum ${PROJECT_NAME}-report.${LOCALE}.html.gz)</td>
+    <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.tgz | cut -f1)</td>
+    <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.tgz)</td>
   </tr>
 EOF
 }
 
 ########################################################
 
-# PROJECT_NAME
-function create_report_stats {
-    PROJECT_NAME=${1}
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+function create_project_report_stats {
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
@@ -154,12 +143,8 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME LIST DOCUMENT
 function report_package_table {
-    PROJECT_NAME=${1}
-    LIST=${2}
-    DOCUMENT=${3}
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     if [ "${DOCUMENT}" == "NO" ]; then
         cat << EOF >> ${HTML_REPORT}
@@ -202,23 +187,18 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME
-function download_all_translations {
-    PROJECT_NAME=${1}
-
+function download_all_project_translations {
     ${WORK_PATH}/${PROJECT_NAME}.sh -a;
 }
 
 ########################################################
 
-# PROJECT_NAME
 function add_locale_stats {
-    PROJECT_NAME=${1}
-    HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     for LOCALE in ${locales[@]}; do
         if [ -f "${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
-            FILE="${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png"
+            local FILE="${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png"
             cat << EOF >> ${HTML_REPORT}
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${FILE})" alt="Messages">
@@ -230,10 +210,8 @@ EOF
 
 ########################################################
 
-# PROJECT_NAME
-function update_db() {
-    PROJECT_NAME=${1}
-    LOCALES=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec basename {} .po \; | sort -u)
+function update_project_db() {
+    local LOCALES=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec basename {} .po \; | sort -u)
     declare -i date_file
     declare -i date_report
 
@@ -244,7 +222,7 @@ function update_db() {
     # add the project in t_projects table if not exists, and update date_file field (PO_FILE latest modification)
     sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_projects (project) VALUES ('${PROJECT_NAME}');"
     date_file=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
-    id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
+    declare -i id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
     sqlite3 ${DB_PATH} "UPDATE t_projects SET date_file = ${date_file} WHERE id = ${id_project};"
 
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
@@ -270,16 +248,19 @@ declare -i date_file
 declare -i date_report
 for PROJECT in ${PROJECTS[@]}; do
     source ${WORK_PATH}/conf/${PROJECT}.conf
-    echo "* project: ${PROJECT_NAME}"
-    download_all_translations ${PROJECT_NAME}
-    update_db ${PROJECT_NAME}
+    BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
+    REPORT_PATH=${BASE_PATH}/report
 
-    id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
+    echo "* project: ${PROJECT_NAME}"
+    download_all_project__translations ${PROJECT_NAME}
+    update_project_db
+
+    declare -i id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
     date_file=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_projects WHERE id = ${id_project};")
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
 
     if [ "$date_report" -lt "$date_file" ]; then
-        start_report_index_html "${PROJECT_NAME}" "${TITLE}"
+        start_report_index_html
         for LOCALE in ${locales[@]}; do
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_project = ${id_project} AND id_locale = ${id_locale};")
@@ -287,15 +268,15 @@ for PROJECT in ${PROJECTS[@]}; do
                 date_file_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_updates WHERE id = ${id_update};")
                 date_report_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
                 if [ "$date_report_t_updates" -lt "$date_file_t_updates" ]; then
-                    locale_report ${PROJECT_NAME} ${LOCALE} ${date_file_t_updates}
+                    locale_report ${LOCALE} ${date_file_t_updates}
                     sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = $(date '+%Y%m%d') WHERE id = ${id_update};"
                 fi
             fi
         done
-        create_report_stats ${PROJECT_NAME}
-        report_package_table ${PROJECT_NAME} ${LIST} ${DOCUMENT}
-        add_locale_stats ${PROJECT_NAME}
-        end_report_index_html ${PROJECT_NAME}
+        create_project_report_stats
+        report_package_table
+        add_locale_stats
+        end_report_index_html
         chmod 644 ${WORK_PATH}/${PROJECT_NAME}-index.html
         scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 
