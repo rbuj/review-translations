@@ -169,6 +169,9 @@ function report {
         declare -i date_file
 
         # add the component in t_components table if not exists, and update date_file field (PO_FILE latest modification)
+        if [ ! -f "${BASE_PATH}/${COMPONENT_NAME}" ]; then
+            continue
+        fi
         date_file=$(find ${BASE_PATH}/${COMPONENT_NAME}  -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
         if [ -z "${date_file}" ]; then
             continue
