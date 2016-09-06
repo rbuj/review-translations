@@ -297,6 +297,7 @@ EOF
             cat << EOF >> ${HTML_REPORT}
       <li><a href="data/${COMPONENT}.html" target="main_page">${COMPONENT}</a></li>
 EOF
+        fi
     done
     cat << EOF >> ${HTML_REPORT}
     </ul>
