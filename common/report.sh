@@ -74,7 +74,7 @@ function report_project_cotent {
 
     declare -i date_file=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_components WHERE name = '${COMPONENT}';")
     declare -i date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_components WHERE name = '${COMPONENT}';")
-    if [ "$date_report" -ge "$date_file" ]; then
+    if [ "$date_report" -gt "$date_file" ]; then
         return 0;
     fi
 
