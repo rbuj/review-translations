@@ -1,7 +1,6 @@
 abrt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/abrt.mo
 anaconda f25 F25 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
 anaconda master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
-audit-viewer default
 authconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/authconfig.mo
 blivet master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
 chkconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/chkconfig.mo
@@ -21,7 +20,6 @@ passwd password LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/passwd.mo
 pykickstart master
 pykickstart pykickstart-2
 python-meh master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/python-meh.mo
-redhat-menus master
 retrace-server master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/retrace-server.mo
 selinux master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/policycoreutils.mo
 setroubleshoot master framework/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot.mo;plugins/po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/setroubleshoot-plugins.mo

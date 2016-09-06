@@ -46,7 +46,7 @@ function download_code {
     else
         cd $1
         echo -ne "git pull "
-        git pull &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
+        git pull --rebase &> /dev/null && git submodule init &> /dev/null && git submodule update &> /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}"
     fi
 }
 

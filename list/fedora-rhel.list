@@ -13,7 +13,6 @@ oscap-anaconda-addon rhel7-branch
 pulseaudio 6.0 LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/pulseaudio.mo
 pykickstart rhel7-branch
 python-meh rhel7-branch
-rhel-comps master
 selinux rhel6
 selinux	rhel7
 setroubleshoot rhel6
