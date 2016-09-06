@@ -223,6 +223,9 @@ fi
 
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
+if [ ! -d "${BASE_PATH}" ]; then
+    exit 1
+fi
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
 
 rpm -q gnuplot sqlite &> /dev/null
