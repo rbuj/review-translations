@@ -58,6 +58,9 @@ function populate_db {
          ;;
       esac
 
+      if [ ! -d "${BASE_PATH}/${COMPONENT}" ]; then
+          continue
+      fi
       for LOCALE in $(find ${BASE_PATH}/${COMPONENT} -name *.po -exec basename {} .po \; | sort -u); do
          stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${COMPONENT} |
          while read -r o; do
