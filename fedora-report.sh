@@ -252,7 +252,7 @@ for PROJECT in ${PROJECTS[@]}; do
     REPORT_PATH=${BASE_PATH}/report
 
     echo "* project: ${PROJECT_NAME}"
-    download_all_project__translations ${PROJECT_NAME}
+    download_all_project_translations ${PROJECT_NAME}
     update_project_db
 
     declare -i id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
