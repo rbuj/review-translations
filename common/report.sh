@@ -289,9 +289,12 @@ var make_button_active = function()
 <div id="container" style="display: flex; min-height: 100vh;">
     <ul class="menu">
 EOF
+    local FILES=()
     for COMPONENT in ${COMPONENTS[@]}; do
         report_project_cotent ${COMPONENT}
-    cat << EOF >> ${HTML_REPORT}
+        if [ -f "${HTML_REPORT_PATH}/data/${COMPONENT}.html" ]; then
+            FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
+            cat << EOF >> ${HTML_REPORT}
       <li><a href="data/${COMPONENT}.html" target="main_page">${COMPONENT}</a></li>
 EOF
     done
@@ -304,29 +307,24 @@ EOF
 </html>
 EOF
     chmod 644 ${HTML_REPORT}
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
 
     if [ ! -f "${HTML_REPORT_PATH}/data/emty.html" ]; then
         touch "${HTML_REPORT_PATH}/data/emty.html"
         chmod 644 "${HTML_REPORT_PATH}/data/emty.html"
     fi
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/emty.html")
 
     if [ ! -d "${HTML_REPORT_PATH}/javascript" ]; then
         mkdir -p "${HTML_REPORT_PATH}/javascript"
         chmod 755 "${HTML_REPORT_PATH}/javascript"
     fi
-
     if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js" ]; then
         curl --output "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js" https://code.jquery.com/jquery-3.1.0.slim.min.js > /dev/null
         chmod 644 "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js"
     fi
-
-    local FILES=()
-    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-3.1.0.slim.js")
-    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/emty.html")
-    for COMPONENT in ${COMPONENTS[@]}; do
-        FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
-    done
+
     cd ${REPORT_PATH}
     if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.tgz" ]; then
         rm -f "${PROJECT_NAME}-report-${LANG_CODE}.tgz"
