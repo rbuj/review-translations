@@ -85,9 +85,9 @@ function end_report_index_html {
 
     cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
-<br><br>&copy; 2015-2016 Robert Buj, 2016 Piotr Drąg - <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
+<br><br>&copy; 2015-2016 Robert Buj <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
 <br><br>
-    Copyright (C) $(LC_ALL=en.utf8 date '+%Y') Robert Buj, Piotr Drąg.
+    Copyright (C) $(LC_ALL=en.utf8 date '+%Y') Robert Buj.
     Permission is granted to copy, distribute and/or modify this document
     under the terms of the GNU Free Documentation License, Version 1.3
     or any later version published by the Free Software Foundation;
