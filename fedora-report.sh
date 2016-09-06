@@ -28,6 +28,7 @@ function start_report_index_html {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>${TITLE}</title>
 <style>
 table {
@@ -131,11 +132,11 @@ function create_project_report_stats {
     cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
-  <img src="data:image/png;base64,$(base64 -w 0 ${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.png)" alt="Messages">
+  <img src="data:image/png;base64,$(base64 -w 0 ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png)" alt="Messages">
   <figcaption>Fig.1 - Global translation - message stats by language.</figcaption>
 </figure>
 <figure>
-  <img src="data:image/png;base64,$(base64 -w 0 ${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-w.png)" alt="Words">
+  <img src="data:image/png;base64,$(base64 -w 0 ${DATA_STATS_PATH}/${PROJECT_NAME}-w.png)" alt="Words">
   <figcaption>Fig.2 - Global translation - word stats by language.</figcaption>
 </figure>
 EOF
@@ -197,8 +198,8 @@ function add_locale_stats {
     local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
 
     for LOCALE in ${locales[@]}; do
-        if [ -f "${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
-            local FILE="${WORK_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-msg.${LOCALE}.png"
+        if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
+            local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
             cat << EOF >> ${HTML_REPORT}
 <figure>
   <img src="data:image/png;base64,$(base64 -w 0 ${FILE})" alt="Messages">
@@ -250,6 +251,8 @@ for PROJECT in ${PROJECTS[@]}; do
     source ${WORK_PATH}/conf/${PROJECT}.conf
     BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
     REPORT_PATH=${BASE_PATH}/report
+    STATS_PATH=${BASE_PATH}/stats
+    DATA_STATS_PATH=${BASE_PATH}/stats/${PROJECT_NAME}
 
     echo "* project: ${PROJECT_NAME}"
     download_all_project_translations

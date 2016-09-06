@@ -38,10 +38,10 @@ function populate_db {
    echo "************************************************"
    echo "* populating DB..."
    echo "************************************************"
-   if [ -f "${BASE_PATH}/${PROJECT_NAME}.db" ]; then
-       rm -f ${BASE_PATH}/${PROJECT_NAME}.db
+   if [ -f "${DB_PATH}" ]; then
+       rm -f ${DB_PATH}
    fi
-   sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  "create table n (id INTEGER PRIMARY KEY, 'project' TEXT, 'locale' TEXT,'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
+   sqlite3 ${DB_PATH}  "create table n (id INTEGER PRIMARY KEY, 'project' TEXT, 'locale' TEXT,'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
    while read -r f; do
       set -- $f
       COMPONENT=
@@ -63,33 +63,33 @@ function populate_db {
          while read -r o; do
             set -- $o
                if [ "${1}" != "-" ];then
-                  echo "sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db  \"insert into n ('project','locale','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${COMPONENT}"','"${LOCALE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
+                  echo "sqlite3 ${DB_PATH}  \"insert into n ('project','locale','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${COMPONENT}"','"${LOCALE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
                fi
          done
       done
    done <${INPUT_FILE}
-   echo "${BASE_PATH}/${PROJECT_NAME}.db"
+   echo "${DB_PATH}"
 }
 
 function png_stat_msg {
-   WIDTH=$((110+$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
+   WIDTH=$((110+$(($(sqlite3 ${DB_PATH} "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
    echo "************************************************"
    echo "* message stats..."
    echo "************************************************"
-   if [ -f "${BASE_PATH}/${PROJECT_NAME}-msg.tsv" ]; then
-      rm -f ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
+   if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv" ]; then
+      rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
    fi
 
-   for LOCALE in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
-      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='translated'";)
-      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(msg) from n where locale='${LOCALE}' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.tsv
+   for LOCALE in $(sqlite3 ${DB_PATH} "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
+      translated=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='translated'";)
+      fuzzy=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='fuzzy'";)
+      untranslated=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='untranslated'";)
+      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
    done
-   echo "${BASE_PATH}/${PROJECT_NAME}-msg.tsv"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv"
 
-   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(result) from (select sum(msg) as result from n where state='total' group by locale)" | wc -c)*10))
-   echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.png"\n'\
+   LEGEND=$(($(sqlite3 ${DB_PATH} "select max(result) from (select sum(msg) as result from n where state='total' group by locale)" | wc -c)*10))
+   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
@@ -98,34 +98,34 @@ function png_stat_msg {
       'set key outside horizontal center bottom font ",10"\n'\
       'set ylabel "messages"\n'\
       'set xtics rotate font ",10"\n'\
-      'plot "'${BASE_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${BASE_PATH}/${PROJECT_NAME}-msg.png"
-   echo "${BASE_PATH}/${PROJECT_NAME}-msg.png"
+      'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
+   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png"
 }
 
 function png_stat_msg_locale {
    LOCALE="${1}"
-   declare -i NUMPRO=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(result) from (select project as result from n where locale='${LOCALE}' and state='translated' and msg>0)")))
+   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} "select count(result) from (select project as result from n where locale='${LOCALE}' and state='translated' and msg>0)")))
    if [ $NUMPRO -gt 0 ]; then
        WIDTH=$((260+$(($NUMPRO*14))))
 
        echo "************************************************"
        echo "* message stats..."
        echo "************************************************"
-       if [ -f "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv" ]; then
-          rm -f ${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+       if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv" ]; then
+          rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
        fi
 
-       for COMPONENT in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select project from n where locale='${LOCALE}' and state='translated' and msg>0";); do
-          translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='translated' and project='$COMPONENT'";)
-          fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='fuzzy' and project='$COMPONENT'";)
-          untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select msg from n where locale='${LOCALE}' and state='untranslated' and project='$COMPONENT'";)
-          echo "${COMPONENT} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+       for COMPONENT in $(sqlite3 ${DB_PATH} "select project from n where locale='${LOCALE}' and state='translated' and msg>0";); do
+          translated=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='translated' and project='$COMPONENT'";)
+          fuzzy=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='fuzzy' and project='$COMPONENT'";)
+          untranslated=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='untranslated' and project='$COMPONENT'";)
+          echo "${COMPONENT} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
        done
-       echo "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
+       echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
 
-       LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(msg) from n where state='total' and locale='${LOCALE}'" | wc -c)*10))
-       echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
+       LEGEND=$(($(sqlite3 ${DB_PATH} "select max(msg) from n where state='total' and locale='${LOCALE}'" | wc -c)*10))
+       echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
           'set term png size '$(($WIDTH+$LEGEND))',720 noenhanced\n'\
           'set boxwidth 0.8\n'\
           'set title "locale: '${LOCALE}'"\n'\
@@ -135,31 +135,31 @@ function png_stat_msg_locale {
           'set key outside right vertical font ",10"\n'\
           'set ylabel "messages"\n'\
           'set xtics rotate font ",10"\n'\
-          'plot "'${BASE_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-       chmod 644 "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
-       echo "${BASE_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+          'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
+       chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+       echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
    fi
 }
 
 function png_stat_w {
-   WIDTH=$((110+$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
+   WIDTH=$((110+$(($(sqlite3 ${DB_PATH} "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
    echo "************************************************"
    echo "* word stats..."
    echo "************************************************"
-   if [ -f "${BASE_PATH}/${PROJECT_NAME}-w.tsv" ]; then
-      rm -f ${BASE_PATH}/${PROJECT_NAME}-w.tsv
+   if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv" ]; then
+      rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
    fi
 
-   for LOCALE in $(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
-      translated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='translated'";)
-      fuzzy=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select sum(w_or) from n where locale='${LOCALE}' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${BASE_PATH}/${PROJECT_NAME}-w.tsv
+   for LOCALE in $(sqlite3 ${DB_PATH} "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
+      translated=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='translated'";)
+      fuzzy=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='fuzzy'";)
+      untranslated=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='untranslated'";)
+      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
    done
-   echo "${BASE_PATH}/${PROJECT_NAME}-w.tsv"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv"
 
-   LEGEND=$(($(sqlite3 ${BASE_PATH}/${PROJECT_NAME}.db "select max(result) from (select sum(w_or) as result from n where state='total' group by locale)" | wc -c)*10))
-   echo -ne 'set output "'${BASE_PATH}/${PROJECT_NAME}'-w.png"\n'\
+   LEGEND=$(($(sqlite3 ${DB_PATH} "select max(result) from (select sum(w_or) as result from n where state='total' group by locale)" | wc -c)*10))
+   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
@@ -168,9 +168,9 @@ function png_stat_w {
       'set key outside horizontal center bottom font ",10"\n'\
       'set ylabel "words"\n'\
       'set xtics rotate font ",10"\n'\
-      'plot "'${BASE_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${BASE_PATH}/${PROJECT_NAME}-w.png"
-   echo "${BASE_PATH}/${PROJECT_NAME}-w.png"
+      'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
+   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-w.png"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.png"
 }
 
 for i in "$@"
@@ -208,7 +208,19 @@ if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] |
     exit 1
 fi
 
-BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
+BASE_PATH="${WORK_PATH}/${PROJECT_NAME}"
+STATS_PATH="${BASE_PATH}/stats"
+DB_PATH="${STATS_PATH}/${PROJECT_NAME}.db"
+DATA_STATS_PATH="${BASE_PATH}/stats/${PROJECT_NAME}"
+
+if [ ! -d "${STATS_PATH}" ]; then
+    mkdir -p "${STATS_PATH}"
+fi
+
+if [ ! -d "${DATA_STATS_PATH}" ]; then
+    mkdir -p "${DATA_STATS_PATH}"
+fi
+
 export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
 export PATH=${WORK_PATH}/pology/bin:$PATH
 LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
@@ -216,7 +228,7 @@ LOCALES=$(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u)
 rpm -q gnuplot sqlite &> /dev/null
 if [ $? -ne 0 ]; then
     echo "download : installing required packages"
-    VERSION_AUX=( $(cat /etc/fedora-release) )
+    local VERSION_AUX=( $(cat /etc/fedora-release) )
     if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite --nogpgcheck; else sudo dnf install -y gnuplot sqlite; fi
 fi
 
