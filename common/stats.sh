@@ -37,10 +37,8 @@ function populate_db {
    echo "************************************************"
    echo "* populating DB..."
    echo "************************************************"
-   if [ -f "${DB_PATH}" ]; then
-       rm -f ${DB_PATH}
-   fi
-   sqlite3 ${DB_PATH}  "create table n (id INTEGER PRIMARY KEY, 'project' TEXT, 'locale' TEXT,'state' TEXT, 'msg' INTEGER, 'msg_div_tot' TEXT, 'w_or' INTEGER, 'w_div_tot_or' TEXT, 'w_tr' INTEGER, 'ch_or' INTEGER, 'ch_tr' INTEGER);"
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_create_tables.sql
+
    while read -r f; do
       set -- $f
       COMPONENT=
@@ -60,41 +58,56 @@ function populate_db {
       if [ ! -d "${BASE_PATH}/${COMPONENT}" ]; then
           continue
       fi
+      sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_components (name) VALUES ('${COMPONENT}');"
+      declare -i id_component=$(sqlite3 ${DB_PATH} "SELECT id FROM t_components WHERE name = '${COMPONENT}';")
       for LOCALE in $(find ${BASE_PATH}/${COMPONENT} -name *.po -exec basename {} .po \; | sort -u); do
-         stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${COMPONENT} |
-         while read -r o; do
-            set -- $o
-               if [ "${1}" != "-" ];then
-                  echo "sqlite3 ${DB_PATH}  \"insert into n ('project','locale','state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') values ('"${COMPONENT}"','"${LOCALE}"','${1}','${2}','${3}','${4}','${5}','${6}','${7}','${8}');\"" | sh
-               fi
-         done
+         sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_locales (name) VALUES ('${LOCALE}');"
+         declare -i id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE name = '${LOCALE}';")
+
+         sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_updates (id_component,id_locale) VALUES (${id_component},${id_locale});"
+         declare -i id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_component = ${id_component} AND id_locale = ${id_locale};")
+         declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+         declare -i date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
+
+         if [ "${date_report}" -le ${date_file} ]; then
+             stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${COMPONENT} |
+             while read -r o; do
+                set -- $o
+                   if [ "${1}" != "-" ];then
+                      sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_states (name) VALUES ('${1}');"
+                      declare -i id_state=$(sqlite3 ${DB_PATH} "SELECT id FROM t_states WHERE name = '${1}';")
+
+                      sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_stats ('id_update','id_state','msg','msg_div_tot','w_or','w_div_tot_or','w_tr','ch_or','ch_tr') VALUES (${id_update},${id_state},${2},'${3}',${4},'${5}',${6},${7},${8});"
+                      declare -i id_stat=$(sqlite3 ${DB_PATH} "SELECT id FROM t_stats WHERE id_update = ${id_update} AND id_state = ${id_state};")
+                      sqlite3 ${DB_PATH} "UPDATE t_stats SET msg = ${2}, msg_div_tot = '${3}', w_or = ${4}, w_div_tot_or = '${5}', w_tr = ${6}, ch_or = ${7}, ch_tr = ${8}  WHERE id = ${id_stat};"
+                   fi
+             done
+             declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name "${LOCALE}.po" -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+             sqlite3 ${DB_PATH} "UPDATE t_updates SET date_file = ${date_file}, active = 1 WHERE id = ${id_update};"
+         fi
+
       done
    done <${INPUT_FILE}
    echo "${DB_PATH}"
 }
 
 function png_stat_msg {
-   WIDTH=$((110+$(($(sqlite3 ${DB_PATH} "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
+   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} "SELECT COUNT(result) FROM (SELECT t_locales.name as result, sum(t_stats.msg) as sum_msg from t_stats INNER JOIN t_updates ON t_stats.id_update = t_updates.id INNER JOIN t_locales ON t_updates.id_locale = t_locales.id INNER JOIN t_components ON t_updates.id_component = t_components.id INNER JOIN t_states ON t_stats.id_state = t_states.id WHERE t_updates.active = 1 AND t_states.name='translated' GROUP BY t_locales.name) where sum_msg > 0;")))
+   if [ -z "${NUMPRO}" ]; then
+       return 1
+   fi
+   if [ "${NUMPRO}" -eq 0 ]; then
+       return 1
+   fi
+   WIDTH=$((110+$(($NUMPRO*14))))
+
    echo "************************************************"
    echo "* message stats..."
    echo "************************************************"
-   if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv" ]; then
-      rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
-   fi
-
-   declare -a LOCALES=($(sqlite3 ${DB_PATH} "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0;"))
-   if [ -z "${LOCALES}" ]; then
-       return 1;
-   fi
-   for LOCALE in ${LOCALES[@]}; do
-      translated=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='translated'";)
-      fuzzy=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${DB_PATH} "select sum(msg) from n where locale='${LOCALE}' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
-   done
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_msg_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv"
 
-   LEGEND=$(($(sqlite3 ${DB_PATH} "select max(result) from (select sum(msg) as result from n where state='total' group by locale)" | wc -c)*10))
+   LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -110,6 +123,7 @@ function png_stat_msg {
 }
 
 function png_stat_msg_locale {
+return 0
    LOCALE="${1}"
    declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} "select count(result) from (select project as result from n where locale='${LOCALE}' and state='translated' and msg>0)")))
 
@@ -159,27 +173,23 @@ function png_stat_msg_locale {
 }
 
 function png_stat_w {
-   WIDTH=$((110+$(($(sqlite3 ${DB_PATH} "select count(locale) from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0")*14))))
+   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_num_locales.sql)))
+   if [ -z "${NUMPRO}" ]; then
+       return 1
+   fi
+   if [ "${NUMPRO}" -eq 0 ]; then
+       return 1
+   fi
+   WIDTH=$((110+$(($NUMPRO*14))))
+
    echo "************************************************"
    echo "* word stats..."
    echo "************************************************"
-   if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv" ]; then
-      rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
-   fi
-
-   declare -a LOCALES=($(sqlite3 ${DB_PATH} "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0;"))
-   if [ -z "${LOCALES}" ]; then
-       return 1;
-   fi
-   for LOCALE in $(sqlite3 ${DB_PATH} "select locale from (select locale, sum(msg) as result from n where state='translated' group by locale) where result>0"); do
-      translated=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='translated'";)
-      fuzzy=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='fuzzy'";)
-      untranslated=$(sqlite3 ${DB_PATH} "select sum(w_or) from n where locale='${LOCALE}' and state='untranslated'";)
-      echo "${LOCALE} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
-   done
+   # LOCALE translated fuzzy untranslated
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_w_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv"
 
-   LEGEND=$(($(sqlite3 ${DB_PATH} "select max(result) from (select sum(w_or) as result from n where state='total' group by locale)" | wc -c)*10))
+   LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -248,11 +258,11 @@ if [ ! -d "${BASE_PATH}" ]; then
     exit 1
 fi
 
-rpm -q gnuplot sqlite &> /dev/null
+rpm -q gnuplot sqlite perl &> /dev/null
 if [ $? -ne 0 ]; then
     echo "download : installing required packages"
     local VERSION_AUX=( $(cat /etc/fedora-release) )
-    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite --nogpgcheck; else sudo dnf install -y gnuplot sqlite; fi
+    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite perl --nogpgcheck; else sudo dnf install -y gnuplot sqlite perl; fi
 fi
 
 populate_db
@@ -262,3 +272,6 @@ png_stat_w
 for LOCALE in $(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u); do
     png_stat_msg_locale $LOCALE
 done
+
+date_report=$(date "+%Y%m%d")
+sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = ${date_report} WHERE active = 1;"
