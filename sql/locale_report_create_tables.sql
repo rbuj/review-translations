@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS t_components (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    'name' TEXT NOT NULL UNIQUE,
+    'date_file' INTEGER DEFAULT 0,
+    'date_report' INTEGER DEFAULT 0
+);

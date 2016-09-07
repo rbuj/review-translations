@@ -148,7 +148,7 @@ function report {
     echo "************************************************"
     echo "* Updating database..."
     echo "************************************************"
-    sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_components (id INTEGER PRIMARY KEY AUTOINCREMENT, 'name' TEXT NOT NULL UNIQUE, 'date_file' INTEGER DEFAULT 0, 'date_report' INTEGER DEFAULT 0);"
+    sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/locale_report_create_tables.sql
     local COMPONENTS=()
     local COMPONENT_NAME=
     while read -r p; do
