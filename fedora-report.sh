@@ -22,7 +22,7 @@ DB_PATH="${WORK_PATH}/fedora-report.db"
 ########################################################
 
 function start_report_index_html {
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
@@ -81,7 +81,7 @@ EOF
 ########################################################
 
 function end_report_index_html {
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
@@ -105,7 +105,7 @@ EOF
 function locale_report {
     local LOCALE=${1}
     local DATE=${2}
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n;
@@ -125,7 +125,7 @@ EOF
 ########################################################
 
 function create_project_report_stats {
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
@@ -145,7 +145,7 @@ EOF
 ########################################################
 
 function report_package_table {
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     if [ "${DOCUMENT}" == "NO" ]; then
         cat << EOF >> ${HTML_REPORT}
@@ -195,7 +195,7 @@ function download_all_project_translations {
 ########################################################
 
 function add_locale_stats {
-    local HTML_REPORT="${WORK_PATH}/${PROJECT_NAME}-index.html"
+    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     for LOCALE in ${locales[@]}; do
         if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
@@ -212,6 +212,9 @@ EOF
 ########################################################
 
 function update_project_db() {
+    if [ ! -d "${WORK_PATH}/${PROJECT_NAME}" ]; then
+        return 1;
+    fi
     local LOCALES=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec basename {} .po \; | sort -u)
     declare -i date_file
     declare -i date_report
@@ -221,18 +224,24 @@ function update_project_db() {
     sqlite3 ${DB_PATH} "CREATE TABLE IF NOT EXISTS t_updates (id INTEGER PRIMARY KEY AUTOINCREMENT, 'id_project' INTEGER, 'id_locale' INTEGER, 'date_file' INTEGER DEFAULT 0, 'date_report' INTEGER DEFAULT 0, UNIQUE(id_project, id_locale) ON CONFLICT IGNORE, FOREIGN KEY(id_project) REFERENCES t_projects(id), FOREIGN KEY(id_locale) REFERENCES t_locales(id));"
 
     # add the project in t_projects table if not exists, and update date_file field (PO_FILE latest modification)
-    sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_projects (project) VALUES ('${PROJECT_NAME}');"
+    if [ ! -d "${WORK_PATH}/${PROJECT_NAME}" ]; then
+        return 1;
+    fi
     date_file=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+    sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_projects (project) VALUES ('${PROJECT_NAME}');"
     declare -i id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
     sqlite3 ${DB_PATH} "UPDATE t_projects SET date_file = ${date_file} WHERE id = ${id_project};"
 
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
     if [ "$date_report" -lt "$date_file" ]; then
         for LOCALE in ${LOCALES[@]}; do
-            # add the locale in t_locales if not exists
-            sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_locales (locale) VALUES ('${LOCALE}');"
             # get required fiels for updating t_updates
             date_file_t_updates=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+            if [ -z "$date_file_t_updates" ]; then
+                continue
+            fi
+            # add the locale in t_locales if not exists
+            sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_locales (locale) VALUES ('${LOCALE}');"
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             # add the update in t_projects table if not exists, and update date_file field (PO_FILE latest modification)
             sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_updates (id_project,id_locale,date_file) VALUES (${id_project},${id_locale},${date_file_t_updates});"
@@ -280,8 +289,8 @@ for PROJECT in ${PROJECTS[@]}; do
         report_package_table
         add_locale_stats
         end_report_index_html
-        chmod 644 ${WORK_PATH}/${PROJECT_NAME}-index.html
-        scp -i ~/.ssh/id_rsa ${WORK_PATH}/${PROJECT_NAME}-index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
+        chmod 644 ${REPORT_PATH}/index.html
+        scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 
         sqlite3 ${DB_PATH} "UPDATE t_projects SET date_report = $(date '+%Y%m%d') WHERE id = ${id_project};"
     fi
