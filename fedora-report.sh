@@ -110,14 +110,14 @@ function locale_report {
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n;
     cd ${REPORT_PATH}
-    scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.tgz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+    scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><a href="${PROJECT_NAME}-report-${LOCALE}.tgz">${languages[${LOCALE}]}</a></td>
+    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">${languages[${LOCALE}]}</a></td>
     <td nowrap>$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
-    <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.tgz | cut -f1)</td>
-    <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.tgz)</td>
+    <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)</td>
+    <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)</td>
   </tr>
 EOF
 }

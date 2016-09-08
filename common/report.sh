@@ -330,10 +330,10 @@ EOF
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-3.1.0.slim.js")
 
     cd ${REPORT_PATH}
-    if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.tgz" ]; then
-        rm -f "${PROJECT_NAME}-report-${LANG_CODE}.tgz"
+    if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.txz" ]; then
+        rm -f "${PROJECT_NAME}-report-${LANG_CODE}.txz"
     fi
-    echo "tar -czvf ${PROJECT_NAME}-report-${LANG_CODE}.tgz ${FILES[@]}" | sh
+    echo "XZ_OPT=-9 tar -Jcvf ${PROJECT_NAME}-report-${LANG_CODE}.txz ${FILES[@]}" | sh
 
     if [ -z "${LT_EXTERNAL}" ]; then
         kill -9 $LANGUAGETOOL_PID > /dev/null
