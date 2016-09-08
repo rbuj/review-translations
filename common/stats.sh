@@ -133,7 +133,6 @@ function png_stat_msg_locale {
    fi
    WIDTH=$((260+$(($NUMPRO*14))))
 
-return 0
    cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-]*)\|fuzzy\|(\d)*\s[\w\-]*\|obsolete\|\d*\s[\w\-]*\|total\|\d*\s[\w\-]*\|translated\|(\d*)\s[\w\-]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
 
