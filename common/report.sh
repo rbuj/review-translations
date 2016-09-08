@@ -334,6 +334,7 @@ EOF
         rm -f "${PROJECT_NAME}-report-${LANG_CODE}.txz"
     fi
     echo "XZ_OPT=-9 tar -Jcvf ${PROJECT_NAME}-report-${LANG_CODE}.txz ${FILES[@]}" | sh
+    chmod 644 ${PROJECT_NAME}-report-${LANG_CODE}.txz
 
     if [ -z "${LT_EXTERNAL}" ]; then
         kill -9 $LANGUAGETOOL_PID > /dev/null
