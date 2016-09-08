@@ -116,7 +116,7 @@ function png_stat_msg {
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
 
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME}'"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
@@ -153,7 +153,7 @@ function png_stat_msg_locale {
    LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
 
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME}'"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
       'set boxwidth 0.8\n'\
       'set title "locale: '${LOCALE}'"\n'\
       'set style fill solid 1.00 border 0\n'\
@@ -193,7 +193,7 @@ function png_stat_w {
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
 
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME}'"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
