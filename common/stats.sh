@@ -115,8 +115,8 @@ function png_stat_msg {
    WIDTH=$((110+$(($NUMPRO*14))))
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
 
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.png"\n'\
-      'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
+   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.svg"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME}'"\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
@@ -125,8 +125,8 @@ function png_stat_msg {
       'set ylabel "messages"\n'\
       'set xtics rotate font ",10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png"
+   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
 }
 
 function png_stat_msg_locale {
@@ -149,11 +149,11 @@ function png_stat_msg_locale {
        return 0
    fi
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
-   WIDTH=$((260+$(($NUMPRO*14))))
+   WIDTH=$((200+$(($NUMPRO*14))))
    LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
 
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
-      'set term png size '$(($WIDTH+$LEGEND))',720 noenhanced\n'\
+   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.svg"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME}'"\n'\
       'set boxwidth 0.8\n'\
       'set title "locale: '${LOCALE}'"\n'\
       'set style fill solid 1.00 border 0\n'\
@@ -163,8 +163,8 @@ function png_stat_msg_locale {
       'set ylabel "messages"\n'\
       'set xtics rotate font ",10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
 }
 
 function png_stat_w {
@@ -192,8 +192,8 @@ function png_stat_w {
    WIDTH=$((110+$(($NUMPRO*14))))
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
 
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.png"\n'\
-      'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
+   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.svg"\n'\
+      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME}'"\n'\
       'set boxwidth 0.8\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
@@ -202,8 +202,8 @@ function png_stat_w {
       'set ylabel "words"\n'\
       'set xtics rotate font ",10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-w.png"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.png"
+   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
+   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
 }
 
 for i in "$@"
@@ -260,11 +260,11 @@ if [ ! -d "${BASE_PATH}" ]; then
     exit 1
 fi
 
-rpm -q gnuplot sqlite perl &> /dev/null
+rpm -q gnuplot sqlite perl ImageMagick &> /dev/null
 if [ $? -ne 0 ]; then
     echo "download : installing required packages"
     local VERSION_AUX=( $(cat /etc/fedora-release) )
-    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite perl --nogpgcheck; else sudo dnf install -y gnuplot sqlite perl; fi
+    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite perl ImageMagick --nogpgcheck; else sudo dnf install -y gnuplot sqlite perl ImageMagick; fi
 fi
 
 populate_db

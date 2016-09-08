@@ -132,11 +132,15 @@ function create_project_report_stats {
     cat << EOF >> ${HTML_REPORT}
 </table>
 <figure>
-  <img src="data:image/png;base64,$(base64 -w 0 ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.png)" alt="Messages">
+EOF
+cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg >> ${HTML_REPORT}
+    cat << EOF >> ${HTML_REPORT}
   <figcaption>Fig.1 - Global translation - message stats by language.</figcaption>
 </figure>
 <figure>
-  <img src="data:image/png;base64,$(base64 -w 0 ${DATA_STATS_PATH}/${PROJECT_NAME}-w.png)" alt="Words">
+EOF
+cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg >> ${HTML_REPORT}
+    cat << EOF >> ${HTML_REPORT}
   <figcaption>Fig.2 - Global translation - word stats by language.</figcaption>
 </figure>
 EOF
@@ -198,11 +202,13 @@ function add_locale_stats {
     local HTML_REPORT="${REPORT_PATH}/index.html"
 
     for LOCALE in ${locales[@]}; do
-        if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png" ]; then
-            local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.png"
+        if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg" ]; then
+            local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
             cat << EOF >> ${HTML_REPORT}
 <figure>
-  <img src="data:image/png;base64,$(base64 -w 0 ${FILE})" alt="Messages">
+EOF
+            cat $FILE >> ${HTML_REPORT}
+            cat << EOF >> ${HTML_REPORT}
 </figure>
 EOF
         fi
