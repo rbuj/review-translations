@@ -92,22 +92,29 @@ function populate_db {
 }
 
 function png_stat_msg {
-   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_num_locales.sql)))
+   echo "************************************************"
+   echo "* message stats..."
+   echo "************************************************"
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_msg_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
+
+   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv | wc -l)))
+   if [ $? -ne 0 ]; then
+       return 1
+   fi
    if [ -z "${NUMPRO}" ]; then
        return 1
    fi
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   WIDTH=$((110+$(($NUMPRO*14))))
-
-   echo "************************************************"
-   echo "* message stats..."
-   echo "************************************************"
-   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_msg_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
+   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv | wc -c)" -eq "1" ]; then
+       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
+       return 0
+   fi
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv"
-
+   WIDTH=$((110+$(($NUMPRO*14))))
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
+
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -124,19 +131,27 @@ function png_stat_msg {
 
 function png_stat_msg_locale {
    LOCALE="${1}"
-   declare -i NUMPRO=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_num_components.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH})))
+
+   cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-]*)\|fuzzy\|(\d)*\s[\w\-]*\|obsolete\|\d*\s[\w\-]*\|total\|\d*\s[\w\-]*\|translated\|(\d*)\s[\w\-]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+
+   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv | wc -l)))
+   if [ $? -ne 0 ]; then
+       return 1
+   fi
    if [ -z "${NUMPRO}" ]; then
        return 1
    fi
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   WIDTH=$((260+$(($NUMPRO*14))))
-
-   cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-]*)\|fuzzy\|(\d)*\s[\w\-]*\|obsolete\|\d*\s[\w\-]*\|total\|\d*\s[\w\-]*\|translated\|(\d*)\s[\w\-]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv | wc -c)" -eq "1" ]; then
+       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+       return 0
+   fi
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
-
+   WIDTH=$((260+$(($NUMPRO*14))))
    LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
+
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',720 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -153,23 +168,30 @@ function png_stat_msg_locale {
 }
 
 function png_stat_w {
-   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_num_locales.sql)))
+   echo "************************************************"
+   echo "* word stats..."
+   echo "************************************************"
+   # LOCALE translated fuzzy untranslated
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_w_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
+
+   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv | wc -l)))
+   if [ $? -ne 0 ]; then
+       return 1
+   fi
    if [ -z "${NUMPRO}" ]; then
        return 1
    fi
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   WIDTH=$((110+$(($NUMPRO*14))))
-
-   echo "************************************************"
-   echo "* word stats..."
-   echo "************************************************"
-   # LOCALE translated fuzzy untranslated
-   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_w_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
+   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv | wc -c)" -eq "1" ]; then
+       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
+       return 0
+   fi
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv"
-
+   WIDTH=$((110+$(($NUMPRO*14))))
    LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
+
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',480 noenhanced\n'\
       'set boxwidth 0.8\n'\
