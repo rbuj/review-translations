@@ -92,7 +92,7 @@ function populate_db {
 }
 
 function png_stat_msg {
-   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} "SELECT COUNT(result) FROM (SELECT t_locales.name as result, sum(t_stats.msg) as sum_msg from t_stats INNER JOIN t_updates ON t_stats.id_update = t_updates.id INNER JOIN t_locales ON t_updates.id_locale = t_locales.id INNER JOIN t_components ON t_updates.id_component = t_components.id INNER JOIN t_states ON t_stats.id_state = t_states.id WHERE t_updates.active = 1 AND t_states.name='translated' GROUP BY t_locales.name) where sum_msg > 0;")))
+   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_num_locales.sql)))
    if [ -z "${NUMPRO}" ]; then
        return 1
    fi
@@ -123,40 +123,20 @@ function png_stat_msg {
 }
 
 function png_stat_msg_locale {
-return 0
    LOCALE="${1}"
-   declare -i NUMPRO=$(($(sqlite3 ${DB_PATH} "select count(result) from (select project as result from n where locale='${LOCALE}' and state='translated' and msg>0)")))
-
+   declare -i NUMPRO=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_num_components.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH})))
    if [ -z "${NUMPRO}" ]; then
        return 1
    fi
-
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-
    WIDTH=$((260+$(($NUMPRO*14))))
 
-   echo "************************************************"
-   echo "* message stats..."
-   echo "************************************************"
-   if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv" ]; then
-      rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
-   fi
-
-   declare -a COMPONENTS=($(sqlite3 ${DB_PATH} "select project from n where locale='${LOCALE}' and state='translated' and msg>0;"))
-   if [ -z "${COMPONENTS}" ]; then
-       return 1;
-   fi
-   for COMPONENT in ${COMPONENTS[@]}; do
-      translated=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='translated' and project='$COMPONENT'";)
-      fuzzy=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='fuzzy' and project='$COMPONENT'";)
-      untranslated=$(sqlite3 ${DB_PATH} "select msg from n where locale='${LOCALE}' and state='untranslated' and project='$COMPONENT'";)
-      echo "${COMPONENT} ${translated} ${fuzzy} ${untranslated}" >> ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
-   done
+   cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-]*)\|fuzzy\|(\d)*\s[\w\-]*\|obsolete\|\d*\s[\w\-]*\|total\|\d*\s[\w\-]*\|translated\|(\d*)\s[\w\-]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
 
-   LEGEND=$(($(sqlite3 ${DB_PATH} "select max(msg) from n where state='total' and locale='${LOCALE}'" | wc -c)*10))
+   LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.png"\n'\
       'set term png size '$(($WIDTH+$LEGEND))',720 noenhanced\n'\
       'set boxwidth 0.8\n'\
@@ -269,7 +249,10 @@ populate_db
 png_stat_msg
 png_stat_w
 
-for LOCALE in $(find ${BASE_PATH} -name *.po -exec basename {} .po \; | sort -u); do
+echo "************************************************"
+echo "* message stats by locale..."
+echo "************************************************"
+for LOCALE in $(sqlite3 ${DB_PATH} "SELECT name from t_locales;"); do
     png_stat_msg_locale $LOCALE
 done
 
