@@ -101,16 +101,23 @@ EOF
 
 ########################################################
 
-# LOCALE DATE
+# LOCALE
 function locale_report {
     local LOCALE=${1}
-    local DATE=${2}
-    local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
     cd ${REPORT_PATH}
     scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+}
+
+# LOCALE DATE
+function locale_report_html {
+    local LOCALE=${1}
+    local DATE=${2}
+    local HTML_REPORT="${REPORT_PATH}/index.html"
+
+    cd ${REPORT_PATH}
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
@@ -300,9 +307,10 @@ for PROJECT in ${PROJECTS[@]}; do
                 date_file_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_updates WHERE id = ${id_update};")
                 date_report_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
                 if [ "$date_report_t_updates" -le "$date_file_t_updates" ]; then
-                    locale_report ${LOCALE} $(echo "$date_file_t_updates" | cut -c -8)
+                    locale_report ${LOCALE}
                     sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_update};"
                 fi
+                locale_report_html ${LOCALE} $(echo "$date_file_t_updates" | cut -c -8)
             fi
         done
         create_project_report_stats
