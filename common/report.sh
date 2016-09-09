@@ -124,12 +124,12 @@ EOF
 </html>
 EOF
     chmod 644 ${HTML_REPORT}
-    sqlite3 ${DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d")" WHERE name = '${COMPONENT}';"
+    sqlite3 ${DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
 
 function report {
     declare -i global_date_file
-    global_date_file=$(find ${BASE_PATH} -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+    global_date_file=$(find ${BASE_PATH} -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
     if [ -z "${global_date_file}" ]; then
         return
     fi
@@ -172,7 +172,7 @@ function report {
         if [ ! -d "${BASE_PATH}/${COMPONENT_NAME}" ]; then
             continue
         fi
-        date_file=$(find ${BASE_PATH}/${COMPONENT_NAME}  -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+        date_file=$(find ${BASE_PATH}/${COMPONENT_NAME}  -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
         if [ -z "${date_file}" ]; then
             continue
         fi

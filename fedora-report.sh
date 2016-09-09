@@ -108,7 +108,7 @@ function locale_report {
     local HTML_REPORT="${REPORT_PATH}/index.html"
 
     cd ${WORK_PATH}
-    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n;
+    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
     cd ${REPORT_PATH}
     scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
     cat << EOF >> ${HTML_REPORT}
@@ -231,16 +231,16 @@ function update_project_db() {
     if [ ! -d "${WORK_PATH}/${PROJECT_NAME}" ]; then
         return 1;
     fi
-    date_file=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+    date_file=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name *.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
     sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_projects (project) VALUES ('${PROJECT_NAME}');"
     declare -i id_project=$(sqlite3 ${DB_PATH} "SELECT id FROM t_projects WHERE project = '${PROJECT_NAME}';")
     sqlite3 ${DB_PATH} "UPDATE t_projects SET date_file = ${date_file} WHERE id = ${id_project};"
 
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
-    if [ "$date_report" -lt "$date_file" ]; then
+    if [ "$date_report" -le "$date_file" ]; then
         for LOCALE in ${LOCALES[@]}; do
             # get required fiels for updating t_updates
-            date_file_t_updates=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+            date_file_t_updates=$(find ${WORK_PATH}/${PROJECT_NAME}  -type f -name ${LOCALE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
             if [ -z "$date_file_t_updates" ]; then
                 continue
             fi
@@ -255,6 +255,22 @@ function update_project_db() {
     fi
 }
 
+#########################################
+# LANGUAGETOOL
+#########################################
+if [ ! -d "${WORK_PATH}/languagetool" ]; then
+    ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
+fi
+cd ${WORK_PATH}
+LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+LANGUAGETOOL_PID=$!
+LT_SERVER="localhost"
+LT_PORT="8081"
+
+#########################################
+# REPORTS
+#########################################
 echo "***************************************"
 echo "* reports ..."
 echo "***************************************"
@@ -275,7 +291,7 @@ for PROJECT in ${PROJECTS[@]}; do
     date_file=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_projects WHERE id = ${id_project};")
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
 
-    if [ "$date_report" -lt "$date_file" ]; then
+    if [ "$date_report" -le "$date_file" ]; then
         start_report_index_html
         for LOCALE in ${locales[@]}; do
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
@@ -283,9 +299,9 @@ for PROJECT in ${PROJECTS[@]}; do
             if [ -n "${id_update}" ]; then
                 date_file_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_updates WHERE id = ${id_update};")
                 date_report_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
-                if [ "$date_report_t_updates" -lt "$date_file_t_updates" ]; then
-                    locale_report ${LOCALE} ${date_file_t_updates}
-                    sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = $(date '+%Y%m%d') WHERE id = ${id_update};"
+                if [ "$date_report_t_updates" -le "$date_file_t_updates" ]; then
+                    locale_report ${LOCALE} $(echo "$date_file_t_updates" | cut -c -8)
+                    sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_update};"
                 fi
             fi
         done
@@ -296,6 +312,11 @@ for PROJECT in ${PROJECTS[@]}; do
         chmod 644 ${REPORT_PATH}/index.html
         scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
 
-        sqlite3 ${DB_PATH} "UPDATE t_projects SET date_report = $(date '+%Y%m%d') WHERE id = ${id_project};"
+        sqlite3 ${DB_PATH} "UPDATE t_projects SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_project};"
     fi
 done
+
+#########################################
+# LANGUAGETOOL
+#########################################
+kill -9 $LANGUAGETOOL_PID > /dev/null
