@@ -66,7 +66,7 @@ function populate_db {
 
          sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_updates (id_component,id_locale) VALUES (${id_component},${id_locale});"
          declare -i id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_component = ${id_component} AND id_locale = ${id_locale};")
-         declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name ${LOCALE}.po -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+         declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name ${LOCALE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
          declare -i date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
 
          if [ "${date_report}" -le ${date_file} ]; then
@@ -82,7 +82,7 @@ function populate_db {
                       sqlite3 ${DB_PATH} "UPDATE t_stats SET msg = ${2}, msg_div_tot = '${3}', w_or = ${4}, w_div_tot_or = '${5}', w_tr = ${6}, ch_or = ${7}, ch_tr = ${8}  WHERE id = ${id_stat};"
                    fi
              done
-             declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name "${LOCALE}.po" -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
+             declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name "${LOCALE}.po" -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
              sqlite3 ${DB_PATH} "UPDATE t_updates SET date_file = ${date_file}, active = 1 WHERE id = ${id_update};"
          else
              sqlite3 ${DB_PATH} "UPDATE t_updates SET active = 1 WHERE id = ${id_update};"
@@ -280,5 +280,5 @@ for LOCALE in $(sqlite3 ${DB_PATH} "SELECT name from t_locales;"); do
     png_stat_msg_locale $LOCALE
 done
 
-date_report=$(date "+%Y%m%d")
+date_report=$(date "+%Y%m%d%H")
 sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = ${date_report} WHERE active = 1;"
