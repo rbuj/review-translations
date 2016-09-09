@@ -84,6 +84,8 @@ function populate_db {
              done
              declare -i date_file=$(find ${BASE_PATH}/${COMPONENT} -name "${LOCALE}.po" -exec date -r {} "+%Y%m%d" \; | sort | tail -1)
              sqlite3 ${DB_PATH} "UPDATE t_updates SET date_file = ${date_file}, active = 1 WHERE id = ${id_update};"
+         else
+             sqlite3 ${DB_PATH} "UPDATE t_updates SET active = 1 WHERE id = ${id_update};"
          fi
 
       done
