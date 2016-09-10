@@ -108,9 +108,13 @@ function report_project_cotent {
   </head>
 <body bgcolor="#080808" text="#D0D0D0">
 <h1>${COMPONENT}</h1>
+EOF
+    if [ "${LANG_CODE}" != "ja" ]; then
+        cat << EOF >> ${HTML_REPORT}
 <h2>check-spell-ec</h2>
 EOF
-    posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+        posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+    fi
     cat << EOF >> ${HTML_REPORT}
 <h2>check-grammar</h2>
 EOF
