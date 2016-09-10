@@ -137,14 +137,6 @@ function report {
     #########################################
     # DB
     #########################################
-    rpm -q sqlite &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        VERSION_AUX=( $(cat /etc/fedora-release) )
-        set -x
-	if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y sqlite --nogpgcheck; else sudo dnf install -y sqlite; fi
-        set -
-    fi
     echo "************************************************"
     echo "* Updating database..."
     echo "************************************************"
@@ -180,18 +172,6 @@ function report {
         sqlite3 ${DB_PATH} "INSERT OR IGNORE INTO t_components (name) VALUES ('${COMPONENT_NAME}');"
         sqlite3 ${DB_PATH} "UPDATE t_components SET date_file = ${date_file} WHERE name = '${COMPONENT_NAME}';"
     done <${INPUT_FILE}
-
-    #########################################
-    # aspell
-    #########################################
-    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        local VERSION_AUX=( $(cat /etc/fedora-release) )
-        set -x
-	if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell --nogpgcheck; else sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell; fi
-        set -
-    fi
 
     #########################################
     # LANGUAGETOOL
@@ -396,6 +376,21 @@ fi
 if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
     LT_EXTERNAL="YES"
 fi
+
+
+#########################################
+# REQUIRED PACKAGES
+#########################################
+for REQUIRED_PACKAGE in enchant-aspell java-1.8.0-openjdk langpacks-$LANG_CODE perl-Locale-Codes python-enchant sqlite tar xz; do
+    rpm -q $REQUIRED_PACKAGE &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required package : $REQUIRED_PACKAGE"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
+        set -x
+	if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
+        set -
+    fi
+done
 
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 REPORT_PATH=${BASE_PATH}/report

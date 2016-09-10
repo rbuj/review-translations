@@ -154,10 +154,11 @@ function png_stat_msg_locale {
    WIDTH=$((200+$(($NUMPRO*14))))
    LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
 
+   local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('$LOCALE'));")
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.svg"\n'\
       'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
       'set boxwidth 0.8\n'\
-      'set title "locale: '${LOCALE}'"\n'\
+      'set title "'${LANGUAGE}'"\n'\
       'set style fill solid 1.00 border 0\n'\
       'set style data histogram\n'\
       'set style histogram rowstacked\n'\
@@ -262,12 +263,19 @@ if [ ! -d "${BASE_PATH}" ]; then
     exit 1
 fi
 
-rpm -q gnuplot sqlite perl ImageMagick &> /dev/null
-if [ $? -ne 0 ]; then
-    echo "download : installing required packages"
-    local VERSION_AUX=( $(cat /etc/fedora-release) )
-    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y gnuplot sqlite perl ImageMagick --nogpgcheck; else sudo dnf install -y gnuplot sqlite perl ImageMagick; fi
-fi
+#########################################
+# REQUIRED PACKAGES
+#########################################
+for REQUIRED_PACKAGE in gnuplot perl-Locale-Codes sqlite; do
+    rpm -q $REQUIRED_PACKAGE &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required package : $REQUIRED_PACKAGE"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
+        set -x
+	if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
+        set -
+    fi
+done
 
 populate_db
 png_stat_msg

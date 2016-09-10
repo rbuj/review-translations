@@ -13,8 +13,7 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -a locales=( ca de el es fr gl it nl pt ru )
-declare -A languages=( [ca]="Catalan" [de]="German" [el]="Greek" [es]="Spanish" [fr]="French" [gl]="Galician" [it]="Italian" [nl]="Dutch" [pt]="Portuguese" [ru]="Russian" )
+declare -a locales=( be ca da de el es fr gl it ja lt ml nl pl pt ro ru sk sl sv ta uk )
 WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
 DB_PATH="${WORK_PATH}/fedora-report.db"
@@ -121,7 +120,7 @@ function locale_report_html {
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td>${LOCALE}</td>
-    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">${languages[${LOCALE}]}</a></td>
+    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">$(perl -e "use Locale::Language; print (code2language('$LOCALE'));")</a></td>
     <td nowrap>$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
     <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)</td>
     <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)</td>
@@ -261,6 +260,20 @@ function update_project_db() {
         done
     fi
 }
+
+#########################################
+# REQUIRED PACKAGES
+#########################################
+for REQUIRED_PACKAGE in java-1.8.0-openjdk perl-Locale-Codes sqlite; do
+    rpm -q $REQUIRED_PACKAGE &> /dev/null
+    if [ $? -ne 0 ]; then
+        echo "report : installing required package : $REQUIRED_PACKAGE"
+        VERSION_AUX=( $(cat /etc/fedora-release) )
+        set -x
+        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
+        set -
+    fi
+done
 
 #########################################
 # LANGUAGETOOL
