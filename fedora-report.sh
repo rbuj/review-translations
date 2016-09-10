@@ -303,6 +303,10 @@ for PROJECT in ${PROJECTS[@]}; do
     STATS_PATH=${BASE_PATH}/stats
     DATA_STATS_PATH=${BASE_PATH}/stats/${PROJECT_NAME}
 
+    if [ ! -d "$REPORT_PATH" ]; then
+        mkdir -p $REPORT_PATH
+    fi
+
     echo "* project: ${PROJECT_NAME}"
     download_all_project_translations
     update_project_db
