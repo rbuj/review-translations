@@ -116,6 +116,9 @@ function locale_report_html {
     local DATE=${2}
     local HTML_REPORT="${REPORT_PATH}/index.html"
 
+    if [ ! -f "${REPORT_PATH}/${PROJECT_NAME}-report-${LOCALE}.txz" ]; then
+        return 1
+    fi
     cd ${REPORT_PATH}
     cat << EOF >> ${HTML_REPORT}
   <tr>
