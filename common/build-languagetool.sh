@@ -36,10 +36,18 @@ function build_languagtool {
     echo "languagtool : building"
     cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
-    # remove MORFOLOGIK_RULE_CA_ES rule in Catalan
-    if [ "${LANG_CODE}" == "ca" ] && [ -f "languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java" ]; then sed -i '/MorfologikCatalanSpellerRule/d' languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java; fi
-    # remove MORFOLOGIK_RULE_PL_PL rule in Polish
-    if [ "${LANG_CODE}" == "pl" ] && [ -f "languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java" ]; then sed -i '/MorfologikPolishSpellerRule/d' languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java; fi
+
+    # Catalan:
+    # remove MORFOLOGIK_RULE_CA_ES
+    sed -i '/MorfologikCatalanSpellerRule/d' languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java
+
+    # Polish:
+    # remove MORFOLOGIK_RULE_PL_PL
+    sed -i '/MorfologikPolishSpellerRule/d' languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java
+    # disable BRAK_KROPKI rule
+    sed -i -e "s/<rulegroup id=\"BRAK_KROPKI\"/<rulegroup id=\"BRAK_KROPKI\" default=\"off\"/g" languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml
+#    sed -i -e "/\([ tab]*\)<rulegroup id=\"BRAK_KROPKI\" name=\"Brak kropki na końcu zdania\">/!b;n;c<rule default=\"off\">" languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml
+
     cd languagetool
     ./build.sh languagetool-standalone clean package -DskipTests
 }
