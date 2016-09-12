@@ -118,7 +118,7 @@ EOF
     cat << EOF >> ${HTML_REPORT}
 <h2>check-grammar</h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+    posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
     cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
