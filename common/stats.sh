@@ -125,7 +125,7 @@ function png_stat_msg {
       'set style histogram rowstacked\n'\
       'set key outside horizontal center bottom font ",10"\n'\
       'set ylabel "messages"\n'\
-      'set xtics rotate font ",10"\n'\
+      'set xtics rotate font "Verdana,10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
    chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
@@ -164,7 +164,7 @@ function png_stat_msg_locale {
       'set style histogram rowstacked\n'\
       'set key outside right vertical font ",10"\n'\
       'set ylabel "messages"\n'\
-      'set xtics rotate font ",10"\n'\
+      'set xtics rotate font "Verdana,10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
    chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
@@ -203,7 +203,7 @@ function png_stat_w {
       'set style histogram rowstacked\n'\
       'set key outside horizontal center bottom font ",10"\n'\
       'set ylabel "words"\n'\
-      'set xtics rotate font ",10"\n'\
+      'set xtics rotate font "Verdana,10"\n'\
       'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
    chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
    echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
