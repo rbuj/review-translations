@@ -25,26 +25,44 @@ function usage {
 }
 
 function build_languagtool {
-    rpm -q maven &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "languagtool : installing required packages"
-        VERSION_AUX=( $(cat /etc/fedora-release) )
-        set -x
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y maven --nogpgcheck; else sudo dnf install -y maven; fi
-        set -
-    fi
+    #########################################
+    # REQUIRED PACKAGES
+    #########################################
+    for REQUIRED_PACKAGE in java-1.8.0-openjdk java-1.8.0-openjdk-devel perl-Locale-Codes maven; do
+        rpm -q $REQUIRED_PACKAGE &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "report : installing required package : $REQUIRED_PACKAGE"
+            VERSION_AUX=( $(cat /etc/fedora-release) )
+            set -x
+            if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
+            set -
+        fi
+    done
+
     echo "languagtool : building"
     cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
 
-    # Catalan:
-    # remove MORFOLOGIK_RULE_CA_ES
-    sed -i '/MorfologikCatalanSpellerRule/d' languagetool/languagetool-language-modules/ca/src/main/java/org/languagetool/language/Catalan.java
+    # remove MORFOLOGIK_RULE
+    for LOCALE  in be br ca de el es ml nl pl ro ru sl uk; do
+        case $LOCALE in
+            de)
+                for LANGUAGE in AustrianGerman GermanyGerman SwissGerman; do
+                    sed -i "/GermanSpellerRule/d" languagetool/languagetool-language-modules/$LOCALE/src/main/java/org/languagetool/language/$LANGUAGE.java
+                done
+            ;;
+            el)
+                local LANGUAGE=Greek
+                sed -i "/Morfologik"$LANGUAGE"SpellerRule/d" languagetool/languagetool-language-modules/$LOCALE/src/main/java/org/languagetool/language/$LANGUAGE.java
+            ;;
+            *)
+                local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('$LOCALE'));")
+                sed -i "/Morfologik"$LANGUAGE"SpellerRule/d" languagetool/languagetool-language-modules/$LOCALE/src/main/java/org/languagetool/language/$LANGUAGE.java
+            ;;
+	esac
+    done
 
-    # Polish:
-    # remove MORFOLOGIK_RULE_PL_PL
-    sed -i '/MorfologikPolishSpellerRule/d' languagetool/languagetool-language-modules/pl/src/main/java/org/languagetool/language/Polish.java
-    # disable BRAK_KROPKI rule
+    # Polish: disable BRAK_KROPKI rule
     sed -i -e "s/<rulegroup id=\"BRAK_KROPKI\"/<rulegroup id=\"BRAK_KROPKI\" default=\"off\"/g" languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml
 #    sed -i -e "/\([ tab]*\)<rulegroup id=\"BRAK_KROPKI\" name=\"Brak kropki na końcu zdania\">/!b;n;c<rule default=\"off\">" languagetool/languagetool-language-modules/pl/src/main/resources/org/languagetool/rules/pl/grammar.xml
 
