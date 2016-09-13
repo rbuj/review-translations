@@ -138,7 +138,7 @@ function locale_report_html {
     cat << EOF >> ${HTML_REPORT}
   <tr>
     <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));") (${LOCALE})</a></td>
-    <td nowrap>$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
+    <td style="white-space:nowrap;">$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
     <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)</td>
     <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)</td>
   </tr>
@@ -187,7 +187,7 @@ EOF
         for PACKAGE in $(cat $LIST | cut -d ' ' -f1 | sort -u); do
             cat << EOF >> ${HTML_REPORT}
   <tr>
-    <td nowrap>${PACKAGE}</td>
+    <td style="white-space:nowrap;">${PACKAGE}</td>
     <td>$(dnf repoquery -q --queryformat "%{description}" $PACKAGE)</td>
   </tr>
 EOF
