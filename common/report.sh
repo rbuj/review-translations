@@ -109,18 +109,19 @@ function report_project_cotent {
 <body bgcolor="#080808" text="#D0D0D0">
 <h1>${COMPONENT}</h1>
 EOF
-    case $LANG_CODE in
-        be|ca|da|de|el|es|fr|gl|it|lt|ml|nl|pl|pt|ro|ru|sk|sl|sv|ta|uk)
+    local LANG_CODE_SIEVE=${LANG_CODE/_/-}
+    case $LANG_CODE_SIEVE in
+        be|be-BY|br|br-FR|ca|ca-ES|da|da-DK|de|de-AT|de-CH|de-DE|el|el-GR|eo|es|fa|fr|gl|gl-ES|is-IS|it|lt|lt-LT|km-KH|ml|ml-IN|nl|pl|pl-PL|pt|pt-BR|pt-PT|ro|ro-RO|ru|ru-RU|sk|sk-SK|sl|sl-SI|sv|ta|ta-IN|tl-PH|uk|uk-UA)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
         ;;
-        ja)
+        ja|ja-JP|zh-CN)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
         ;;
         *)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
