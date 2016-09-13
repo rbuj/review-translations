@@ -68,7 +68,6 @@ figure figcaption {
 <h2>spelling and grammar report</h2>
 <table>
   <tr>
-    <th>ISO 6391-1 Code</th>
     <th>Language</th>
     <th>Date</th>
     <th>Size</th>
@@ -122,8 +121,7 @@ function locale_report_html {
     cd ${REPORT_PATH}
     cat << EOF >> ${HTML_REPORT}
   <tr>
-    <td>${LOCALE}</td>
-    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">$(perl -e "use Locale::Language; print (code2language('$LOCALE'));")</a></td>
+    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));") (${LOCALE})</a></td>
     <td nowrap>$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
     <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)</td>
     <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)</td>
