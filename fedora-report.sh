@@ -122,7 +122,7 @@ function locale_report {
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
     cd ${REPORT_PATH}
-    scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report
+    scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}
 }
 
 # LOCALE DATE
@@ -353,7 +353,7 @@ for PROJECT in ${PROJECTS[@]}; do
         add_locale_stats
         end_report_index_html
         chmod 644 ${REPORT_PATH}/index.html
-        scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/${PROJECT_NAME}-report/index.html
+        scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}/index.html
 
         sqlite3 ${DB_PATH} "UPDATE t_projects SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_project};"
     fi
