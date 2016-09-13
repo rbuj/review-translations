@@ -154,7 +154,7 @@ function png_stat_msg_locale {
    WIDTH=$((200+$(($NUMPRO*14))))
    LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
 
-   local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('$LOCALE'));")
+   local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));")" ($LOCALE)"
    echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.svg"\n'\
       'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
       'set boxwidth 0.8\n'\
