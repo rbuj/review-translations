@@ -239,6 +239,7 @@ EOF
     done
     sed -i "/DOCTYPE svg PUBLIC/d" ${HTML_REPORT}
     sed -i "/http\:\/\/www\.w3\.org\/Graphics\/SVG\/1\.1\/DTD\/svg11\.dt/d" ${HTML_REPORT}
+    sed -i "/xml version=\"1\.0\" encoding=\"utf-8\"  standalone=\"no\"/d" ${HTML_REPORT}
 }
 
 ########################################################
