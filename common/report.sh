@@ -109,16 +109,24 @@ function report_project_cotent {
 <body bgcolor="#080808" text="#D0D0D0">
 <h1>${COMPONENT}</h1>
 EOF
-    if [ "${LANG_CODE}" != "ja" ]; then
-        cat << EOF >> ${HTML_REPORT}
-<h2>check-spell-ec</h2>
-EOF
-        posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
-    fi
-    cat << EOF >> ${HTML_REPORT}
-<h2>check-grammar</h2>
-EOF
-    posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+    case $LANG_CODE in
+        be|ca|da|de|el|es|fr|gl|it|lt|ml|nl|pl|pt|ro|ru|sk|sl|sv|ta|uk)
+            echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+        ;;
+        ja)
+            echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+        ;;
+        *)
+            echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+        ;;
+    esac
     cat << EOF >> ${HTML_REPORT}
 </body>
 </html>
