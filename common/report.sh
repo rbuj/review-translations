@@ -113,7 +113,7 @@ EOF
     case $LANG_CODE_SIEVE in
         be|be-BY|br|br-FR|ca|ca-ES|da|da-DK|de|de-AT|de-CH|de-DE|el|el-GR|eo|es|fa|fr|gl|gl-ES|is-IS|it|lt|lt-LT|km-KH|ml|ml-IN|nl|pl|pl-PL|pt|pt-BR|pt-PT|ro|ro-RO|ru|ru-RU|sk|sk-SK|sl|sl-SI|sv|ta|ta-IN|tl-PH|uk|uk-UA)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
             posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
         ;;
@@ -124,8 +124,10 @@ EOF
             posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
         ;;
         *)
-            echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            if [ -f "/usr/share/myspell/${LANG_CODE/-/_}.dic" ]; then
+                echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
+                posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            fi
         ;;
     esac
     cat << EOF >> ${HTML_REPORT}
