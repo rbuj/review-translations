@@ -241,6 +241,7 @@ EOF
     sed -i "/http\:\/\/www\.w3\.org\/Graphics\/SVG\/1\.1\/DTD\/svg11\.dt/d" ${HTML_REPORT}
     sed -i "/xml version=\"1\.0\" encoding=\"utf-8\"  standalone=\"no\"/d" ${HTML_REPORT}
     sed -i -e "s/ xmlns:xlink=\"http:\/\/www\.w3\.org\/1999\/xlink\"//g" ${HTML_REPORT}
+    tidy -i -w 0 -m -q ${HTML_REPORT}
 }
 
 ########################################################
@@ -286,7 +287,7 @@ function update_project_db() {
 #########################################
 # REQUIRED PACKAGES
 #########################################
-for REQUIRED_PACKAGE in java-1.8.0-openjdk perl-Locale-Codes sqlite; do
+for REQUIRED_PACKAGE in java-1.8.0-openjdk perl-Locale-Codes sqlite tidy; do
     rpm -q $REQUIRED_PACKAGE &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required package : $REQUIRED_PACKAGE"
