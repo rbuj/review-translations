@@ -13,7 +13,7 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-declare -a locales=( be ca da de el es fr gl it ja lt ml nl pl pt ro ru sk sl sv ta uk )
+declare -a locales=( be ca da de el es fr gl it ja lt ml ml_IN nl pl pt pt_BR pt_PT ro ru sk sl sv ta uk zh_CN )
 WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
 DB_PATH="${WORK_PATH}/fedora-report.db"
