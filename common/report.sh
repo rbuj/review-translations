@@ -392,7 +392,17 @@ fi
 #########################################
 # REQUIRED PACKAGES
 #########################################
-for REQUIRED_PACKAGE in enchant-aspell java-1.8.0-openjdk langpacks-$LANG_CODE perl-Locale-Codes python-enchant sqlite tar xz; do
+REQUIRED_PACKAGES=( enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python-enchant sqlite tar xz )
+case $LANG_CODE in
+    ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
+        REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)
+    ;;
+    *)
+        REQUIRED_PACKAGES+=(langpacks-${LANG_CODE:0:2})
+    ;;
+esac
+
+for REQUIRED_PACKAGE in ${REQUIRED_PACKAGES[@]}; do
     rpm -q $REQUIRED_PACKAGE &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required package : $REQUIRED_PACKAGE"
