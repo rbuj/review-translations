@@ -29,6 +29,8 @@ function start_report_index_html {
 <head>
 <meta charset="UTF-8">
 <title>${TITLE}</title>
+<script type="text/javascript" src="/js/jquery-3.1.0.slim.min.js"></script>
+<script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
 <style>
 table {
     font-family: arial, sans-serif;
@@ -40,6 +42,10 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+}
+
+table.tablesorter thead tr .header {
+    cursor: pointer;
 }
 
 tr:nth-child(even) {
@@ -61,18 +67,28 @@ figure figcaption {
     text-align: center;
 }
 </style>
+<script type="text/javascript">
+\$(document).ready(function()
+	{
+		\$("#reportTable").tablesorter();
+	}
+);
+</script>
 </head>
 <body>
 
 <h1>${TITLE}</h1>
 <h2>spelling and grammar report</h2>
-<table>
+<table id="reportTable" class="tablesorter">
+  <thead>
   <tr>
     <th>Language</th>
     <th>Date</th>
     <th>Size</th>
     <th>MD5SUM</th>
   </tr>
+  </thead>
+  <tbody>
 EOF
 }
 
@@ -137,6 +153,7 @@ function create_project_report_stats {
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
     cat << EOF >> ${HTML_REPORT}
+  </tbody>
 </table>
 <figure>
 EOF
