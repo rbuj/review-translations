@@ -301,15 +301,15 @@ done
 #########################################
 # LANGUAGETOOL
 #########################################
+LT_SERVER="localhost"
+LT_PORT="8081"
 if [ ! -d "${WORK_PATH}/languagetool" ]; then
     ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
 fi
 cd ${WORK_PATH}
 LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port ${LT_PORT} > /dev/null &
 LANGUAGETOOL_PID=$!
-LT_SERVER="localhost"
-LT_PORT="8081"
 
 #########################################
 # REPORTS

@@ -190,15 +190,15 @@ function report {
     # LANGUAGETOOL
     #########################################
     if [ -z "${LT_EXTERNAL}" ]; then
+        LT_SERVER="localhost"
+        LT_PORT="8081"
         if [ ! -d "${WORK_PATH}/languagetool" ]; then
             ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
         fi
         cd ${WORK_PATH}
         LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-        java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
+        java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port ${LT_PORT} > /dev/null &
         LANGUAGETOOL_PID=$!
-        LT_SERVER="localhost"
-        LT_PORT="8081"
     fi
     echo -ne "report : waiting for langtool"
     until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://${LT_SERVER}:${LT_PORT}); do
