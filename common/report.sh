@@ -56,9 +56,11 @@ function fedora_wordlist {
         if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
             mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
         fi
-        local WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
-        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-        cat ${WORK_PATH}/wordlist >> ${DICT}
+        if [ ! -f "${DICT}" ]; then
+            local WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
+            echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
+            cat ${WORK_PATH}/wordlist >> ${DICT}
+        fi
     fi
 }
 

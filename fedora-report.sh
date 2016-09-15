@@ -120,7 +120,7 @@ function locale_report {
     local LOCALE=${1}
 
     cd ${WORK_PATH}
-    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r --disable-wordlist -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
+    ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
     cd ${REPORT_PATH}
     scp -i ~/.ssh/id_rsa ${PROJECT_NAME}-report-${LOCALE}.txz rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}
 }
