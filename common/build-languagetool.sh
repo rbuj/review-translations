@@ -42,6 +42,12 @@ function build_languagtool {
     echo "languagtool : building"
     cd ${WORK_PATH}
     git clone https://github.com/languagetool-org/languagetool.git
+    # use version 3.5
+    # https://github.com/languagetool-org/languagetool/commit/4b0f03f6122a99ec5a7da132286015d13c911a21
+    # The old API has been deactivated, as documented at https://languagetool.org/http-api/migration.php - it now returns a pseudo error pointing to the migration page
+    cd ${WORK_PATH}/languagetool
+    git checkout c2f5ac8c245f3cc41f328e66b5d145955f11c4c8
+    cd ${WORK_PATH}
 
     # remove MORFOLOGIK_RULE
     for LOCALE  in be br ca de el es ml nl pl ro ru sl uk; do
