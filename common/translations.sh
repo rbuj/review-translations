@@ -202,12 +202,12 @@ if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] |
     exit 1
 fi
 
-if [ -z "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
+if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
     usage
     exit 1
 fi
 
-if [ -n "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
+if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
     usage
     exit 1
 fi
