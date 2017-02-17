@@ -24,7 +24,15 @@ function info_proc {
                 cd $PROJECT
                 if [ -f "sources" ]; then
                     fedpkg -q sources &> /dev/null
-                    FILE=$(awk '{print $2}' sources)
+                    HASH=$(awk '{print $2}' sources)
+                    case $space in
+                    SHA512)
+                        FILE=$(awk -F '[()]' '{print $(NF-1)}' sources)
+                    ;;
+                    *)
+                        FILE=$(awk '{print $2}' sources)
+                    ;;
+                    esac
                     DATE="@"$(stat -c %Y $FILE 2>/dev/null)
                     if [ $? -eq 0 ]; then
                         STR_DATE=$(date -d $DATE +%Y-%m-%d)
