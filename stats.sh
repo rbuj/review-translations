@@ -18,21 +18,25 @@ function info_proc {
         set -- $p
         PROJECT=${1}
 
-        fedpkg -q co $PROJECT > /dev/null
+        fedpkg -q co $PROJECT &> /dev/null
         if [ $? -eq 0 ]; then
-            cd $PROJECT
-            fedpkg -q sources > /dev/null
-            FILE=$(cut -f 3 -d ' ' sources)
-            DATE="@"$(stat -c %Y $FILE)
-            STR_DATE=$(date -d $DATE +%Y-%m-%d)
-            if [ $? -eq 0 ]; then
-                arrIN=(${FILE//.tar./ })
-                VERSION=${arrIN[0]}
-                echo $STR_DATE $PROJECT ${VERSION/$PROJECT-/}
+            if [ -d "$PROJECT" ]; then
+                cd $PROJECT
+                fedpkg -q sources &> /dev/null
+                FILE=$(awk '{print $2}' sources)
+                DATE="@"$(stat -c %Y $FILE 2>/dev/null)
+                if [ $? -eq 0 ]; then
+                    STR_DATE=$(date -d $DATE +%Y-%m-%d)
+                    if [ $? -eq 0 ]; then
+                        arrIN=(${FILE//.tar./ })
+                        VERSION=${arrIN[0]}
+                        echo $STR_DATE $PROJECT ${VERSION/$PROJECT-/}
+                    fi
+                fi
+                cd ..
+                rm -fr $PROJECT
             fi
-            cd ..
         fi
-        rm -fr $PROJECT
     done <${INPUT_FILE}
 }
 
@@ -69,6 +73,11 @@ th {
 </style>
 </head>
 <body>
+<tr>
+<th>Date</th>
+<th>Package</th>
+<th>Version</th>
+</tr>
 EOF
 info_proc | sort -r | awk 'BEGIN{print "<table>"} {print "<tr>";for(i=1;i<=NF;i++)print "<td>" $i"</td>";print "</tr>"} END{print "</table>"}'
 cat <<EOF
