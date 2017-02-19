@@ -16,6 +16,7 @@
 declare -a locales=( be ca da de el es fr gl it ja lt ml ml_IN nl pl pt pt_BR pt_PT ro ru sk sl sv ta uk zh_CN )
 WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
+
 DB_PATH="${WORK_PATH}/fedora-report.db"
 
 ########################################################
@@ -99,7 +100,7 @@ function end_report_index_html {
 
     cat << EOF >> ${HTML_REPORT}
 <br>$(LC_ALL=en.utf8 date)
-<br><br>&copy; 2015-2016 Robert Buj <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
+<br><br>&copy; 2015-2017 Robert Buj <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
 <br><br>
     Copyright (C) $(LC_ALL=en.utf8 date '+%Y') Robert Buj.
     Permission is granted to copy, distribute and/or modify this document
@@ -341,6 +342,9 @@ for PROJECT in ${PROJECTS[@]}; do
     if [ "$date_report" -le "$date_file" ]; then
         start_report_index_html
         for LOCALE in ${locales[@]}; do
+            if [ "$LOCALE" == "pt_BR" ] && [ "$PROJECT" == "fedora-upstream" ]; then
+                continue;
+            fi
             id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
             id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_project = ${id_project} AND id_locale = ${id_locale};")
             if [ -n "${id_update}" ]; then
