@@ -256,7 +256,7 @@ function report {
     color: #080808;
 }
 </style>
-<script type="text/javascript" src="javascript/jquery-3.1.0.slim.js"></script>
+<script type="text/javascript" src="javascript/jquery-3.1.1.slim.js"></script>
 <script>
 var make_button_active = function()
 {
@@ -316,11 +316,11 @@ EOF
         mkdir -p "${HTML_REPORT_PATH}/javascript"
         chmod 755 "${HTML_REPORT_PATH}/javascript"
     fi
-    if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js" ]; then
-        curl --output "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js" https://code.jquery.com/jquery-3.1.0.slim.min.js > /dev/null
-        chmod 644 "${HTML_REPORT_PATH}/javascript/jquery-3.1.0.slim.js"
+    if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js" ]; then
+        curl --output "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js" https://code.jquery.com/jquery-3.1.1.slim.min.js > /dev/null
+        chmod 644 "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js"
     fi
-    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-3.1.0.slim.js")
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-3.1.1.slim.js")
 
     cd ${REPORT_PATH}
     if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.txz" ]; then
