@@ -49,6 +49,9 @@ function build_languagtool {
     git checkout c2f5ac8c245f3cc41f328e66b5d145955f11c4c8
     cd ${WORK_PATH}
 
+    # remove DeprecationWarning
+    sed -i "/replaceFirst/d" languagetool/languagetool-server/src/main/java/org/languagetool/server/V1TextChecker.java
+
     # remove MORFOLOGIK_RULE
     for LOCALE  in be br ca de el es ml nl pl ro ru sl uk; do
         case $LOCALE in
