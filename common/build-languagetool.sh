@@ -51,6 +51,7 @@ function build_languagtool {
 
     # remove DeprecationWarning
     sed -i "/replaceFirst/d" languagetool/languagetool-server/src/main/java/org/languagetool/server/V1TextChecker.java
+    sed -i "s/String xml =/return/" languagetool/languagetool-server/src/main/java/org/languagetool/server/V1TextChecker.java
 
     # remove MORFOLOGIK_RULE
     for LOCALE  in be br ca de el es ml nl pl ro ru sl uk; do
