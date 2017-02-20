@@ -47,6 +47,7 @@ function build_languagtool {
     # The old API has been deactivated, as documented at https://languagetool.org/http-api/migration.php - it now returns a pseudo error pointing to the migration page
     cd ${WORK_PATH}/languagetool
     git checkout c2f5ac8c245f3cc41f328e66b5d145955f11c4c8
+    xzcat ../languagetool.patch.xz | patch -p1
     cd ${WORK_PATH}
 
     # remove MORFOLOGIK_RULE
