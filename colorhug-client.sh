@@ -24,7 +24,6 @@ BASE_PATH_RPM=${BASE_PATH}/rpm
 
 LANG_CODE=
 GENERATE_REPORT=
-DISABLE_WORDLIST=
 INSTALL_TRANS=
 VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
@@ -35,7 +34,6 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -i, --install         Install translations"
     echo "   -h, --help            Display this help and exit"
     echo ""
@@ -82,24 +80,8 @@ function download {
     get_trans
 }
 
-function fedora_wordlist {
-    DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n "${DISABLE_WORDLIST}" ]; then
-        if [ -f "${DICT}" ]; then
-            rm -f ${DICT}
-        fi
-    else
-        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
-            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
-        fi
-        WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
-        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-        cat ${WORK_PATH}/wordlist >> ${DICT}
-    fi
-}
-
 function report {
-    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    rpm -q pology aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
         set -x
@@ -127,16 +109,6 @@ function report {
     else
         echo " ${GREEN}[ OK ]${NC}"
     fi
-
-    #########################################
-    # POLOGY
-    #########################################
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
-    fi
-    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-    export PATH=${WORK_PATH}/pology/bin:$PATH
-    fedora_wordlist
 
     HTML_REPORT=${WORK_PATH}/${PROJECT}-report.html
     cat << EOF > ${HTML_REPORT}
@@ -289,9 +261,6 @@ case $i in
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
-    --disable-wordlist)
-    DISABLE_WORDLIST="YES"
-    ;;
     -i|--install)
     INSTALL_TRANS="YES"
     ;;
@@ -307,10 +276,6 @@ esac
 done
 
 if [ -z "${LANG_CODE}" ]; then
-    usage
-    exit 1
-fi
-if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi

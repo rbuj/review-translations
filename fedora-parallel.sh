@@ -19,7 +19,6 @@ SCRIPTS=(./fedora-docs.sh ./fedora-main.sh ./fedora-upstream.sh ./fedora-web.sh 
 declare -A tasks
 LANG_CODE=
 GENERATE_REPORT=
-DISABLE_WORDLIST=
 LANGUAGETOOL_PID=
 
 function usage {
@@ -29,7 +28,6 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   --disable-wordlist    Do not use wordlist file (requires -r)"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
@@ -76,9 +74,6 @@ case $i in
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
-    --disable-wordlist)
-    DISABLE_WORDLIST="YES"
-    ;;
     -h|--help)
     usage
     exit 0
@@ -95,11 +90,6 @@ if [ -z "${LANG_CODE}" ]; then
     exit 1
 fi
 
-if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
-    usage
-    exit 1
-fi
-
 if [ -n "${GENERATE_REPORT}" ]; then
     #########################################
     # LANGUAGETOOL
@@ -111,23 +101,19 @@ if [ -n "${GENERATE_REPORT}" ]; then
     LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
     java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
     LANGUAGETOOL_PID=$!
+fi
 
-    #########################################
-    # POLOGY
-    #########################################
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
-    fi
+rpm -q pology &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "download : installing required packages"
+    VERSION_AUX=( $(cat /etc/fedora-release) )
+    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y pology --nogpgcheck; else sudo dnf install -y pology; fi
 fi
 
 cd ${WORK_PATH}
 for i in "${!SCRIPTS[@]}"; do
     if [ -n "$GENERATE_REPORT" ]; then
-        if [ -z "${DISABLE_WORDLIST}" ]; then
-            tasks["key${i}"]="${SCRIPTS[${i}]} -l=${LANG_CODE} -r --languagetool-server=localhost --languagetool-port=8081"
-        else
-            tasks["key${i}"]="${SCRIPTS[${i}]} -l=${LANG_CODE} -r --disable-wordlist --languagetool-server=localhost --languagetool-port=8081"
-        fi
+        tasks["key${i}"]="${SCRIPTS[${i}]} -l=${LANG_CODE} -r --languagetool-server=localhost --languagetool-port=8081"
     fi
 done
 

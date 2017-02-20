@@ -22,7 +22,6 @@ BASE_PATH=${WORK_PATH}
 
 LANG_CODE=
 GENERATE_REPORT=
-DISABLE_WORDLIST=
 INSTALL_TRANS=
 DEPLOY_MARIADB=
 UPDATE_DEPLOY=
@@ -36,7 +35,6 @@ function usage {
     echo "   -r, --report          Generate group report"
     echo "   --deploy              Create MariaDB database & user, virtualenv"
     echo "   --update              Update translations in local deployment"
-    echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo ""
 }
@@ -151,24 +149,8 @@ function download {
     get_trans
 }
 
-function fedora_wordlist {
-    DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n "${DISABLE_WORDLIST}" ]; then
-        if [ -f "${DICT}" ]; then
-            rm -f ${DICT}
-        fi
-    else
-        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
-            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
-        fi
-        WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
-        echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-        cat ${WORK_PATH}/wordlist >> ${DICT}
-    fi
-}
-
 function report {
-    rpm -q aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
+    rpm -q pology aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required packages"
         set -x
@@ -196,16 +178,6 @@ function report {
     else
         echo " ${GREEN}[ OK ]${NC}"
     fi
-
-    #########################################
-    # POLOGY
-    #########################################
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
-    fi
-    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-    export PATH=${WORK_PATH}/pology/bin:$PATH
-    fedora_wordlist
 
     HTML_REPORT=${WORK_PATH}/askbot-report.html
     cat << EOF > ${HTML_REPORT}
@@ -242,9 +214,6 @@ case $i in
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
-    --disable-wordlist)
-    DISABLE_WORDLIST="YES"
-    ;;
     --deploy)
     DEPLOY_MARIADB="YES"
     ;;
@@ -263,10 +232,6 @@ esac
 done
 
 if [ -z "${LANG_CODE}" ]; then
-    usage
-    exit 1
-fi
-if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi

@@ -28,7 +28,6 @@ LANG_CODE=
 ALL_LANGS=
 
 GENERATE_REPORT=
-DISABLE_WORDLIST=
 INSTALL_TRANS=
 STATS=
 DOWNLOAD="YES"
@@ -43,7 +42,6 @@ function usage {
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
-    echo "   --disable-wordlist    Do not use wordlist file"
     if [ "${DOCUMENT}" == "NO" ]; then
         echo "   -i, --install         Install translations"
     fi
@@ -108,18 +106,10 @@ function install {
 ###################################################################################
 
 function report {
-    if [ -z "${DISABLE_WORDLIST}" ]; then
-        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-        else
-            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-        fi
+    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
+        ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
     else
-        if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-        else
-            ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --disable-wordlist --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-        fi
+        ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
     fi
 }
 
@@ -164,9 +154,6 @@ case $i in
     -r|--report)
     GENERATE_REPORT="YES"
     ;;
-    --disable-wordlist)
-    DISABLE_WORDLIST="YES"
-    ;;
     -i|--install)
     INSTALL_TRANS="YES"
     ;;
@@ -208,11 +195,6 @@ if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
 fi
 
 if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
-    usage
-    exit 1
-fi
-
-if [ -z "${GENERATE_REPORT}" ] && [ -n "${DISABLE_WORDLIST}" ]; then
     usage
     exit 1
 fi

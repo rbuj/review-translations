@@ -73,7 +73,6 @@ Mandatory arguments:
 
 Optional arguments:
    -r, --report          Generate group report
-   --disable-wordlist    Do not use wordlist file (requires -r)
    -i, --install         Install translations
    -h, --help            Display this help and exit
 
@@ -82,17 +81,7 @@ Optional arguments:
 
 
 ```
-./fedora-main.sh -l=ca -r -i --disable-wordlist
-```
-
-
-```
 ./fedora-main.sh -l=ca -r -i
-```
-
-
-```
-./fedora-main.sh -l=ca -r --disable-wordlist
 ```
 
 

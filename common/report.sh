@@ -25,7 +25,6 @@ LANG_CODE=
 PROJECT_NAME=
 TRANSLATION_TYPE=
 INPUT_FILE=
-DISABLE_WORDLIST=
 VERBOSE=
 
 LT_SERVER=
@@ -41,27 +40,8 @@ function usage {
     echo "   -w|--workpath=W_PATH  Work PATH folder"
     echo "   -t|--type=TYPE        TYPE of translation sorce one of fedora, git, transifex"
     echo -ne "\nOptional arguments:\n"
-    echo "   --disable-wordlist    Do not use wordlist file"
     echo "   -h, --help            Display this help and exit"
     echo "   -v, --verbose         Verbose operation"
-}
-
-function fedora_wordlist {
-    local DICT=${WORK_PATH}/pology/lang/${LANG_CODE}/spell/report-fedora.aspell
-    if [ -n "${DISABLE_WORDLIST}" ]; then
-        if [ -f "${DICT}" ]; then
-            rm -f ${DICT}
-        fi
-    else
-        if [ ! -d "${WORK_PATH}/pology/lang/${LANG_CODE}/spell" ]; then
-            mkdir -p ${WORK_PATH}/pology/lang/${LANG_CODE}/spell
-        fi
-        if [ ! -f "${DICT}" ]; then
-            local WORDS=`cat ${WORK_PATH}/wordlist | wc -l`
-            echo "personal_ws-1.1 ${LANG_CODE} ${WORDS} utf-8" > ${DICT}
-            cat ${WORK_PATH}/wordlist >> ${DICT}
-        fi
-    fi
 }
 
 # project_name project_version html_filename
@@ -212,17 +192,6 @@ function report {
     fi
 
     #########################################
-    # POLOGY
-    #########################################
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        ${WORK_PATH}/common/build-pology.sh --path=${WORK_PATH}
-    fi
-    export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-    export PATH=${WORK_PATH}/pology/bin:$PATH
-
-    fedora_wordlist
-
-    #########################################
     # HTML
     #########################################
     HTML_REPORT="${HTML_REPORT_PATH}/index.html"
@@ -349,9 +318,6 @@ case $i in
     PROJECT_NAME="${i#*=}"
     shift # past argument=value
     ;;
-    --disable-wordlist)
-    DISABLE_WORDLIST="YES"
-    ;;
     --languagetool-server=*)
     LT_SERVER="${i#*=}"
     shift # past argument=value
@@ -394,7 +360,7 @@ fi
 #########################################
 # REQUIRED PACKAGES
 #########################################
-REQUIRED_PACKAGES=( enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python-enchant sqlite tar xz )
+REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz )
 case $LANG_CODE in
     ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
         REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)

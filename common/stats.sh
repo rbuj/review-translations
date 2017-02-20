@@ -257,8 +257,6 @@ if [ ! -d "${DATA_STATS_PATH}" ]; then
     mkdir -p "${DATA_STATS_PATH}"
 fi
 
-export PYTHONPATH=${WORK_PATH}/pology:$PYTHONPATH
-export PATH=${WORK_PATH}/pology/bin:$PATH
 if [ ! -d "${BASE_PATH}" ]; then
     exit 1
 fi
@@ -266,7 +264,7 @@ fi
 #########################################
 # REQUIRED PACKAGES
 #########################################
-for REQUIRED_PACKAGE in gnuplot perl-Locale-Codes sqlite; do
+for REQUIRED_PACKAGE in gnuplot perl-Locale-Codes sqlite pology; do
     rpm -q $REQUIRED_PACKAGE &> /dev/null
     if [ $? -ne 0 ]; then
         echo "report : installing required package : $REQUIRED_PACKAGE"
