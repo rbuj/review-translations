@@ -16,102 +16,20 @@
 declare -a locales=( be ca da de el es fr gl it ja lt ml ml_IN nl pl pt pt_BR pt_PT ro ru sk sl sv ta uk zh_CN )
 WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
-
 DB_PATH="${WORK_PATH}/fedora-report.db"
 
 ########################################################
 
 function start_report_index_html {
     local HTML_REPORT="${REPORT_PATH}/index.html"
-
-    cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${TITLE}</title>
-<script type="text/javascript" src="/js/jquery-3.1.0.slim.min.js"></script>
-<script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-table.tablesorter thead tr .header {
-    cursor: pointer;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-
-figure {
-    display: inline-block;
-    border: 1px none;
-    margin: 20px; /* adjust as needed */
-}
-
-figure img {
-    vertical-align: top;
-}
-
-figure figcaption {
-    border: none;
-    text-align: center;
-}
-</style>
-<script type="text/javascript">
-\$(document).ready(function()
-	{
-		\$("#reportTable").tablesorter();
-	}
-);
-</script>
-</head>
-<body>
-
-<h1>${TITLE}</h1>
-<h2>spelling and grammar report</h2>
-<table id="reportTable" class="tablesorter">
-  <thead>
-  <tr>
-    <th>Language</th>
-    <th>Date</th>
-    <th>Size</th>
-    <th>MD5SUM</th>
-  </tr>
-  </thead>
-  <tbody>
-EOF
+    sed "s/TITLE/$TITLE/g" ${WORK_PATH}/snippet/html.fedora-report.start.txt > ${HTML_REPORT}
 }
 
 ########################################################
 
 function end_report_index_html {
     local HTML_REPORT="${REPORT_PATH}/index.html"
-
-    cat << EOF >> ${HTML_REPORT}
-<br>$(LC_ALL=en.utf8 date)
-<br><br>&copy; 2015-2017 Robert Buj <a href="https://github.com/rbuj/review-translations">https://github.com/rbuj/review-translations</a>
-<br><br>
-    Copyright (C) $(LC_ALL=en.utf8 date '+%Y') Robert Buj.
-    Permission is granted to copy, distribute and/or modify this document
-    under the terms of the GNU Free Documentation License, Version 1.3
-    or any later version published by the Free Software Foundation;
-    with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
-    A copy of the license is included in the section entitled "GNU
-    Free Documentation License".
-</body>
-</html>
-EOF
+    sed "s/DATE/$(LC_ALL=en.utf8 date)/g;s/YEAR/$(LC_ALL=en.utf8 date '+%Y')/g" ${WORK_PATH}/snippet/html.fedora-report.end.txt >> ${HTML_REPORT}
 }
 
 ########################################################
@@ -119,7 +37,6 @@ EOF
 # LOCALE
 function locale_report {
     local LOCALE=${1}
-
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -l=$LOCALE -r -n  --languagetool-server=$LT_SERVER --languagetool-port=$LT_PORT;
     cd ${REPORT_PATH}
@@ -131,19 +48,16 @@ function locale_report_html {
     local LOCALE=${1}
     local DATE=${2}
     local HTML_REPORT="${REPORT_PATH}/index.html"
+    local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));")
+    local FORMATED_DATE=$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")
 
     if [ ! -f "${REPORT_PATH}/${PROJECT_NAME}-report-${LOCALE}.txz" ]; then
         return 1
     fi
     cd ${REPORT_PATH}
-    cat << EOF >> ${HTML_REPORT}
-  <tr>
-    <td><a href="${PROJECT_NAME}-report-${LOCALE}.txz">$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));") (${LOCALE})</a></td>
-    <td style="white-space:nowrap;">$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")</td>
-    <td>$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)</td>
-    <td>$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)</td>
-  </tr>
-EOF
+    local SIZE=$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)
+    local MD5SUM=$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)
+    sed "s/PROJECT_NAME/$PROJECT_NAME/g;s/LOCALE/$LOCALE/g;s/LANGUAGE/$LANGUAGE/g;s/DATE/$FORMATED_DATE/g;s/SIZE/$SIZE/g;s/MD5SUM/$MD5SUM/g" ${WORK_PATH}/snippet/html.fedora-report.table.row.txt >> ${HTML_REPORT}
 }
 
 ########################################################

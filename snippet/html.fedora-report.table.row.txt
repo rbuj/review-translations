@@ -1,0 +1,6 @@
+  <tr>
+    <td><a href="PROJECT_NAME-report-LOCALE.txz">LANGUAGE (LOCALE)</a></td>
+    <td style="white-space:nowrap;">DATE</td>
+    <td>SIZE</td>
+    <td>MD5SUM</td>
+  </tr>
