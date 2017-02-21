@@ -60,37 +60,7 @@ function report_project_cotent {
         return 0;
     fi
 
-    cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html lang="${LANG_CODE}" xml:lang="${LANG_CODE}" xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Translation Report</title>
-    <style type="text/css">
-        /* unvisited link */
-        a:link {
-            color: #D0D0D0;
-        }
-
-        /* visited link */
-        a:visited {
-            color: #00FF00;
-        }
-
-	/* mouse over link */
-        a:hover {
-            color: #FF00FF;
-        }
-
-	/* selected link */
-        a:active {
-            color: #0000FF;
-        }
-    </style>
-  </head>
-<body bgcolor="#080808" text="#D0D0D0">
-<h1>${COMPONENT}</h1>
-EOF
+    sed "s/LANG_CODE/$LANG_CODE/g;s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.COMPONENT.start.txt > ${HTML_REPORT}
     local LANG_CODE_SIEVE=${LANG_CODE/_/-}
     case $LANG_CODE_SIEVE in
         be|be-BY|br|br-FR|ca|ca-ES|da|da-DK|de|de-AT|de-CH|de-DE|el|el-GR|eo|es|fa|fr|gl|gl-ES|is-IS|it|lt|lt-LT|km-KH|ml|ml-IN|nl|pl|pl-PL|pt|pt-BR|pt-PT|ro|ro-RO|ru|ru-RU|sk|sk-SK|sl|sl-SI|sv|ta|ta-IN|tl-PH|uk|uk-UA)
@@ -112,10 +82,7 @@ EOF
             fi
         ;;
     esac
-    cat << EOF >> ${HTML_REPORT}
-</body>
-</html>
-EOF
+    cat ${WORK_PATH}/snippet/html.report.COMPONENT.end.txt >> ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     sqlite3 ${DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
@@ -198,80 +165,17 @@ function report {
     echo "************************************************"
     echo "* checking translations..."
     echo "************************************************"
-    cat << EOF > ${HTML_REPORT}
-<!DOCTYPE html>
-<html>
-<head>
-<title>Translation Report</title>
-<style>
-.menu {
-    list-style-type: none;
-    white-space:nowrap;
-    margin: 0;
-    padding: 0;
-    background-color: #080808;
-    color: #D0D0D0;
-}
-
-.menu li a {
-    display: block;
-    color: #D0D0D0;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
-.menu li a:hover, .menu li.active a {
-    background-color: #D0D0D0;
-    color: #080808;
-}
-</style>
-<script type="text/javascript" src="javascript/jquery-3.1.1.slim.js"></script>
-<script>
-var make_button_active = function()
-{
-  var siblings =(\$(this).siblings());
-
-  siblings.each(function (index)
-    {
-      \$(this).removeClass('active');
-    }
-  )
-
-
-  \$(this).addClass('active');
-}
-
-\$(document).ready(
-  function()
-  {
-    \$(".menu li").click(make_button_active);
-  }
-)
-</script>
-</head>
-<body>
-
-<div id="container" style="display: flex; min-height: 100vh;">
-    <ul class="menu">
-EOF
+    source ${WORK_PATH}/snippet/jquery.version
+    sed "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${WORK_PATH}/snippet/html.report.INDEX.start.txt > ${HTML_REPORT}
     local FILES=()
     for COMPONENT in ${COMPONENTS[@]}; do
         report_project_cotent ${COMPONENT}
         if [ -f "${HTML_REPORT_PATH}/data/${COMPONENT}.html" ]; then
             FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
-            cat << EOF >> ${HTML_REPORT}
-      <li><a href="data/${COMPONENT}.html" target="main_page">${COMPONENT}</a></li>
-EOF
+            sed "s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.INDEX.NAV.start.txt >> ${HTML_REPORT}
         fi
     done
-    cat << EOF >> ${HTML_REPORT}
-    </ul>
-    <iframe src="data/emty.html" style="flex: 1;" frameBorder="0" name="main_page"></iframe>
-</div>
-
-</body>
-</html>
-EOF
+    cat ${WORK_PATH}/snippet/html.report.INDEX.end.txt >> ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
 

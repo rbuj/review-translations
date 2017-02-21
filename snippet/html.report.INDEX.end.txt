@@ -1,0 +1,6 @@
+    </ul>
+    <iframe src="data/emty.html" style="flex: 1;" frameBorder="0" name="main_page"></iframe>
+</div>
+
+</body>
+</html>
