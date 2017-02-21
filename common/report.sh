@@ -172,7 +172,7 @@ function report {
         report_project_cotent ${COMPONENT}
         if [ -f "${HTML_REPORT_PATH}/data/${COMPONENT}.html" ]; then
             FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
-            sed "s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.INDEX.NAV.start.txt >> ${HTML_REPORT}
+            sed "s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.INDEX.nav.txt >> ${HTML_REPORT}
         fi
     done
     cat ${WORK_PATH}/snippet/html.report.INDEX.end.txt >> ${HTML_REPORT}
