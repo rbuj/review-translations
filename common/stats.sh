@@ -70,7 +70,7 @@ function populate_db {
          declare -i date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_updates WHERE id = ${id_update};")
 
          if [ "${date_report}" -le ${date_file} ]; then
-             stdbuf -oL posieve stats --include-name=${LOCALE}\$  ${BASE_PATH}/${COMPONENT} |
+             LC_ALL=en_US.UTF-8 stdbuf -oL posieve stats --include-name=${LOCALE}\$ ${BASE_PATH}/${COMPONENT} |
              while read -r o; do
                 set -- $o
                    if [ "${1}" != "-" ];then
