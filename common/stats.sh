@@ -97,9 +97,10 @@ function png_stat_msg {
    echo "************************************************"
    echo "* message stats..."
    echo "************************************************"
-   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_msg_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
-
-   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv | wc -l)))
+   local PLOT=${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
+   local SQL=${WORK_PATH}/sql/stats_png_stat_msg_tsv.sql
+   sqlite3 ${DB_PATH} < ${SQL} | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_msg_tsv.pl - > ${PLOT}
+   declare -i NUMPRO=$(($(cat ${PLOT} | wc -l)))
    if [ $? -ne 0 ]; then
        return 1
    fi
@@ -109,34 +110,29 @@ function png_stat_msg {
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv | wc -c)" -eq "1" ]; then
-       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv
+   if [ "$(cat ${PLOT} | wc -c)" -eq "1" ]; then
+       rm -f ${PLOT}
        return 0
    fi
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.tsv"
-   WIDTH=$((110+$(($NUMPRO*14))))
-   LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
+   echo "${PLOT}"
 
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
-      'set boxwidth 0.8\n'\
-      'set style fill solid 1.00 border 0\n'\
-      'set style data histogram\n'\
-      'set style histogram rowstacked\n'\
-      'set key outside horizontal center bottom font ",10"\n'\
-      'set ylabel "messages"\n'\
-      'set xtics rotate font "Verdana,10"\n'\
-      'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg"
+   local WIDTH=$((110+$(($NUMPRO*14))))
+   local LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_msg_max_total.sql | wc -c)*10))
+   local SIZE=$(($WIDTH+$LEGEND)),480
+   local OUTPUT=${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg
+   local NAME=${PROJECT_NAME//-/_}_msg
+   sed "s/SIZE/$SIZE/g;s/NAME/$NAME/g;s/OUTPUT/${OUTPUT//\//\\\/}/g;s/PLOT/${PLOT//\//\\\/}/g" ${WORK_PATH}/snippet/gnuplot.project.msg.txt | gnuplot
+   chmod 644 "${OUTPUT}"
+   echo "${OUTPUT}"
 }
 
 function png_stat_msg_locale {
    LOCALE="${1}"
 
-   cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-\.]*)\|fuzzy\|(\d)*\s[\w\-\.]*\|obsolete\|\d*\s[\w\-\.]*\|total\|\d*\s[\w\-\.]*\|translated\|(\d*)\s[\w\-\.]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
-
-   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv | wc -l)))
+   local PLOT=${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+   local SQL=${WORK_PATH}/sql/stats_png_stat_msg_locale_tsv.sql
+   sed "s/LOCALE/${LOCALE}/g" ${SQL} | sqlite3 ${DB_PATH} | xargs -n5 | perl -pe 's/^([\w\-\.]*)\|fuzzy\|(\d)*\s[\w\-\.]*\|obsolete\|\d*\s[\w\-\.]*\|total\|\d*\s[\w\-\.]*\|translated\|(\d*)\s[\w\-\.]*\|untranslated\|(\d*).*/$1 $3 $2 $4/g' > ${PLOT}
+   declare -i NUMPRO=$(($(cat ${PLOT} | wc -l)))
    if [ $? -ne 0 ]; then
        return 1
    fi
@@ -146,28 +142,21 @@ function png_stat_msg_locale {
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv | wc -c)" -eq "1" ]; then
-       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv
+   if [ "$(cat ${PLOT} | wc -c)" -eq "1" ]; then
+       rm -f ${PLOT}.tsv
        return 0
    fi
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.tsv"
-   WIDTH=$((200+$(($NUMPRO*14))))
-   LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
+   echo "${PLOT}"
 
+   local WIDTH=$((200+$(($NUMPRO*14))))
+   local LEGEND=$(($(cat ${WORK_PATH}/sql/stats_png_stat_msg_locale_max_total.sql | sed "s/LOCALE/${LOCALE}/g" | sqlite3 ${DB_PATH} | wc -c)*10))
    local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));")" ($LOCALE)"
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',720 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
-      'set boxwidth 0.8\n'\
-      'set title "'${LANGUAGE}'"\n'\
-      'set style fill solid 1.00 border 0\n'\
-      'set style data histogram\n'\
-      'set style histogram rowstacked\n'\
-      'set key outside right vertical font ",10"\n'\
-      'set ylabel "messages"\n'\
-      'set xtics rotate font "Verdana,10"\n'\
-      'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-msg.'${LOCALE}'.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
+   local SIZE=$(($WIDTH+$LEGEND)),720
+   local OUTPUT="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
+   local NAME=${PROJECT_NAME//-/_}_msg_${LOCALE//-/_}
+   sed "s/TITLE/$LANGUAGE/g;s/SIZE/$SIZE/g;s/NAME/$NAME/g;s/OUTPUT/${OUTPUT//\//\\\/}/g;s/PLOT/${PLOT//\//\\\/}/g" ${WORK_PATH}/snippet/gnuplot.language.msg.txt | gnuplot
+   chmod 644 "${OUTPUT}"
+   echo "${OUTPUT}"
 }
 
 function png_stat_w {
@@ -175,9 +164,9 @@ function png_stat_w {
    echo "* word stats..."
    echo "************************************************"
    # LOCALE translated fuzzy untranslated
-   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_w_tsv.pl - > ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
-
-   declare -i NUMPRO=$(($(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv | wc -l)))
+   local PLOT=${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
+   sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_tsv.sql | xargs -n5 | perl ${WORK_PATH}/sql/stats_png_stat_w_tsv.pl - > ${PLOT}
+   declare -i NUMPRO=$(($(cat ${PLOT} | wc -l)))
    if [ $? -ne 0 ]; then
        return 1
    fi
@@ -187,26 +176,21 @@ function png_stat_w {
    if [ "${NUMPRO}" -eq 0 ]; then
        return 1
    fi
-   if [ "$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv | wc -c)" -eq "1" ]; then
-       rm -f ${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv
+   if [ "$(cat ${PLOT} | wc -c)" -eq "1" ]; then
+       rm -f ${PLOT}
        return 0
    fi
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.tsv"
-   WIDTH=$((110+$(($NUMPRO*14))))
-   LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
+   echo "${PLOT}"
 
-   echo -ne 'set output "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.svg"\n'\
-      'set terminal svg size '$(($WIDTH+$LEGEND))',480 noenhanced name "'${PROJECT_NAME//-/_}'"\n'\
-      'set boxwidth 0.8\n'\
-      'set style fill solid 1.00 border 0\n'\
-      'set style data histogram\n'\
-      'set style histogram rowstacked\n'\
-      'set key outside horizontal center bottom font ",10"\n'\
-      'set ylabel "words"\n'\
-      'set xtics rotate font "Verdana,10"\n'\
-      'plot "'${DATA_STATS_PATH}/${PROJECT_NAME}'-w.tsv" using 2:xticlabels(1) lt rgb "#406090" title "translated", "" using 3 title "fuzzy", "" using 4 title "untranslated"' | gnuplot
-   chmod 644 "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
-   echo "${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
+   local WIDTH=$((110+$(($NUMPRO*14))))
+   local LEGEND=$(($(sqlite3 ${DB_PATH} < ${WORK_PATH}/sql/stats_png_stat_w_max_total.sql | wc -c)*10))
+   local SIZE=$(($WIDTH+$LEGEND)),480
+   local OUTPUT="${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg"
+   local NAME=${PROJECT_NAME//-/_}_w
+
+   sed "s/SIZE/$SIZE/g;s/NAME/$NAME/g;s/OUTPUT/${OUTPUT//\//\\\/}/g;s/PLOT/${PLOT//\//\\\/}/g" ${WORK_PATH}/snippet/gnuplot.project.w.txt | gnuplot
+   chmod 644 "${OUTPUT}"
+   echo "${OUTPUT}"
 }
 
 for i in "$@"
