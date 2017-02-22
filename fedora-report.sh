@@ -71,15 +71,11 @@ function create_project_report_stats {
   </tbody>
 </table>
 <figure>
-EOF
-cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg >> ${HTML_REPORT}
-    cat << EOF >> ${HTML_REPORT}
+  <img alt="Global translation: message stats by language" src="data:image/svg+xml;base64,$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg | python -m base64 -e | perl -pe 'chomp')"/>
   <figcaption>Fig.1 - Global translation - message stats by language.</figcaption>
 </figure>
 <figure>
-EOF
-cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg >> ${HTML_REPORT}
-    cat << EOF >> ${HTML_REPORT}
+  <img alt="Global translation: word stats by language" src="data:image/svg+xml;base64,$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg | python -m base64 -e | perl -pe 'chomp')"/>
   <figcaption>Fig.2 - Global translation - word stats by language.</figcaption>
 </figure>
 EOF
@@ -144,19 +140,12 @@ function add_locale_stats {
         if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg" ]; then
             local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
             cat << EOF >> ${HTML_REPORT}
-<figure>
-EOF
-            cat $FILE >> ${HTML_REPORT}
-            cat << EOF >> ${HTML_REPORT}
-</figure>
+  <figure>
+      <img alt="$FILE" src="data:image/svg+xml;base64,$(cat $FILE | python -m base64 -e | perl -pe 'chomp')"/>
+  </figure>
 EOF
         fi
     done
-    sed -i "/DOCTYPE svg PUBLIC/d" ${HTML_REPORT}
-    sed -i "/http\:\/\/www\.w3\.org\/Graphics\/SVG\/1\.1\/DTD\/svg11\.dt/d" ${HTML_REPORT}
-    sed -i "/xml version=\"1\.0\" encoding=\"utf-8\"  standalone=\"no\"/d" ${HTML_REPORT}
-    sed -i -e "s/ xmlns:xlink=\"http:\/\/www\.w3\.org\/1999\/xlink\"//g" ${HTML_REPORT}
-    tidy -i -w 0 -m -q ${HTML_REPORT}
 }
 
 ########################################################
@@ -275,6 +264,7 @@ for PROJECT in ${PROJECTS[@]}; do
         report_package_table
         add_locale_stats
         end_report_index_html
+        tidy -i -w 0 -m -q ${REPORT_PATH}/index.html
         chmod 644 ${REPORT_PATH}/index.html
         scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}/index.html
 
