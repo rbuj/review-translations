@@ -49,19 +49,17 @@ function update_src {
 
 function download_trans {
     echo -ne "$1 : downloading translation"
-    curl -s -S $2 > ${BASE_PATH}/${1}/po/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+    wget -q -O ${BASE_PATH}/${1}/po/${LANG_CODE}.po $2 && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 }
 
 function download {
     echo "************************************************"
     echo "* downloading sources & translations..."
     echo "************************************************"
-    for PROJECT in sugar sugar-toolkit-gtk3; do
+    for PROJECT in sugar sugar-toolkit-gtk3 OLPC_switch_desktop; do
         echo -ne ${PROJECT}" "
-        curl -s -S http://translate.sugarlabs.org/export/${PROJECT}/${LANG_CODE}.po > ${BASE_PATH}/${PROJECT}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
+        wget -q -O ${BASE_PATH}/${PROJECT}.po https://translate.sugarlabs.org/download/${LANG_CODE}/${PROJECT}/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
     done
-
-    echo -ne "olpc-switch-desktop "; curl -s -S http://translate.sugarlabs.org/export/OLPC_switch_desktop/${LANG_CODE}/${LANG_CODE}.po > ${BASE_PATH}/olpc-switch-desktop.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 
     while read -r p; do
         set -- ${p//"LOCALE"/${LANG_CODE}}
