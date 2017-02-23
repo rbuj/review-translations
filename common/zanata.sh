@@ -71,5 +71,3 @@ function download {
     done <${LIST}
     echo "************************************************"
 }
-
-download

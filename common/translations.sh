@@ -51,54 +51,6 @@ function usage {
 
 ###################################################################################
 
-function download {
-    case $TYPE in
-        fedora|git|transifex)
-            source ${WORK_PATH}/common/download-${TYPE}.sh
-        ;;
-        *)
-            usage
-            exit 1
-        ;;
-    esac
-}
-
-###################################################################################
-
-function install {
-    case $TYPE in
-        fedora)
-            if [ "${PROJECT_NAME}" != "fedora-web" ]; then
-                source ${WORK_PATH}/common/install.sh
-            else
-                usage
-                exit 1
-            fi
-        ;;
-        git|transifex)
-            source ${WORK_PATH}/common/fedpkg-install.sh
-        ;;
-        *)
-            usage
-            exit 1
-        ;;
-    esac
-}
-
-###################################################################################
-
-function report {
-    source ${WORK_PATH}/common/report.sh
-}
-
-###################################################################################
-
-function stats {
-    source ${WORK_PATH}/common/stats.sh
-}
-
-###################################################################################
-
 for i in "$@"
 do
 case $i in
@@ -177,19 +129,45 @@ fi
 BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 if [ "${DOWNLOAD}" == "YES" ]; then
+    case $TYPE in
+        fedora|git|transifex)
+            source ${WORK_PATH}/common/download-${TYPE}.sh
+        ;;
+	*)
+            usage
+            exit 1
+        ;;
+    esac
     download
 fi
 
 if [ -n "$GENERATE_REPORT" ]; then
-    report
+    source ${WORK_PATH}/common/report.sh
 fi
 
 if [ -n "$INSTALL_TRANS" ] && [ "${DOCUMENT}" == "NO" ]; then
+    case $TYPE in
+        fedora)
+            if [ "${PROJECT_NAME}" != "fedora-web" ]; then
+                source ${WORK_PATH}/common/install.sh
+            else
+                usage
+                exit 1
+            fi
+	;;
+	git|transifex)
+            source ${WORK_PATH}/common/fedpkg-install.sh
+        ;;
+	*)
+            usage
+            exit 1
+        ;;
+    esac
     install
 fi
 
 if [ -n "$STATS" ]; then
-    stats
+    source ${WORK_PATH}/common/stats.sh
 fi
 
 echo "complete!"

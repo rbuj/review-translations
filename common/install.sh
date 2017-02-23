@@ -58,5 +58,3 @@ function install {
         fi
     done <${LIST}
 }
-
-install

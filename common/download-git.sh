@@ -39,5 +39,3 @@ function download {
         download_code ${1} ${2}
     done <${LIST}
 }
-
-download

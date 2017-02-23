@@ -18,6 +18,8 @@ function install {
     echo "* installing translations..."
     echo "************************************************"
     local VERSION_AUX=( $(cat /etc/fedora-release) )
+    local BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
+    local VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
     rpm -q fedpkg fedora-packager rpmdevtools &> /dev/null
     if [ $? -ne 0 ]; then
@@ -160,8 +162,3 @@ function install {
         let "COUNTER++"
     done <${LIST}
 }
-
-BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
-VERSION=$(${WORK_PATH}/common/fedora-version.sh)
-
-install
