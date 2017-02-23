@@ -154,11 +154,11 @@ if [ -n "$INSTALL_TRANS" ] && [ "${DOCUMENT}" == "NO" ]; then
                 usage
                 exit 1
             fi
-	;;
-	git|transifex)
+        ;;
+        git|transifex)
             source ${WORK_PATH}/common/fedpkg-install.sh
         ;;
-	*)
+        *)
             usage
             exit 1
         ;;
