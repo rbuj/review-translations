@@ -13,18 +13,9 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-WORK_PATH=
-LANG_CODE=
+LANGUAGETOOL_PID=
 
-function usage {
-    echo "This script builds LanguageTool in the specified path if there is no languagetool folder."
-    echo "usage : $0 --path=PATH  -l|--lang=LANG_CODE"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
-    echo "   --path=PATH           PATH  to look for"
-    echo "   -h, --help            Display this help and exit"
-}
-
-function build_languagtool {
+function build_languagetool {
     #########################################
     # REQUIRED PACKAGES
     #########################################
@@ -83,33 +74,14 @@ function build_languagtool {
     ./build.sh languagetool-standalone clean package -DskipTests
 }
 
-for i in "$@"
-do
-case $i in
-    -l=*|--lang=*)
-    LANG_CODE="${i#*=}"
-    shift # past argument=value
-    ;;
-    --path=*)
-    WORK_PATH="${i#*=}"
-    shift # past argument=value
-    ;;
-    -h|--help)
-    usage
-    exit 0
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-esac
-done
-
-if [ -z "${WORK_PATH}" ]; then
-    usage
-    exit 1
-fi
+function run_languagetool {
+    cd ${WORK_PATH}
+    local LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
+    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port $LT_PORT > /dev/null &
+    LANGUAGETOOL_PID=$!
+}
 
 if [ ! -d "${WORK_PATH}/languagetool" ]; then
-    build_languagtool
+    build_languagetool
 fi
+run_languagetool

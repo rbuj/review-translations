@@ -9,8 +9,7 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
 
 Components (scripts which are used by other scrips):
-* common/build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder
-* common/build-pology.sh : builds Pology in the specified path if there is no pology folder
+* common/languagetool.sh : builds LanguageTool if there is no languagetool folder and launch LT server
 * common/download-fedora.sh : downloads the translations from fedora.zanata.org
 * common/download-git.sh : downloads the translations from a git repo
 * common/download-transifex.sh : downloads the translations from transifex

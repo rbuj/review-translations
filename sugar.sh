@@ -25,6 +25,9 @@ LANG_CODE=
 GENERATE_REPORT=
 INSTALL_TRANS=
 
+LT_SERVER="localhost"
+LT_PORT="8081"
+
 function usage {
     echo "This script downloads the translations of the Sugar Labs project"
     echo "    usage : $0 -l|--lang=LANG_CODE [ARGS]"
@@ -137,43 +140,39 @@ EOF
     cat << EOF >> $3
 <h2 id=CheckGrammar${1}>check-grammar <a href="#toc">[^]</a></h2>
 EOF
-    posieve check-grammar -s lang:${LANG_CODE} --skip-obsolete --coloring-type=html $2 >> $3
+    posieve check-grammar -s lang:${LANG_CODE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html $2 >> $3
     cat << EOF >> $3
 <h2 id=Stats${1}>stats <a href="#toc">[^]</a></h2>
 EOF
     posieve stats --msgfmt-check --skip-obsolete --coloring-type=html $2 >> $3
 }
 
-function install_pology {
-    if [ ! -d "${WORK_PATH}/pology" ]; then
-        echo "report : building pology"
-        cd ${WORK_PATH}
-        svn checkout svn://anonsvn.kde.org/home/kde/trunk/l10n-support/pology
-        cd pology
-        mkdir build && cd build
-        cmake ..
-        make
-    fi
-}
-
 function report {
-    rpm -q pology aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        set -x
-        sudo dnf install -y pology aspell-${LANG_CODE} python-enchant enchant-aspell
-        set -
-    fi
+    REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz )
+    case $LANG_CODE in
+        ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
+            REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)
+        ;;
+        *)
+      	    REQUIRED_PACKAGES+=(langpacks-${LANG_CODE:0:2})
+        ;;
+    esac
+
+    for REQUIRED_PACKAGE in ${REQUIRED_PACKAGES[@]}; do
+        rpm -q $REQUIRED_PACKAGE &> /dev/null
+        if [ $? -ne 0 ]; then
+            echo "report : installing required package : $REQUIRED_PACKAGE"
+            VERSION_AUX=( $(cat /etc/fedora-release) )
+            set -x
+	    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
+            set -
+        fi
+    done
+
     #########################################
     # LANGUAGETOOL
     #########################################
-    if [ ! -d "${WORK_PATH}/languagetool" ]; then
-        ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l={LANG_CODE}
-    fi
-    cd ${WORK_PATH}
-    LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-    java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port 8081 > /dev/null &
-    LANGUAGETOOL_PID=$!
+    source ${WORK_PATH}/common/languagetool.sh
 
     echo -ne "report : waiting for langtool"
     until $(curl --output /dev/null --silent --data "language=ca&text=Hola món!" --fail http://localhost:8081); do

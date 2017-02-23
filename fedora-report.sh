@@ -17,6 +17,7 @@ declare -a locales=( be ca da de el es fr gl it ja lt ml ml_IN nl pl pt pt_BR pt
 WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
 DB_PATH="${WORK_PATH}/fedora-report.db"
+source ${WORK_PATH}/conf/languagetool.conf
 
 ########################################################
 
@@ -205,15 +206,7 @@ done
 #########################################
 # LANGUAGETOOL
 #########################################
-LT_SERVER="localhost"
-LT_PORT="8081"
-if [ ! -d "${WORK_PATH}/languagetool" ]; then
-    ${WORK_PATH}/common/build-languagetool.sh --path=${WORK_PATH} -l=${LANG_CODE}
-fi
-cd ${WORK_PATH}
-LANGUAGETOOL=`find . -name 'languagetool-server.jar'`
-java -cp $LANGUAGETOOL org.languagetool.server.HTTPServer --port ${LT_PORT} > /dev/null &
-LANGUAGETOOL_PID=$!
+source ${WORK_PATH}/common/languagetool.sh
 
 #########################################
 # REPORTS
