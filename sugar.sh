@@ -152,17 +152,8 @@ function report {
       	    REQUIRED_PACKAGES+=(langpacks-${LANG_CODE:0:2})
         ;;
     esac
-
-    for REQUIRED_PACKAGE in ${REQUIRED_PACKAGES[@]}; do
-        rpm -q $REQUIRED_PACKAGE &> /dev/null
-        if [ $? -ne 0 ]; then
-            echo "report : installing required package : $REQUIRED_PACKAGE"
-            VERSION_AUX=( $(cat /etc/fedora-release) )
-            set -x
-	    if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
-            set -
-        fi
-    done
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages ${REQUIRED_PACKAGES[@]}
 
     #########################################
     # LANGUAGETOOL

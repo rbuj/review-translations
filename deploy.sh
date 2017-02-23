@@ -13,6 +13,8 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+WORK_PATH=$PWD
+source ${WORK_PATH}/conf/colors.sh
 
 function usage {
     set -
@@ -29,16 +31,13 @@ function usage {
     echo ""
 }
 
-rpm -q httpd &> /dev/null
-if [ $? -ne 0 ]; then
-    echo "download : installing required packages"
-    sudo dnf install -y httpd
-fi
-
 if [ $# -eq 0 ]; then
     usage
     exit 0
 fi
+
+source ${WORK_PATH}/common/install-pakages.sh
+install-pakages httpd
 
 for i in "$@"
 do

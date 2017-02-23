@@ -53,12 +53,8 @@ function project_download {
 }
 
 function download {
-    rpm -q zanata-client &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "download : installing required packages"
-        VERSION_AUX=( $(cat /etc/fedora-release) )
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y zanata-client --nogpgcheck; else sudo dnf install -y zanata-client; fi
-    fi
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages zanata-client
     echo "************************************************"
     echo "* downloading translations..."
     echo "************************************************"

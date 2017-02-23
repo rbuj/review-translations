@@ -37,12 +37,8 @@ EOF
 }
 
 function download {
-    rpm -q transifex-client &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "download : installing required packages"
-        local VERSION_AUX=( $(cat /etc/fedora-release) )
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y transifex-client --nogpgcheck; else sudo dnf install -y transifex-client; fi
-    fi
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages transifex-client
     echo "************************************************"
     echo "* downloading translations..."
     echo "************************************************"

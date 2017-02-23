@@ -21,13 +21,9 @@ function install {
     local BASE_PATH_RPM=${WORK_PATH}/${PROJECT_NAME}/rpm
     local VERSION=$(${WORK_PATH}/common/fedora-version.sh)
 
-    rpm -q fedpkg fedora-packager rpmdevtools &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "installing required packages"
-        set -x
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y fedpkg fedora-packager rpmdevtools --nogpgcheck; else sudo dnf install -y fedpkg fedora-packager rpmdevtools; fi
-        set -
-    fi
+    local REQUIRED_PACKAGES=( fedpkg fedora-packager rpmdevtools )
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages ${REQUIRED_PACKAGES[@]}
 
     if [ ! -d "${BASE_PATH_RPM}" ]; then
         mkdir -p "${BASE_PATH_RPM}"

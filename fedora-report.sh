@@ -192,16 +192,9 @@ function update_project_db() {
 #########################################
 # REQUIRED PACKAGES
 #########################################
-for REQUIRED_PACKAGE in java-1.8.0-openjdk perl-Locale-Codes sqlite tidy; do
-    rpm -q $REQUIRED_PACKAGE &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required package : $REQUIRED_PACKAGE"
-        VERSION_AUX=( $(cat /etc/fedora-release) )
-        set -x
-        if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
-        set -
-    fi
-done
+REQUIRED_PACKAGES=( java-1.8.0-openjdk perl-Locale-Codes sqlite tidy )
+source ${WORK_PATH}/common/install-pakages.sh
+install-pakages ${REQUIRED_PACKAGES[@]}
 
 #########################################
 # LANGUAGETOOL

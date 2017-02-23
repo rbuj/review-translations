@@ -19,16 +19,9 @@ function build_languagetool {
     #########################################
     # REQUIRED PACKAGES
     #########################################
-    for REQUIRED_PACKAGE in java-1.8.0-openjdk java-1.8.0-openjdk-devel perl-Locale-Codes maven; do
-        rpm -q $REQUIRED_PACKAGE &> /dev/null
-        if [ $? -ne 0 ]; then
-            echo "report : installing required package : $REQUIRED_PACKAGE"
-            VERSION_AUX=( $(cat /etc/fedora-release) )
-            set -x
-            if [ "${VERSION_AUX[${#VERSION_AUX[@]}-1]}" == "(Rawhide)" ]; then sudo dnf install -y $REQUIRED_PACKAGE --nogpgcheck; else sudo dnf install -y $REQUIRED_PACKAGE; fi
-            set -
-        fi
-    done
+    local REQUIRED_PACKAGES=( java-1.8.0-openjdk java-1.8.0-openjdk-devel perl-Locale-Codes maven )
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages ${REQUIRED_PACKAGES[@]}
 
     echo "languagtool : building"
     cd ${WORK_PATH}

@@ -50,12 +50,10 @@ function update_deploy {
 }
 
 function deploy_mariadb {
-    rpm -q mysql-server mariadb-devel &> /dev/null
-    if [ $? -ne 0 ]; then
-        set -x
-        sudo dnf install -y mysql-server mariadb-devel
-        set -
-    fi
+    local REQUIRED_PACKAGES=( mysql-server mariadb-devel )
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages ${REQUIRED_PACKAGES[@]}
+
     set -x
     sudo systemctl start mariadb.service
     sudo systemctl enable mariadb.service
@@ -122,13 +120,9 @@ function get_code {
 }
 
 function get_trans {
-    rpm -q transifex-client &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        set -x
-        sudo dnf install -y transifex-client
-        set -
-    fi
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages transifex-client
+
     echo -ne "downloading translation "
     cd ${BASE_PATH}/askbot
     find ./askbot/locale/${LANG_CODE} -type f -name '*.po' -exec rm '{}' \;
@@ -147,13 +141,10 @@ function download {
 }
 
 function report {
-    rpm -q pology aspell-${LANG_CODE} python-enchant enchant-aspell &> /dev/null
-    if [ $? -ne 0 ]; then
-        echo "report : installing required packages"
-        set -x
-        sudo dnf install -y aspell-${LANG_CODE} python-enchant enchant-aspell
-        set -
-    fi
+    local REQUIRED_PACKAGES=( pology aspell-${LANG_CODE} python-enchant enchant-aspell )
+    source ${WORK_PATH}/common/install-pakages.sh
+    install-pakages ${REQUIRED_PACKAGES[@]}
+
     #########################################
     # LANGUAGETOOL
     #########################################
