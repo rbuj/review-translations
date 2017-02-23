@@ -60,6 +60,7 @@ function download {
         echo -ne ${PROJECT}" "
         wget -q -O ${BASE_PATH}/${PROJECT}.po https://translate.sugarlabs.org/download/${LANG_CODE}/${PROJECT}/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
     done
+    echo -ne "olpc-switch-desktop "; wget -O ${BASE_PATH}/olpc-switch-desktop.po https://translate.sugarlabs.org/download/${LANG_CODE}/OLPC_switch_desktop/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
 
     while read -r p; do
         set -- ${p//"LOCALE"/${LANG_CODE}}
