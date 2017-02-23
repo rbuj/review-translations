@@ -18,6 +18,7 @@ WORK_PATH=$PWD
 PROJECTS=$(find $WORK_PATH/conf -type f -name *.conf -exec basename {} .conf \; | sort)
 DB_PATH="${WORK_PATH}/fedora-report.db"
 source ${WORK_PATH}/conf/languagetool.conf
+source ${WORK_PATH}/conf/colors.sh
 
 ########################################################
 
