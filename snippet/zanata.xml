@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+  <url>URL</url>
+  <project>PROJECT</project>
+  <project-version>VERSION</project-version>
+  <project-type>gettext</project-type>
+</config>

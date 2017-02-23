@@ -21,19 +21,10 @@ function project_folder {
 }
 
 function project_config {
-    ZANATA_FILE=${BASE_PATH}/${1}-${2}/zanata.xml
+    local ZANATA_FILE=${BASE_PATH}/${1}-${2}/zanata.xml
     if [ ! -f "${ZANATA_FILE}" ]; then
         if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating zanata.xml file "; fi
-        cat << EOF > ${ZANATA_FILE}
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config xmlns="http://zanata.org/namespace/config/">
-  <url>${BASE_URL}</url>
-  <project>${1}</project>
-  <project-version>${2}</project-version>
-  <project-type>gettext</project-type>
-
-</config>
-EOF
+        sed "s/URL/$BASE_URL/g;s/PROJECT/$1/g;s/VERSION/$2/g" ${WORK_PATH}/snippet/zanata.xml > ${ZANATA_FILE}
         if [ $? -ne 0 ]; then
             if [ -n "${VERBOSE}" ]; then echo "${RED}[ FAIL ]${NC}"; fi
         else

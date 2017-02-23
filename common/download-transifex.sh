@@ -17,16 +17,7 @@ function download_code {
     cd ${BASE_PATH}
     if [ ! -f "${1}/.tx/config" ]; then
         mkdir -p ${1}/.tx
-        cat << EOF > ${1}/.tx/config
-[main]
-host = https://www.transifex.com
-
-[${2}.${3}]
-source_file = po/${3}.pot
-source_lang = en
-type = PO
-file_filter = po/<lang>.po
-EOF
+        sed "s/PROJECT/$2/g;s/RESOURCE/$3/g" ${WORK_PATH}/snippet/config > ${1}/.tx/config
     fi
     cd ${BASE_PATH}/${1}
     if [ -n "${ALL_LANGS}" ]; then
