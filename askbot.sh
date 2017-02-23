@@ -13,18 +13,15 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}
-
 LANG_CODE=
 GENERATE_REPORT=
 INSTALL_TRANS=
 DEPLOY_MARIADB=
 UPDATE_DEPLOY=
+
+source ${WORK_PATH}/conf/colors.sh
 
 function usage {
     echo "This script downloads the translation of askbot"

@@ -13,22 +13,14 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
 CONFIG=
-
 BASE_PATH=
-
 LANG_CODE=
 ALL_LANGS=
-
 GENERATE_REPORT=
 INSTALL_TRANS=
 STATS=
 DOWNLOAD="YES"
-
 LT_SERVER=
 LT_PORT=
 
@@ -103,6 +95,7 @@ if [ -z "${CONFIG_FILE}" ]; then
     exit 1
 fi
 source $CONFIG_FILE
+source ${WORK_PATH}/conf/colors.sh
 
 if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
     usage

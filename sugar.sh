@@ -13,20 +13,15 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
 WORK_PATH=$PWD
 BASE_PATH=${WORK_PATH}/sugar
 LIST=${WORK_PATH}/list/sugar.list
-
 LANG_CODE=
 GENERATE_REPORT=
 INSTALL_TRANS=
 
-LT_SERVER="localhost"
-LT_PORT="8081"
+source ${WORK_PATH}/languagetool.conf
+source ${WORK_PATH}/conf/colors.sh
 
 function usage {
     echo "This script downloads the translations of the Sugar Labs project"
