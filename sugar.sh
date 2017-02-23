@@ -56,7 +56,7 @@ function download {
     echo "************************************************"
     echo "* downloading sources & translations..."
     echo "************************************************"
-    for PROJECT in sugar sugar-toolkit-gtk3 OLPC_switch_desktop; do
+    for PROJECT in sugar sugar-toolkit-gtk3; do
         echo -ne ${PROJECT}" "
         wget -q -O ${BASE_PATH}/${PROJECT}.po https://translate.sugarlabs.org/download/${LANG_CODE}/${PROJECT}/${LANG_CODE}.po && echo " ${GREEN}[ OK ]${NC}" || echo " ${RED}[ FAIL ]${NC}"
     done
