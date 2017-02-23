@@ -20,8 +20,8 @@ LANG_CODE=
 GENERATE_REPORT=
 INSTALL_TRANS=
 
-source ${WORK_PATH}/languagetool.conf
 source ${WORK_PATH}/conf/colors.sh
+source ${WORK_PATH}/languagetool.conf
 
 function usage {
     echo "This script downloads the translations of the Sugar Labs project"
