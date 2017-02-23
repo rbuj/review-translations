@@ -17,12 +17,9 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 NC=`tput sgr0` # No Color
 
-BASE_PATH=
+CONFIG=
 
-PROJECT_NAME=
-INPUT_FILE=
-TRANSLATION_TYPE=
-DOCUMENT="NO"
+BASE_PATH=
 
 LANG_CODE=
 ALL_LANGS=
@@ -39,6 +36,7 @@ function usage {
     echo "This script downloads the translation of ${PROJECT_NAME}"
     echo "    usage : ./${PROJECT_NAME}.sh [ARGS]"
     echo -ne "\nMandatory arguments:\n"
+    echo "   --conf=CONFIG_FILE    Config"
     echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales, no compatible with -r option)"
     echo -ne "\nOptional arguments:\n"
     echo "   -r, --report          Generate group report"
@@ -54,33 +52,21 @@ function usage {
 ###################################################################################
 
 function download {
-    if [ -n "${ALL_LANGS}" ]; then
-        case $TRANSLATION_TYPE in
-            fedora|git|transifex)
-                ${WORK_PATH}/common/download-${TRANSLATION_TYPE}.sh -a -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
-            ;;
-            *)
-                usage
-                exit 1
-            ;;
-        esac
-    else
-        case $TRANSLATION_TYPE in
-            fedora|git|transifex)
-                ${WORK_PATH}/common/download-${TRANSLATION_TYPE}.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
-            ;;
-            *)
-                usage
-                exit 1
-            ;;
-        esac
-    fi
+    case $TYPE in
+        fedora|git|transifex)
+            source ${WORK_PATH}/common/download-${TYPE}.sh
+        ;;
+        *)
+            usage
+            exit 1
+        ;;
+    esac
 }
 
 ###################################################################################
 
 function install {
-    case $TRANSLATION_TYPE in
+    case $TYPE in
         fedora)
             if [ "${PROJECT_NAME}" != "fedora-web" ]; then
                 ${WORK_PATH}/common/install.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
@@ -106,17 +92,13 @@ function install {
 ###################################################################################
 
 function report {
-    if [ -z "${LT_SERVER}" ] && [ -z "${LT_PORT}" ]; then
-        ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-    else
-        ${WORK_PATH}/common/report.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} --languagetool-server=${LT_SERVER} --languagetool-port=${LT_PORT} -w=${WORK_PATH} -t=${TRANSLATION_TYPE}
-    fi
+    source ${WORK_PATH}/common/report.sh
 }
 
 ###################################################################################
 
 function stats {
-    ${WORK_PATH}/common/stats.sh "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}" "-t=${TRANSLATION_TYPE}"
+    source ${WORK_PATH}/common/stats.sh
 }
 
 ###################################################################################
@@ -124,32 +106,16 @@ function stats {
 for i in "$@"
 do
 case $i in
+    --conf=*)
+    CONFIG_FILE="${i#*=}"
+    shift # past argument=value
+    ;;
     -l=*|--lang=*)
     LANG_CODE="${i#*=}"
     shift # past argument=value
     ;;
     -a)
     ALL_LANGS="YES"
-    ;;
-    -p=*|--project=*)
-    PROJECT_NAME="${i#*=}"
-    shift # past argument=value
-    ;;
-    -f=*|--file=*)
-    INPUT_FILE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -w=*|--workpath=*)
-    WORK_PATH="${i#*=}"
-    shift # past argument=value
-    ;;
-    -t=*|--type=*)
-    TRANSLATION_TYPE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -d=*|--document=*)
-    DOCUMENT="${i#*=}"
-    shift # past argument=value
     ;;
     -r|--report)
     GENERATE_REPORT="YES"
@@ -184,10 +150,11 @@ done
 
 ###################################################################################
 
-if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ] || [ -z "${TRANSLATION_TYPE}" ]; then
-    usage
+if [ -z "${CONFIG_FILE}" ]; then
+    echo "Missing argument: --conf=CONF_FILE"
     exit 1
 fi
+source $CONFIG_FILE
 
 if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
     usage
@@ -210,6 +177,8 @@ if [ -z "${ALL_LANGS}" ] && [ -n "${STATS}" ]; then
 fi
 
 ###################################################################################
+
+BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 if [ "${DOWNLOAD}" == "YES" ]; then
     download

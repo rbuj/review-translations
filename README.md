@@ -7,7 +7,6 @@ Bash scripts for downloading the Fedora Project translations. Those scripts can 
 * fedora-rhel.sh : download the translations that belongs to the [main group](https://fedora.zanata.org/version-group/view/rhel)
 * fedora-upstream.sh : download the translations that belongs to the [upstream group](https://fedora.zanata.org/version-group/view/upstream)
 * fedora-web.sh : download the translations that belongs to the [web group](https://fedora.zanata.org/version-group/view/web)
-* fedora-parallel.sh : download the translations that belongs to all groups in parallel
 
 Components (scripts which are used by other scrips):
 * common/build-languagetool.sh : builds LanguageTool in the specified path if there is no languagetool folder

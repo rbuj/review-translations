@@ -13,6 +13,4 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-source ${PWD}/conf/$(basename ${0} .sh).conf
-
-${PWD}/common/translations.sh -p=${PROJECT_NAME} -f=${LIST} -w=${WORK_PATH} -t=${TYPE} -d=${DOCUMENT} $@
+${PWD}/common/translations.sh $@ --conf=${PWD}/conf/$(basename ${0} .sh).conf

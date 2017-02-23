@@ -13,33 +13,6 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
-WORK_PATH=
-BASE_PATH=
-
-LANG_CODE=
-ALL_LANGS=
-PROJECT_NAME=
-INPUT_FILE=
-BASE_URL=
-VERBOSE=
-
-function usage {
-    echo "usage : $0 [ARGS]"
-    echo -ne "\nMandatory arguments:\n"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server (-a : all locales)"
-    echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
-    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
-    echo "   -w|--workpath=W_PATH  Work PATH folder"
-    echo "   -u|--url=URL          Base URL of the Zanata server"
-    echo -ne "\nOptional arguments:\n"
-    echo "   -h, --help            Display this help and exit"
-    echo "   -v, --verbose         Verbose operation"
-}
-
 function project_folder {
     if [ ! -d "${BASE_PATH}/${1}-${2}" ]; then
         if [ -n "${VERBOSE}" ]; then echo -ne "${1} (${2}) : creating project folder "; fi
@@ -95,66 +68,8 @@ function download {
         project_folder $1 $2
         project_config $1 $2
         project_download $1 $2
-    done <${INPUT_FILE}
+    done <${LIST}
     echo "************************************************"
 }
 
-for i in "$@"
-do
-case $i in
-    -l=*|--lang=*)
-    LANG_CODE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -a)
-    ALL_LANGS="YES"
-    ;;
-    -f=*|--file=*)
-    INPUT_FILE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -p=*|--project=*)
-    PROJECT_NAME="${i#*=}"
-    shift # past argument=value
-    ;;
-    -u=*|--url=*)
-    BASE_URL="${i#*=}"
-    shift # past argument=value
-    ;;
-    -w=*|--workpath=*)
-    WORK_PATH="${i#*=}"
-    shift # past argument=value
-    ;;
-    -v|--verbose)
-    VERBOSE="YES"
-    ;;
-    -h|--help)
-    usage
-    exit 0
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-esac
-done
-
-if [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${BASE_URL}" ] || [ -z "${WORK_PATH}" ]; then
-    usage
-    exit 1
-fi
-
-if [ -z "${LANG_CODE}" ] && [ -z "${ALL_LANGS}" ]; then
-    usage
-    exit 1
-fi
-
-if [ -n "${LANG_CODE}" ] && [ -n "${ALL_LANGS}" ]; then
-    usage
-    exit 1
-fi
-
-BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
-
-### Main ###
 download

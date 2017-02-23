@@ -13,4 +13,5 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-$(dirname $0)/zanata.sh $@ -u=https://fedora.zanata.org/
+BASE_URL=https://fedora.zanata.org/
+source $(dirname $0)/zanata.sh
