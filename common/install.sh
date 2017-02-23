@@ -13,30 +13,6 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-NC=`tput sgr0` # No Color
-
-WORK_PATH=
-BASE_PATH=
-
-LANG_CODE=
-PROJECT_NAME=
-INPUT_FILE=
-VERBOSE=
-
-function usage {
-    echo "usage : $0 -l|--lang=LANG_CODE -p|--project=PROJECT -f|--file=INPUT_FILE [ ARGS ... ]"
-    echo -ne "\nMandatory arguments:\n"
-    echo "   -l|--lang=LANG_CODE   Locale to pull from the server"
-    echo "   -p|--project=PROJECT  Base PROJECT folder for downloaded files"
-    echo "   -f|--file=INPUT_FILE  INPUT_FILE that contains the project info"
-    echo "   -w|--workpath=W_PATH  Work PATH folder"
-    echo -ne "\nOptional arguments:\n"
-    echo "   -h, --help            Display this help and exit"
-    echo "   -v, --verbose         Verbose operation"
-}
-
 function install_trans {
     IFS=';' read -a TRANS <<< "$3"
     echo -ne "installing ${1} (${2}) "
@@ -62,7 +38,7 @@ function install_trans {
 }
 
 function install {
-    VERSION="upstream"
+    local VERSION="upstream"
     if [ -f "/etc/fedora-release" ]; then
         VERSION_AUX=`cat /etc/fedora-release`
         case ${VERSION_AUX} in
@@ -80,53 +56,7 @@ function install {
                 install_trans $1 $2 $4
             fi
         fi
-    done <${INPUT_FILE}
+    done <${LIST}
 }
 
-# ensure running as root
-if [ "$(id -u)" != "0" ]; then
-  exec sudo "$0" "$@" 
-  exit 0
-fi
-
-for i in "$@"
-do
-case $i in
-    -l=*|--lang=*)
-    LANG_CODE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -f=*|--file=*)
-    INPUT_FILE="${i#*=}"
-    shift # past argument=value
-    ;;
-    -p=*|--project=*)
-    PROJECT_NAME="${i#*=}"
-    shift # past argument=value
-    ;;
-    -w=*|--workpath=*)
-    WORK_PATH="${i#*=}"
-    shift # past argument=value
-    ;;
-    -v|--verbose)
-    VERBOSE="YES"
-    ;;
-    -h|--help)
-    usage
-    exit 0
-    ;;
-    *)
-    usage
-    exit 1
-    ;;
-esac
-done
-
-if [ -z "${LANG_CODE}" ] || [ -z "${INPUT_FILE}" ] || [ -z "${PROJECT_NAME}" ] || [ -z "${WORK_PATH}" ]; then
-    usage
-    exit 1
-fi
-BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
-
-### Main ###
 install

@@ -69,18 +69,14 @@ function install {
     case $TYPE in
         fedora)
             if [ "${PROJECT_NAME}" != "fedora-web" ]; then
-                ${WORK_PATH}/common/install.sh -l=${LANG_CODE} -p=${PROJECT_NAME} -f=${INPUT_FILE} -w=${WORK_PATH}
+                source ${WORK_PATH}/common/install.sh
             else
                 usage
                 exit 1
             fi
         ;;
         git|transifex)
-            if [ -n "${ALL_LANGS}" ]; then
-                ${WORK_PATH}/common/fedpkg-install.sh "-a" "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}"
-            else
-                ${WORK_PATH}/common/fedpkg-install.sh "-l=${LANG_CODE}" "-p=${PROJECT_NAME}" "-f=${INPUT_FILE}" "-w=${WORK_PATH}"
-            fi
+            source ${WORK_PATH}/common/fedpkg-install.sh
         ;;
         *)
             usage
