@@ -58,7 +58,7 @@ function deploy_mariadb {
     sudo systemctl start mariadb.service
     sudo systemctl enable mariadb.service
     sudo mysql_secure_installation
-    mysql -u root -p < ${WORK_PATH}/askbot.sql
+    mysql -u root -p < ${WORK_PATH}/sql/askbot.sql
     set -
 
     if [ ! -d "${WORK_PATH}/VirtPyAskboot" ]; then
