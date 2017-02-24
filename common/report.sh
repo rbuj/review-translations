@@ -33,27 +33,40 @@ function report_project_cotent {
 
     sed "s/LANG_CODE/$LANG_CODE/g;s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.COMPONENT.start.txt > ${HTML_REPORT}
     local LANG_CODE_SIEVE=${LANG_CODE/_/-}
+    cd ${BASE_PATH}/${COMPONENT}
     case $LANG_CODE_SIEVE in
         be|be-BY|br|br-FR|ca|ca-ES|da|da-DK|de|de-AT|de-CH|de-DE|el|el-GR|eo|es|fa|fr|gl|gl-ES|is-IS|it|lt|lt-LT|km-KH|ml|ml-IN|nl|pl|pl-PL|pt|pt-BR|pt-PT|ro|ro-RO|ru|ru-RU|sk|sk-SK|sl|sl-SI|sv|ta|ta-IN|tl-PH|uk|uk-UA)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
         ;;
         ja|ja-JP|zh-CN)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
         ;;
         *)
             if [ -f "/usr/share/myspell/${LANG_CODE/-/_}.dic" ]; then
                 echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-                posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT}/ >> ${HTML_REPORT}
+                posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             fi
         ;;
     esac
+    cd ${WORK_PATH}
     cat ${WORK_PATH}/snippet/html.report.COMPONENT.end.txt >> ${HTML_REPORT}
+    # xml
+    cat ${WORK_PATH}/snippet/check-grammar.start.xml > ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
+    sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl -pe 's/^[\-]+<br\/\>/\<item\>/g;s/^<br\/\>/\<\/item\>/g;s/^\<b\>(.*)\<\/b\>\<br\/\>$/\<file\>$1\<\/file\>/g;s/\<b\>Context\:\<\/b\>\s*(.*)\<br\/\>/\<context\>$1\<\/context\>/g;s/\((.*)\)\s+\<b\>.*\<\/b\>\s*(.*)\<br\/\>$/\<rule\>$1\<\/rule\>\<tip\>$2\<\/tip\>/g' | xargs -L5 >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
+    cat ${WORK_PATH}/snippet/check-grammar.end.xml >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
+    # xslt
+    mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
+    sed "s/JQUERY_VERSION/$JQUERY_VERSION/g;s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.COMPONENT.XSLT.start.txt > ${HTML_REPORT}
+    sed -n '/^<font color.*/p' ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | sed 's/\#52f3ff/Indigo/g;s/\#ff0080/Purple/g' >> ${HTML_REPORT}
+    echo "<br/>" >> ${HTML_REPORT}
+    xsltproc ${WORK_PATH}/snippet/check-grammar.xsl ${HTML_REPORT_PATH}/data/${COMPONENT}.xml | perl -pe 'chomp' >> ${HTML_REPORT}
+    echo "</body></html>" >> ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     sqlite3 ${REPORT_DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
@@ -152,11 +165,19 @@ function report {
         mkdir -p "${HTML_REPORT_PATH}/javascript"
         chmod 755 "${HTML_REPORT_PATH}/javascript"
     fi
-    if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js" ]; then
-        curl --output "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js" https://code.jquery.com/jquery-3.1.1.slim.min.js > /dev/null
-        chmod 644 "${HTML_REPORT_PATH}/javascript/jquery-3.1.1.slim.js"
+    source ${WORK_PATH}/common/download-jquery.sh
+    if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery-${JQUERY_VERSION}.slim.min.js" ]; then
+        cp ${WORK_PATH}/snippet/jquery-${JQUERY_VERSION}.slim.min.js ${HTML_REPORT_PATH}/javascript/jquery-${JQUERY_VERSION}.slim.min.js > /dev/null
+        chmod 644 "${HTML_REPORT_PATH}/javascript/jquery-${JQUERY_VERSION}.slim.min.js"
     fi
-    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-3.1.1.slim.js")
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery-${JQUERY_VERSION}.slim.min.js")
+
+    source ${WORK_PATH}/common/download-tablesorter.sh
+    if [ ! -f "${HTML_REPORT_PATH}/javascript/jquery.tablesorter.min.js" ]; then
+        cp ${WORK_PATH}/snippet/jquery.tablesorter.min.js ${HTML_REPORT_PATH}/javascript/jquery.tablesorter.min.js > /dev/null
+        chmod 644 "${HTML_REPORT_PATH}/javascript/jquery.tablesorter.min.js"
+    fi
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery.tablesorter.min.js")
 
     cd ${REPORT_PATH}
     if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.txz" ]; then
