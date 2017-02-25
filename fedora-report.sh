@@ -46,14 +46,14 @@ function end_report_data_xml {
 
 function start_locales_report {
     local HTML_REPORT="${REPORT_PATH}/data.xml"
-    echo "  <locales>" >> ${HTML_REPORT}
+    echo "  <languages>" >> ${HTML_REPORT}
 }
 
 ########################################################
 
 function end_locales_report {
     local HTML_REPORT="${REPORT_PATH}/data.xml"
-    echo "  </locales>" >> ${HTML_REPORT}
+    echo "  </languages>" >> ${HTML_REPORT}
 }
 
 ########################################################
