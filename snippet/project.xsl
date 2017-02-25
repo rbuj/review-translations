@@ -6,21 +6,12 @@
 <head>
   <meta charset="UTF-8"/>
   <title><xsl:value-of select="//project/name"/></title>
-  <script type="text/javascript" src="/js/jquery-3.1.1.slim.min.js"></script>
-  <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
-  <script type="text/javascript">
-  $(document).ready(function()
-        {
-                $("#reportTable").tablesorter();
-        }
-  );
-  </script>
   <link rel="stylesheet" href="/css/project.css"/>
 </head>
 <body>
   <h1><xsl:value-of select="//project/name"/></h1>
   <h2>spelling and grammar report</h2>
-  <table id="reportTable" class="tablesorter">
+  <table>
     <thead>
       <tr>
         <th>Language</th>
@@ -31,6 +22,7 @@
     </thead>
     <tbody>
     <xsl:for-each select="project/languages/language">
+    <xsl:sort select="language"/>
     <tr>
       <td>
          <a>
@@ -69,6 +61,7 @@
     </xsl:for-each>
   </table><br/>
   <xsl:for-each select="project/languages/language">
+  <xsl:sort select="language"/>
     <figure>
       <img>
         <xsl:attribute name="alt">
