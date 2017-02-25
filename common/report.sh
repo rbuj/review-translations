@@ -63,10 +63,11 @@ function report_project_cotent {
     # xslt
     mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
     sed "s/JQUERY_VERSION/$JQUERY_VERSION/g;s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.COMPONENT.XSLT.start.txt > ${HTML_REPORT}
-    sed -n '/^<font color.*/p' ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | sed 's/\#52f3ff/Indigo/g;s/\#ff0080/Purple/g' >> ${HTML_REPORT}
+    sed -n '/^<font color.*/p' ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | sed 's/\#52f3ff/indigo/g;s/\#ff0080/Purple/g' >> ${HTML_REPORT}
     echo "<br/>" >> ${HTML_REPORT}
     xsltproc ${WORK_PATH}/snippet/check-grammar.xsl ${HTML_REPORT_PATH}/data/${COMPONENT}.xml | perl -pe 'chomp' >> ${HTML_REPORT}
     echo "</body></html>" >> ${HTML_REPORT}
+    tidy -w 0 -q -i -utf8 -ashtml -m -c ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     sqlite3 ${REPORT_DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
@@ -166,6 +167,7 @@ EOF
 EOF
     xsltproc ${WORK_PATH}/snippet/language.xsl ${XML_REPORT} > ${HTML_REPORT}
     sed -i "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${HTML_REPORT}
+    tidy -w 0 -q -i -utf8 -ashtml -m ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
 
