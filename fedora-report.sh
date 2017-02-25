@@ -199,6 +199,7 @@ echo "***************************************"
 declare -i date_file
 declare -i date_report
 for PROJECT in ${PROJECTS[@]}; do
+    cd ${WORK_PATH}
     source ${WORK_PATH}/conf/${PROJECT}.conf
     BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
     REPORT_PATH=${BASE_PATH}/report
