@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="html"/>
+<xsl:template match="/">
 <html>
 <head>
 <title>Translation Report</title>
@@ -36,7 +39,6 @@ var make_button_active = function()
     }
   )
 
-
   $(this).addClass('active');
 }
 
@@ -49,6 +51,24 @@ $(document).ready(
 </script>
 </head>
 <body>
-
 <div id="container" style="display: flex; min-height: 100vh;">
     <ul class="menu">
+    <xsl:for-each select="components/component">
+    <xsl:sort select="name"/>
+      <li>
+        <a>
+          <xsl:attribute name="href">
+            <xsl:value-of select="url"/>
+          </xsl:attribute>
+          <xsl:attribute name="target">main_page</xsl:attribute>
+          <xsl:value-of select="name"/>
+        </a>
+      </li>
+    </xsl:for-each>
+    </ul>
+    <iframe src="data/emty.html" style="flex: 1;" frameBorder="0" name="main_page"></iframe>
+</div>
+</body>
+</html>
+</xsl:template>
+</xsl:stylesheet>

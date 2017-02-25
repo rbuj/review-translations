@@ -1,1 +1,0 @@
-      <li><a href="data/COMPONENT.html" target="main_page">COMPONENT</a></li>

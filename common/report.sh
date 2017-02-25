@@ -37,20 +37,20 @@ function report_project_cotent {
     case $LANG_CODE_SIEVE in
         be|be-BY|br|br-FR|ca|ca-ES|da|da-DK|de|de-AT|de-CH|de-DE|el|el-GR|eo|es|fa|fr|gl|gl-ES|is-IS|it|lt|lt-LT|km-KH|ml|ml-IN|nl|pl|pl-PL|pt|pt-BR|pt-PT|ro|ro-RO|ru|ru-RU|sk|sk-SK|sl|sl-SI|sv|ta|ta-IN|tl-PH|uk|uk-UA)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
+            LC_ALL=en_US.UTF-8 posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
+            LC_ALL=en_US.UTF-8 posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
         ;;
         ja|ja-JP|zh-CN)
             echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-            posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
+            LC_ALL=en_US.UTF-8 posieve check-spell-ec -s lang:${LANG_CODE_SIEVE} -s suponly --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             echo "<h2>check-grammar</h2>" >> ${HTML_REPORT}
-            posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
+            LC_ALL=en_US.UTF-8 posieve check-grammar -s lang:${LANG_CODE_SIEVE} -s host:${LT_SERVER} -s port:${LT_PORT} --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
         ;;
         *)
             if [ -f "/usr/share/myspell/${LANG_CODE/-/_}.dic" ]; then
                 echo "<h2>check-spell-ec</h2>" >> ${HTML_REPORT}
-                posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
+                LC_ALL=en_US.UTF-8 posieve check-spell-ec -s lang:${LANG_CODE/-/_} -s provider:myspell --skip-obsolete --coloring-type=html --include-name=${LANG_CODE}\$ ./ >> ${HTML_REPORT}
             fi
         ;;
     esac
@@ -137,21 +137,35 @@ function report {
     #########################################
     # HTML
     #########################################
-    HTML_REPORT="${HTML_REPORT_PATH}/index.html"
+    local XML_REPORT="${HTML_REPORT_PATH}/index.xml"
+    local HTML_REPORT="${HTML_REPORT_PATH}/index.html"
     echo "************************************************"
     echo "* checking translations..."
     echo "************************************************"
     source ${WORK_PATH}/snippet/jquery.version
-    sed "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${WORK_PATH}/snippet/html.report.INDEX.start.txt > ${HTML_REPORT}
+    cat << EOF > ${XML_REPORT}
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/xsl/project.xsl"?>
+<components>
+EOF
     local FILES=()
     for COMPONENT in ${COMPONENTS[@]}; do
         report_project_cotent ${COMPONENT}
         if [ -f "${HTML_REPORT_PATH}/data/${COMPONENT}.html" ]; then
             FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
-            sed "s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.INDEX.nav.txt >> ${HTML_REPORT}
+            cat << EOF >> ${XML_REPORT}
+  <component>
+    <name>$COMPONENT</name>
+    <url>data/$COMPONENT.html</url>
+  </component>
+EOF
         fi
     done
-    cat ${WORK_PATH}/snippet/html.report.INDEX.end.txt >> ${HTML_REPORT}
+    cat << EOF >> ${XML_REPORT}
+</components>
+EOF
+    xsltproc ${WORK_PATH}/snippet/language.xslt ${XML_REPORT} > ${HTML_REPORT}
+    sed -i "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
 
