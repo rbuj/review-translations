@@ -1,0 +1,34 @@
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  table.tablesorter thead tr .header {
+    cursor: pointer;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+
+  figure {
+    display: inline-block;
+    border: 1px none;
+    margin: 20px; /* adjust as needed */
+  }
+
+  figure img {
+    vertical-align: top;
+  }
+
+  figure figcaption {
+    border: none;
+    text-align: center;
+  }
