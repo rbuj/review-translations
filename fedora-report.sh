@@ -22,16 +22,38 @@ source ${WORK_PATH}/conf/colors.sh
 
 ########################################################
 
-function start_report_index_html {
-    local HTML_REPORT="${REPORT_PATH}/index.html"
-    sed "s/TITLE/$TITLE/g" ${WORK_PATH}/snippet/html.fedora-report.start.txt > ${HTML_REPORT}
+function start_report_data_xml {
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
+    cat << EOF > ${HTML_REPORT}
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/xsl/project.xsl"?>
+<project>
+  <name>$TITLE</name>
+  <date>$(LC_ALL=en.utf8 date)</date>
+  <msg>$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg | python -m base64 -e | perl -pe 'chomp')</msg>
+  <wrd>$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg | python -m base64 -e | perl -pe 'chomp')</wrd>
+EOF
 }
 
 ########################################################
 
-function end_report_index_html {
-    local HTML_REPORT="${REPORT_PATH}/index.html"
-    sed "s/DATE/$(LC_ALL=en.utf8 date)/g;s/YEAR/$(LC_ALL=en.utf8 date '+%Y')/g" ${WORK_PATH}/snippet/html.fedora-report.end.txt >> ${HTML_REPORT}
+function end_report_data_xml {
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
+    echo "</project>" >> ${HTML_REPORT}
+}
+
+########################################################
+
+function start_locales_report {
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
+    echo "  <locales>" >> ${HTML_REPORT}
+}
+
+########################################################
+
+function end_locales_report {
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
+    echo "  </locales>" >> ${HTML_REPORT}
 }
 
 ########################################################
@@ -46,10 +68,10 @@ function locale_report {
 }
 
 # LOCALE DATE
-function locale_report_html {
+function locale_report_data {
     local LOCALE=${1}
     local DATE=${2}
-    local HTML_REPORT="${REPORT_PATH}/index.html"
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
     local LANGUAGE=$(perl -e "use Locale::Language; print (code2language('${LOCALE:0:2}'));")
     local FORMATED_DATE=$(LC_ALL="en.utf-8" date -d "$DATE" "+%d %B, %Y")
 
@@ -59,95 +81,61 @@ function locale_report_html {
     cd ${REPORT_PATH}
     local SIZE=$(du -h ${PROJECT_NAME}-report-${LOCALE}.txz | cut -f1)
     local MD5SUM=$(md5sum ${PROJECT_NAME}-report-${LOCALE}.txz)
-    sed "s/PROJECT_NAME/$PROJECT_NAME/g;s/LOCALE/$LOCALE/g;s/LANGUAGE/$LANGUAGE/g;s/DATE/$FORMATED_DATE/g;s/SIZE/$SIZE/g;s/MD5SUM/$MD5SUM/g" ${WORK_PATH}/snippet/html.fedora-report.table.row.txt >> ${HTML_REPORT}
+    local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
+    cat << EOF >> ${HTML_REPORT}
+    <language>
+      <url>${PROJECT_NAME}-report-${LOCALE}.txz</url>
+      <language>$LANGUAGE</language>
+      <date>$FORMATED_DATE</date>
+      <size>$SIZE</size>
+      <md5sum>$MD5SUM</md5sum>
+      <svg>$(cat $FILE | python -m base64 -e | perl -pe 'chomp')</svg>
+      <svg-alt>$(basename $FILE)</svg-alt>
+    </language>
+EOF
 }
 
 ########################################################
 
 function create_project_report_stats {
-    local HTML_REPORT="${REPORT_PATH}/index.html"
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
 
     cd ${WORK_PATH}
     ${WORK_PATH}/${PROJECT_NAME}.sh -n -s -a;
-    cat << EOF >> ${HTML_REPORT}
-  </tbody>
-</table>
-<figure>
-  <img alt="Global translation: message stats by language" src="data:image/svg+xml;base64,$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-msg.svg | python -m base64 -e | perl -pe 'chomp')"/>
-  <figcaption>Fig.1 - Global translation - message stats by language.</figcaption>
-</figure>
-<figure>
-  <img alt="Global translation: word stats by language" src="data:image/svg+xml;base64,$(cat ${DATA_STATS_PATH}/${PROJECT_NAME}-w.svg | python -m base64 -e | perl -pe 'chomp')"/>
-  <figcaption>Fig.2 - Global translation - word stats by language.</figcaption>
-</figure>
-EOF
 }
 
 ########################################################
 
 function report_package_table {
-    local HTML_REPORT="${REPORT_PATH}/index.html"
+    local HTML_REPORT="${REPORT_PATH}/data.xml"
 
+    echo "  <components>" >> ${HTML_REPORT}
     if [ "${DOCUMENT}" == "NO" ]; then
-        cat << EOF >> ${HTML_REPORT}
-<h2>Package List</h2>
-<table>
-  <tr>
-    <th>Package Name</th>
-    <th>Description</th>
-  </tr>
-EOF
         for PACKAGE in $(cat $LIST | cut -d ' ' -f1 | sort -u); do
             cat << EOF >> ${HTML_REPORT}
-  <tr>
-    <td style="white-space:nowrap;">${PACKAGE}</td>
-    <td>$(dnf repoquery -q --queryformat "%{description}" $PACKAGE)</td>
-  </tr>
+    <component>
+      <name>${PACKAGE}</name>
+      <desc>$(dnf repoquery -q --queryformat "%{description}" $PACKAGE)</desc>
+    </component>
 EOF
         done
-        cat << EOF >> ${HTML_REPORT}
-</table>
-EOF
     else
-        cat << EOF >> ${HTML_REPORT}
-<h2>Document List</h2>
-  <ul>
-EOF
         for PACKAGE in $(cat $LIST | cut -d ' ' -f1 | sort -u); do
             cat << EOF >> ${HTML_REPORT}
-    <li>${PACKAGE}</li>
+    <component>
+      <name>${PACKAGE}</name>
+      <desc>document</desc>
+    </component>
 EOF
         done
-        cat << EOF >> ${HTML_REPORT}
-  </ul>
-EOF
     fi
-    cat << EOF >> ${HTML_REPORT}
-<br>
-EOF
+    echo "  </components>" >> ${HTML_REPORT}
 }
 
 ########################################################
 
 function download_all_project_translations {
     ${WORK_PATH}/${PROJECT_NAME}.sh -a;
-}
-
-########################################################
-
-function add_locale_stats {
-    local HTML_REPORT="${REPORT_PATH}/index.html"
-
-    for LOCALE in ${locales[@]}; do
-        if [ -f "${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg" ]; then
-            local FILE="${DATA_STATS_PATH}/${PROJECT_NAME}-msg.${LOCALE}.svg"
-            cat << EOF >> ${HTML_REPORT}
-  <figure>
-      <img alt="$FILE" src="data:image/svg+xml;base64,$(cat $FILE | python -m base64 -e | perl -pe 'chomp')"/>
-  </figure>
-EOF
-        fi
-    done
 }
 
 ########################################################
@@ -230,7 +218,7 @@ for PROJECT in ${PROJECTS[@]}; do
     date_report=$(sqlite3 ${DB_PATH} "SELECT date_report FROM t_projects WHERE id = ${id_project};")
 
     if [ "$date_report" -le "$date_file" ]; then
-        start_report_index_html
+        LOCALES=( )
         for LOCALE in ${locales[@]}; do
             if [ "$LOCALE" == "pt_BR" ] && [ "$PROJECT" == "fedora-upstream" ]; then
                 continue;
@@ -244,16 +232,25 @@ for PROJECT in ${PROJECTS[@]}; do
                     locale_report ${LOCALE}
                     sqlite3 ${DB_PATH} "UPDATE t_updates SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_update};"
                 fi
-                locale_report_html ${LOCALE} $(echo "$date_file_t_updates" | cut -c -8)
+                LOCALES+=( $LOCALE )
             fi
         done
         create_project_report_stats
+        start_report_data_xml
+        start_locales_report
+        for LOCALE in ${LOCALES[@]}; do
+            id_locale=$(sqlite3 ${DB_PATH} "SELECT id FROM t_locales WHERE locale = '${LOCALE}';")
+            id_update=$(sqlite3 ${DB_PATH} "SELECT id FROM t_updates WHERE id_project = ${id_project} AND id_locale = ${id_locale};")
+            if [ -n "${id_update}" ]; then
+                date_file_t_updates=$(sqlite3 ${DB_PATH} "SELECT date_file FROM t_updates WHERE id = ${id_update};")
+                locale_report_data ${LOCALE} $(echo "$date_file_t_updates" | cut -c -8)
+            fi
+        done
+        end_locales_report
         report_package_table
-        add_locale_stats
-        end_report_index_html
-        tidy -i -w 0 -m -q ${REPORT_PATH}/index.html
-        chmod 644 ${REPORT_PATH}/index.html
-        scp -i ~/.ssh/id_rsa ${REPORT_PATH}/index.html rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}/index.html
+        end_report_data_xml
+        chmod 644 ${REPORT_PATH}/data.xml
+        scp -i ~/.ssh/id_rsa ${REPORT_PATH}/data.xml rbuj@fedorapeople.org:/home/fedora/rbuj/public_html/report/${PROJECT_NAME}/data.xml
 
         sqlite3 ${DB_PATH} "UPDATE t_projects SET date_report = $(date '+%Y%m%d%H') WHERE id = ${id_project};"
     fi
