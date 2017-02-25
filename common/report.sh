@@ -164,7 +164,7 @@ EOF
     cat << EOF >> ${XML_REPORT}
 </components>
 EOF
-    xsltproc ${WORK_PATH}/snippet/language.xslt ${XML_REPORT} > ${HTML_REPORT}
+    xsltproc ${WORK_PATH}/snippet/language.xsl ${XML_REPORT} > ${HTML_REPORT}
     sed -i "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
