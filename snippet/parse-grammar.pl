@@ -3,7 +3,7 @@ use v5.12;
 
 while (<STDIN>) {
   if (m/^<br\/>$/) {
-    print "<tip></item>\n";
+    print "</tip></item>\n";
   } elsif (m/^[\-]{2,}/) {
     print "<item>";
   } elsif (m/^<b>.*<\/b><br\/>/) {
