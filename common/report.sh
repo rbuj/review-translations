@@ -58,7 +58,7 @@ function report_project_cotent {
     cat ${WORK_PATH}/snippet/html.report.COMPONENT.end.txt >> ${HTML_REPORT}
     # xml
     cat ${WORK_PATH}/snippet/check-grammar.start.xml > ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
-    sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl -pe ${WORK_PATH}/snippet/parse-grammar.pl >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
+    sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl ${WORK_PATH}/snippet/parse-grammar.pl >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     cat ${WORK_PATH}/snippet/check-grammar.end.xml >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     # xslt
     mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
