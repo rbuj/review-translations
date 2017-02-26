@@ -58,7 +58,7 @@ function report_project_cotent {
     cat ${WORK_PATH}/snippet/html.report.COMPONENT.end.txt >> ${HTML_REPORT}
     # xml
     cat ${WORK_PATH}/snippet/check-grammar.start.xml > ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
-    sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl -pe 's/^[\-]+<br\/\>/\<item\>/g;s/^<br\/\>/\<\/item\>/g;s/^\<b\>(.*)\<\/b\>\<br\/\>$/\<file\>$1\<\/file\>/g;s/\<b\>Context\:\<\/b\>\s*(.*)\<br\/\>/\<context\>$1\<\/context\>/g;s/\((.*)\)\s+\<b\>.*\<\/b\>\s*(.*)\<br\/\>$/\<rule\>$1\<\/rule\>\<tip\>$2\<\/tip\>/g' | xargs -L5 >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
+    sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl -pe ${WORK_PATH}/snippet/parse-grammar.pl >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     cat ${WORK_PATH}/snippet/check-grammar.end.xml >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     # xslt
     mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
