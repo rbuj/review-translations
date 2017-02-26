@@ -16,11 +16,14 @@
     <tr>
       <td><xsl:value-of select="file"/></td>
       <td><xsl:value-of select="context"/></td>
-      <td><xsl:value-of select="tip"/></td>
+      <td><xsl:apply-templates select="tip"/></td>
       <td><xsl:value-of select="rule"/></td>
     </tr>
     </xsl:for-each>
     </tbody>
   </table>
+</xsl:template>
+<xsl:template match="br">
+  <br/>
 </xsl:template>
 </xsl:stylesheet>
