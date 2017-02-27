@@ -1,6 +1,6 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Copyright 2015, Robert Buj <rbuj@fedoraproject.org>
+# Copyright 2017, Robert Buj <rbuj@fedoraproject.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
