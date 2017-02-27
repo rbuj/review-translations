@@ -13,6 +13,18 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-LC_ALL=en_US.UTF-8 wget -qO- https://l10n.gnome.org/languages/en_US/gnome-3-24/ui.tar.gz | tar tvz | grep -oE '[^ ]+$' | cut -d'.' -f1 | awk '{print $1" git://git.gnome.org/"$1}' > list/gnome.list
-LC_ALL=en_US.UTF-8 wget -qO- http://l10n.gnome.org/languages/en_US/gnome-extras/ui.tar.gz | tar tvz | grep -oE '[^ ]+$' | cut -d'.' -f1 | awk '{print $1" git://git.gnome.org/"$1}' >> list/gnome.list
-sort list/gnome.list -o list/gnome.list
+URL_LIST=( https://l10n.gnome.org/languages/en_US/gnome-3-24/ui.tar.gz http://l10n.gnome.org/languages/en_US/gnome-extras/ui.tar.gz )
+for URL in ${URL_LIST[@]}; do
+  for PACKAGE in $(LC_ALL=en_US.UTF-8 wget -qO- $URL | tar tvz | grep -oE '[^ ]+$' | cut -d'.' -f1); do
+    echo "$PACKAGE"
+    echo "  + checking sources file..."
+    wget -qO/dev/null  https://src.fedoraproject.org/cgit/rpms/$PACKAGE.git/plain/sources
+    if [ $? -ne 0 ]; then
+      echo "  + couldn't find sources file. skipping."
+    else
+      echo "  + adding the package into list/gnome.list..."
+      echo "$PACKAGE git://git.gnome.org/$PACKAGE" >> list/gnome.list
+      sort -u -o list/gnome.list list/gnome.list
+    fi
+  done
+done
