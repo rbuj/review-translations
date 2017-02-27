@@ -30,7 +30,6 @@ More scripts:
 * colord.sh : downloads and tests the translations of [colord](https://www.freedesktop.org/software/colord/)
 * colorhug-client : downloads and tests the translations of [colorhug-client](http://www.hughski.com/)
 * compiz-reloaded.sh: downloads and tests the translations of [Compiz](http://www.compiz.org/)
-* deploy.sh : a deployment example for publishing the reports in a local apache server
 * exaile.sh: downloads and tests the translations of [exaile](http://www.exaile.org/)
 * freedesktop.sh : downloads and tests the translations of [accounts-service](http://freedesktop.org/wiki/Software/AccountsService/), [fprintd](http://www.freedesktop.org/wiki/Software/fprint/), [PackageKit](http://www.freedesktop.org/software/PackageKit/), [Shared MIME-info Database](http://standards.freedesktop.org/shared-mime-info-spec/latest/) and [udisks2](http://www.freedesktop.org/wiki/Software/udisks/)
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
