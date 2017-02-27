@@ -39,6 +39,7 @@ More scripts:
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 * update-gnome-list.sh : update list/gnome.list file
+* update-MATE-list.sh : update list/MATE.list file
 * XFCE.sh : downloads and tests the translations of [xfce](http://www.xfce.org/)
 * yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/) and [yumex-dnf](http://www.yumex.dk/)
 
