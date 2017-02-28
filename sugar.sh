@@ -21,7 +21,7 @@ GENERATE_REPORT=
 INSTALL_TRANS=
 
 source ${WORK_PATH}/conf/colors.sh
-source ${WORK_PATH}/conf/languagetool.conf
+source ${WORK_PATH}/conf/languagetool.sh
 
 function usage {
     echo "This script downloads the translations of the Sugar Labs project"

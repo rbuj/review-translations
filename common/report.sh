@@ -210,7 +210,7 @@ EOF
 if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
     LT_EXTERNAL="YES"
 else
-    source ${WORK_PATH}/conf/languagetool.conf
+    source ${WORK_PATH}/conf/languagetool.sh
 fi
 
 
