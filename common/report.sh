@@ -261,7 +261,7 @@ fi
 #########################################
 # REQUIRED PACKAGES
 #########################################
-REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz )
+REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz jq )
 case $LANG_CODE in
     ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
         REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)
