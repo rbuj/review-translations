@@ -27,7 +27,7 @@
     color: #080808;
 }
 </style>
-<script type="text/javascript" src="javascript/jquery-JQUERY_VERSION.slim.js"></script>
+<script type="text/javascript" src="javascript/jquery-JQUERY_VERSION.slim.min.js"></script>
 <script>
 var make_button_active = function()
 {
