@@ -13,6 +13,6 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-if [ ! -f "${WORK_PATH}/snippet/jquery-${JQUERY_VERSION}.slim.min.js" ]; then
-    wget -O ${WORK_PATH}/snippet/jquery-${JQUERY_VERSION}.slim.min.js https://code.jquery.com/jquery-${JQUERY_VERSION}.slim.min.js
+if [ ! -f "${WORK_PATH}/snippet/mustache.min.js" ]; then
+    wget -O ${WORK_PATH}/snippet/mustache.min.js https://raw.githubusercontent.com/janl/mustache.js/master/mustache.min.js
 fi

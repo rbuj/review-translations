@@ -1,0 +1,20 @@
+.menu {
+ list-style-type: none;
+ white-space:nowrap;
+ margin: 0;
+ padding: 0;
+ background-color: #080808;
+ color: #D0D0D0;
+}
+
+.menu li a {
+ display: block;
+ color: #D0D0D0;
+ padding: 8px 16px;
+ text-decoration: none;
+}
+
+.menu li a:hover, .menu li.active a {
+ background-color: #D0D0D0;
+ color: #080808;
+}

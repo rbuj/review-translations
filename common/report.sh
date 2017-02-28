@@ -138,36 +138,64 @@ function report {
     #########################################
     # HTML
     #########################################
-    local XML_REPORT="${HTML_REPORT_PATH}/index.xml"
     local HTML_REPORT="${HTML_REPORT_PATH}/index.html"
     echo "************************************************"
     echo "* checking translations..."
     echo "************************************************"
-    source ${WORK_PATH}/snippet/jquery.version
-    cat << EOF > ${XML_REPORT}
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="/xsl/project.xsl"?>
-<components>
-EOF
     local FILES=()
+    local JSON_FILES=()
     for COMPONENT in ${COMPONENTS[@]}; do
         report_project_cotent ${COMPONENT}
         if [ -f "${HTML_REPORT_PATH}/data/${COMPONENT}.html" ]; then
             FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/data/${COMPONENT}.html")
-            cat << EOF >> ${XML_REPORT}
-  <component>
-    <name>$COMPONENT</name>
-    <url>data/$COMPONENT.html</url>
-  </component>
-EOF
+            jq -n "{name: \"$COMPONENT\"} + {url: \"data/$COMPONENT.html\"}" --indent n > ${HTML_REPORT_PATH}/${COMPONENT}.json
+            JSON_FILES+=(${HTML_REPORT_PATH}/${COMPONENT}.json)
         fi
     done
-    cat << EOF >> ${XML_REPORT}
-</components>
+    source ${WORK_PATH}/snippet/jquery.version
+    cat << EOF > ${HTML_REPORT}
+<!DOCTYPE html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <title>Translation Report</title>
+ <link rel="stylesheet" type="text/css" href="css/nav.css">
+ <script src="javascript/jquery-$JQUERY_VERSION.slim.min.js"></script>
+ <script src="javascript/mustache.min.js"></script>
+ <script>
+  var make_button_active = function() {
+   var siblings =(\$(this).siblings());
+   siblings.each(function (index) {
+    \$(this).removeClass('active');
+   })
+   \$(this).addClass('active');
+  }
+  function loadMenu() {
+   var template = \$('#template').html();
+   Mustache.parse(template);   // optional, speeds up future uses
+   var data = {
+    components: $(jq --indent n "sort_by(.name)" --slurp . ${JSON_FILES[*]})
+   };
+   var rendered = Mustache.render(template, data);
+   \$('#container').html(rendered).promise().done(function() {
+    \$(".menu li").click(make_button_active);
+   });
+  };
+ </script>
+</head>
+<body onload="loadMenu()">
+ <div id="container" style="display: flex; min-height: 100vh;">Loading...</div>
+ <script id="template" type="x-tmpl-mustache">
+  <ul class="menu">
+  {{#components}}
+   <li><a href="{{& url }}" target="main_page">{{ name }}</a></li>
+  {{/components}}
+  </ul>
+  <iframe src="data/emty.html" style="flex: 1;" frameBorder="0" name="main_page"></iframe>
+ </script>
+</body>
+</html>
 EOF
-    xsltproc ${WORK_PATH}/snippet/language.xsl ${XML_REPORT} > ${HTML_REPORT}
-    sed -i "s/JQUERY_VERSION/$JQUERY_VERSION/g" ${HTML_REPORT}
-    tidy -w 0 -q -i -utf8 -ashtml -m ${HTML_REPORT}
     chmod 644 ${HTML_REPORT}
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/index.html")
 
@@ -194,6 +222,22 @@ EOF
         chmod 644 "${HTML_REPORT_PATH}/javascript/jquery.tablesorter.min.js"
     fi
     FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/jquery.tablesorter.min.js")
+
+    source ${WORK_PATH}/common/download-mustache.sh
+    if [ ! -f "${HTML_REPORT_PATH}/javascript/mustache.min.js" ]; then
+        cp ${WORK_PATH}/snippet/mustache.min.js ${HTML_REPORT_PATH}/javascript/mustache.min.js > /dev/null
+        chmod 644 "${HTML_REPORT_PATH}/javascript/mustache.min.js"
+    fi
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/javascript/mustache.min.js")
+
+    if [ ! -d "${HTML_REPORT_PATH}/css" ]; then
+        mkdir "${HTML_REPORT_PATH}/css"
+    fi
+    if [ ! -f "${HTML_REPORT_PATH}/css/nav.css" ]; then
+        cp ${WORK_PATH}/css/nav.css ${HTML_REPORT_PATH}/css/nav.css > /dev/null
+        chmod 644 "${HTML_REPORT_PATH}/css/nav.css"
+    fi
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/css/nav.css")
 
     cd ${REPORT_PATH}
     if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.txz" ]; then
