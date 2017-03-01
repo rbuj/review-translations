@@ -54,20 +54,66 @@ function report_project_cotent {
             fi
         ;;
     esac
-    cd ${WORK_PATH}
     cat ${WORK_PATH}/snippet/html.report.COMPONENT.end.txt >> ${HTML_REPORT}
+
     # xml
     cat ${WORK_PATH}/snippet/check-grammar.start.xml > ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     sed -n '/^[\-]\{2,\}<br\/>$/,/^<br\/>$/p' ${HTML_REPORT} | perl ${WORK_PATH}/snippet/parse-grammar.pl >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
     cat ${WORK_PATH}/snippet/check-grammar.end.xml >> ${HTML_REPORT_PATH}/data/${COMPONENT}.xml
-    # xslt
+
+    # backup
     mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
-    sed "s/JQUERY_VERSION/$JQUERY_VERSION/g;s/COMPONENT/$COMPONENT/g" ${WORK_PATH}/snippet/html.report.COMPONENT.XSLT.start.txt > ${HTML_REPORT}
-    sed -n '/^<font color.*/p' ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | sed 's/\#52f3ff/indigo/g;s/\#ff0080/Purple/g' >> ${HTML_REPORT}
-    echo "<br/>" >> ${HTML_REPORT}
-    xsltproc ${WORK_PATH}/snippet/check-grammar.xsl ${HTML_REPORT_PATH}/data/${COMPONENT}.xml | perl -pe 'chomp' >> ${HTML_REPORT}
-    echo "</body></html>" >> ${HTML_REPORT}
-    tidy -w 0 -q -i -utf8 -ashtml -m -c ${HTML_REPORT}
+
+    # html
+    source ${WORK_PATH}/snippet/jquery.version
+    cat << EOF > ${HTML_REPORT}
+<!DOCTYPE html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <title>Translation Report</title>
+ <link rel="stylesheet" type="text/css" href="../css/component.css">
+ <script src="../javascript/jquery-$JQUERY_VERSION.slim.min.js"></script>
+ <script src="../javascript/mustache.min.js"></script>
+ <script src="../javascript/jquery.tablesorter.min.js"></script>
+ <script>
+  function loadContent() {
+   var template = \$('#grammarIssuesTemplate').html();
+   Mustache.parse(template);   // optional, speeds up future uses
+   var data = {
+    grammarIssues: [$(xsltproc ${WORK_PATH}/snippet/check-grammar.xsl ${HTML_REPORT_PATH}/data/${COMPONENT}.xml)]
+   };
+   var rendered = Mustache.render(template, data);
+   \$('#grammarIssuesDiv').html(rendered).promise().done(function() {
+    \$("#reportTable").tablesorter();
+   });
+  };
+ </script>
+</head>
+<body onload="loadContent()">
+ <h1>$COMPONENT</h1>
+$(cat ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | perl ${WORK_PATH}/snippet/parse-spelling.pl)
+ <br>
+ <div id="grammarIssuesDiv">Loading...</div>
+ <script id="grammarIssuesTemplate" type="x-tmpl-mustache">
+  <table id="reportTable" class="tablesorter">
+   <thead>
+    <tr style="background-color:#9ACD32;">
+     <th style="text-align:left;">File</th>
+     <th style="text-align:left;">Context</th>
+     <th style="text-align:left;">Tip</th>
+     <th style="text-align:left;">Rule</th>
+    </tr>
+   </thead>
+   <tbody>
+    {{#grammarIssues}}
+     <tr><td>{{& file }}</td><td>{{& context }}</td><td>{{& tip }}</td><td>{{& rule }}</td></tr>
+    {{/grammarIssues}}
+   <tbody>
+ </script>
+</body>
+</html>
+EOF
     chmod 644 ${HTML_REPORT}
     sqlite3 ${REPORT_DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
@@ -237,7 +283,11 @@ EOF
         cp ${WORK_PATH}/css/nav.css ${HTML_REPORT_PATH}/css/nav.css > /dev/null
         chmod 644 "${HTML_REPORT_PATH}/css/nav.css"
     fi
-    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/css/nav.css")
+    if [ ! -f "${HTML_REPORT_PATH}/css/component.css" ]; then
+        cp ${WORK_PATH}/css/component.css ${HTML_REPORT_PATH}/css/component.css
+        chmod 644 "${HTML_REPORT_PATH}/css/component.css"
+    fi
+    FILES+=("${PROJECT_NAME}-report-${LANG_CODE}/css/nav.css" "${PROJECT_NAME}-report-${LANG_CODE}/css/component.css")
 
     cd ${REPORT_PATH}
     if [ -f "${PROJECT_NAME}-report-${LANG_CODE}.txz" ]; then
@@ -261,7 +311,7 @@ fi
 #########################################
 # REQUIRED PACKAGES
 #########################################
-REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz jq )
+REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz jq perl-HTML-Strip )
 case $LANG_CODE in
     ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
         REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)
