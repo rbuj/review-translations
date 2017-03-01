@@ -191,7 +191,7 @@ function report {
    <li><a href="{{& url }}" target="main_page">{{ name }}</a></li>
   {{/components}}
   </ul>
-  <iframe src="data/emty.html" style="flex: 1;" frameBorder="0" name="main_page"></iframe>
+  <iframe src="data/emty.html" style="flex:1;border:none;" name="main_page"></iframe>
  </script>
 </body>
 </html>
