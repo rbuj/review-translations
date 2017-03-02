@@ -10,14 +10,18 @@
         <xsl:with-param name="with" select="'\&quot;'"/>
       </xsl:call-template>
     </xsl:variable>
-    <xsl:text>{"file":"</xsl:text><xsl:value-of select="file"/>"<xsl:text>,"context":"</xsl:text><xsl:value-of select="$escaped-context"/><xsl:text>","tip":"</xsl:text><xsl:apply-templates select="tip"/><xsl:text>","rule":"</xsl:text><xsl:value-of select="rule"/><xsl:text>"}</xsl:text>
+    <xsl:variable name="escaped-tip">
+      <xsl:call-template name="replace-string">
+        <xsl:with-param name="text" select="tip"/>
+        <xsl:with-param name="replace" select="'&quot;'" />
+        <xsl:with-param name="with" select="'\&quot;'"/>
+      </xsl:call-template>
+    </xsl:variable>
+    <xsl:text>{"file":"</xsl:text><xsl:value-of select="file"/>"<xsl:text>,"context":"</xsl:text><xsl:value-of select="$escaped-context"/><xsl:text>","tip":"</xsl:text><xsl:value-of select="$escaped-tip"/><xsl:text>","rule":"</xsl:text><xsl:value-of select="rule"/><xsl:text>"}</xsl:text>
     <xsl:if test="position() != last()">
       <xsl:text>, </xsl:text>
     </xsl:if>
   </xsl:for-each>
-</xsl:template>
-<xsl:template match="br">
-  <br/>
 </xsl:template>
 <xsl:template name="replace-string">
   <xsl:param name="text"/>
