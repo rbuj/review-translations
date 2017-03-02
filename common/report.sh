@@ -155,13 +155,16 @@ function report {
         if [ ! -d "${BASE_PATH}/${COMPONENT_NAME}" ]; then
             continue
         fi
-        date_file=$(find ${BASE_PATH}/${COMPONENT_NAME}  -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
+        date_file=$(find ${BASE_PATH}/${COMPONENT_NAME} -type f -name ${LANG_CODE}.po -exec date -r {} "+%Y%m%d%H" \; | sort | tail -1)
         if [ -z "${date_file}" ]; then
             continue
         fi
-        COMPONENTS+=("${COMPONENT_NAME}")
         sqlite3 ${REPORT_DB_PATH} "INSERT OR IGNORE INTO t_components (name) VALUES ('${COMPONENT_NAME}');"
         sqlite3 ${REPORT_DB_PATH} "UPDATE t_components SET date_file = ${date_file} WHERE name = '${COMPONENT_NAME}';"
+        # translated words > 0
+        if [ "$(LC_ALL=en_US.UTF-8 posieve stats --coloring-type=none --include-name=${LANG_CODE}\$ ${BASE_PATH}/${COMPONENT_NAME} | xargs -n 8 | perl -alne '/^total.*/ && print $F[5]')" -gt "0" ]; then
+            COMPONENTS+=("${COMPONENT_NAME}")
+        fi
     done <${LIST}
 
     #########################################
@@ -301,13 +304,6 @@ EOF
     fi
 }
 
-if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
-    LT_EXTERNAL="YES"
-else
-    source ${WORK_PATH}/conf/languagetool.sh
-fi
-
-
 #########################################
 # REQUIRED PACKAGES
 #########################################
@@ -323,6 +319,18 @@ esac
 source ${WORK_PATH}/common/install-pakages.sh
 install-pakages ${REQUIRED_PACKAGES[@]}
 
+# translated words == 0?
+if [ "$(LC_ALL=en_US.UTF-8 posieve stats --coloring-type=none --include-name=${LANG_CODE}\$ ${BASE_PATH} | xargs -n 8 | perl -alne '/^total.*/ && print $F[5]')" -eq "0" ]; then
+    exit 0
+fi
+
+if [ -n "${LT_SERVER}" ] && [ -n "${LT_PORT}" ]; then
+    LT_EXTERNAL="YES"
+else
+    source ${WORK_PATH}/conf/languagetool.sh
+fi
+
+
 REPORT_PATH=${BASE_PATH}/report
 HTML_REPORT_PATH=${REPORT_PATH}/${PROJECT_NAME}-report-${LANG_CODE}
 REPORT_DB_PATH="${HTML_REPORT_PATH}.db"
@@ -336,6 +344,4 @@ if [ ! -d "${HTML_REPORT_PATH}" ]; then
     chmod 755 ${HTML_REPORT_PATH}
 fi
 
-
-### Main ###
 report
