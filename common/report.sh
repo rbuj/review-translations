@@ -65,8 +65,10 @@ function report_project_cotent {
     mv ${HTML_REPORT} ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html
 
     # html
-    source ${WORK_PATH}/snippet/jquery.version
-    cat << EOF > ${HTML_REPORT}
+    local NUM_GRAMMAR_ISSUES=$(xmllint --xpath "count(//item)" ${HTML_REPORT_PATH}/data/${COMPONENT}.xml)
+    if [ "$NUM_GRAMMAR_ISSUES" -gt "0" ]; then
+        source ${WORK_PATH}/snippet/jquery.version
+        cat << EOF > ${HTML_REPORT}
 <!DOCTYPE html>
 <html>
 <head>
@@ -114,6 +116,22 @@ $(cat ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | perl ${WORK_PATH}/snippet
 </body>
 </html>
 EOF
+    else
+        cat << EOF > ${HTML_REPORT}
+<!DOCTYPE html>
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <title>Translation Report</title>
+ <link rel="stylesheet" type="text/css" href="../css/component.css">
+</head>
+<body>
+ <h1>$COMPONENT</h1>
+$(cat ${HTML_REPORT_PATH}/data/${COMPONENT}.out.html | perl ${WORK_PATH}/snippet/parse-spelling.pl)
+</body>
+</html>
+EOF
+    fi
     chmod 644 ${HTML_REPORT}
     sqlite3 ${REPORT_DB_PATH} "UPDATE t_components SET date_report = "$(date "+%Y%m%d%H")" WHERE name = '${COMPONENT}';"
 }
@@ -307,7 +325,7 @@ EOF
 #########################################
 # REQUIRED PACKAGES
 #########################################
-REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz jq perl-HTML-Strip )
+REQUIRED_PACKAGES=( pology enchant-aspell java-1.8.0-openjdk perl-Locale-Codes python2-enchant sqlite tar xz jq perl-HTML-Strip libxslt libxml2 )
 case $LANG_CODE in
     ast|en_GB|mai|pt_BR|zh_CN|zh_TW)
         REQUIRED_PACKAGES+=(langpacks-$LANG_CODE)
