@@ -255,10 +255,10 @@ function report {
  <script id="template" type="x-tmpl-mustache">
   <ul class="menu">
   {{#components}}
-   <li><a href="{{& url }}" target="main_page">{{ name }}</a></li>
+   <li><a href="javascript:;" onclick="document.getElementById('main_page').src='{{& url }}';document.body.scrollTop=0;document.documentElement.scrollTop=0;return true;">{{ name }}</a></li>
   {{/components}}
   </ul>
-  <iframe src="data/emty.html" style="flex:1;border:none;" name="main_page"></iframe>
+  <iframe src="data/emty.html" style="flex:1;border:none;" name="main_page" id="main_page"></iframe>
  </script>
 </body>
 </html>
