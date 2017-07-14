@@ -40,8 +40,6 @@ xfce4-notifyd git://git.xfce.org/apps/xfce4-notifyd
 xfce4-panel git://git.xfce.org/xfce/xfce4-panel
 xfce4-places-plugin git://git.xfce.org/panel-plugins/xfce4-places-plugin
 xfce4-power-manager git://git.xfce.org/xfce/xfce4-power-manager
-xfce4-radio-plugin git://git.xfce.org/panel-plugins/xfce4-radio-plugin
-xfce4-rss-plugin git://git.xfce.org/panel-plugins/xfce4-rss-plugin
 xfce4-screenshooter git://git.xfce.org/apps/xfce4-screenshooter
 xfce4-session git://git.xfce.org/xfce/xfce4-session
 xfce4-settings git://git.xfce.org/xfce/xfce4-settings
