@@ -13,7 +13,7 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
-URL_LIST=( https://l10n.gnome.org/languages/en_US/gnome-3-24/ui.tar.gz http://l10n.gnome.org/languages/en_US/gnome-extras/ui.tar.gz )
+URL_LIST=( https://l10n.gnome.org/languages/en_US/gnome-3-26/ui.tar.gz http://l10n.gnome.org/languages/en_US/gnome-extras/ui.tar.gz )
 for URL in ${URL_LIST[@]}; do
   for PACKAGE in $(LC_ALL=en_US.UTF-8 wget -qO- $URL | tar tvz | grep -oE '[^ ]+$' | cut -d'.' -f1); do
     echo "$PACKAGE"
