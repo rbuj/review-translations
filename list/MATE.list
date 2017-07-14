@@ -15,11 +15,8 @@ mate-control-center MATE mate-control-center
 mate-desktop MATE mate-desktop
 mate-icon-theme-faenza MATE mate-icon-theme-faenza
 mate-icon-theme MATE mate-icon-theme
-mate-indicator-applet MATE mate-indicator-applet
 mate-media MATE mate-media
 mate-menus MATE mate-menus
-mate-netbook MATE mate-netbook
-mate-netspeed MATE mate-netspeed
 mate-notification-daemon MATE mate-notification-daemon
 mate-panel MATE mate-panel
 mate-polkit MATE mate-polkit
@@ -31,7 +28,6 @@ mate-settings-daemon MATE mate-settings-daemon
 mate-system-monitor MATE mate-system-monitor
 mate-terminal MATE mate-terminal
 mate-themes MATE mate-themes
-mate-user-share MATE mate-user-share
 mate-user-guide MATE mate-user-guide
 mate-utils MATE mate-utils
 mozo MATE mozo
