@@ -115,7 +115,7 @@ function report_package_table {
             cat << EOF >> ${HTML_REPORT}
     <component>
       <name>${PACKAGE}</name>
-      <desc>$(rpm -q --queryformat=%{description} $PACKAGE || timeout 30 dnf repoquery -q --queryformat "%{description}" $PACKAGE)</desc>
+      <desc>$(rpm -q $PACKAGE &> /dev/null && rpm -q --queryformat=%{description} $PACKAGE || timeout 30 dnf repoquery -q --queryformat "%{description}" $PACKAGE)</desc>
     </component>
 EOF
         done
