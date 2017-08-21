@@ -1,5 +1,5 @@
 abrt master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/abrt.mo
-anaconda f26 F25 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
+anaconda f26 F26 po/LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
 anaconda master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/anaconda.mo
 authconfig master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/authconfig.mo
 blivet master LOCALE.po:/usr/share/locale/LOCALE/LC_MESSAGES/blivet.mo
