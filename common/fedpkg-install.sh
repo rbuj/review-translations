@@ -147,7 +147,7 @@ function install {
         fi
 
         echo -ne "${PROJECT}: rpm -i "
-        sudo rpm reinstall -y */*.rpm &> /dev/null
+        find . -name "*.rpm" ! -name "*.src.rpm" -exec sudo rpm -i --replacefiles --replacepkgs {} +
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
             continue
