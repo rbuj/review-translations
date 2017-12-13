@@ -17,10 +17,10 @@ VERSION="master"
 if [ -f "/etc/fedora-release" ]; then
     VERSION_AUX=`cat /etc/fedora-release`
     case ${VERSION_AUX} in
-	"Fedora release 25 (Twenty Six)")
+	"Fedora release 26 (Twenty Six)")
         VERSION="f26"
         ;;
-        "Fedora release 26 (Twenty Seven)")
+        "Fedora release 27 (Twenty Seven)")
         VERSION="f27"
         ;;
     esac
