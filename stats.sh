@@ -13,23 +13,24 @@
 # GNU General Public License at <http://www.gnu.org/licenses/> for
 # more details.
 # ---------------------------------------------------------------------------
+BRANCH=$(./common/fedora-version.sh)
 function info_proc {
     while read -r p; do
         set -- $p
         PROJECT=${1}
 
-        fedpkg -q co $PROJECT &> /dev/null
+        fedpkg -q co $PROJECT -b $BRANCH --anonymous &> /dev/null
         if [ $? -eq 0 ]; then
             if [ -d "$PROJECT" ]; then
                 cd $PROJECT
                 if [ -f "sources" ]; then
-                    HASH=$(awk '{print $1}' sources)
+                    HASH=$(awk 'NR==1 {print $1}' sources)
                     case $HASH in
                     SHA512)
-                        FILE=$(awk -F '[()]' '{print $2}' sources)
+                        FILE=$(awk -F '[()]' 'NR==1 {print $2}' sources)
                     ;;
                     *)
-                        FILE=$(awk '{print $2}' sources)
+                        FILE=$(awk 'NR==1 {print $2}' sources)
                     ;;
                     esac
                     fedpkg -q sources &> /dev/null
