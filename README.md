@@ -35,6 +35,7 @@ More scripts:
 * fwupd.sh : downloads and tests the translations of [fwupd](http://www.fwupd.org/)
 * geany.sh : downloads and tests the translations of [geany](http://www.geany.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
+* hexchat.sh : downloads and tests the translations of [HexChat](https://hexchat.github.io/)
 * MATE.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * phpMyAdmin.sh : downloads and tests the translations of [phpMyAdmin on Fedora](https://www.phpmyadmin.net/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
