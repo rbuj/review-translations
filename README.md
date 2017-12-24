@@ -40,6 +40,7 @@ More scripts:
 * phpMyAdmin.sh : downloads and tests the translations of [phpMyAdmin on Fedora](https://www.phpmyadmin.net/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
+* transmission.sh : downloads and tests the translations of [Transmission](https://transmissionbt.com/) - gtk only
 * update-compiz-reloaded.list.sh : update list/compiz-reloaded.list file EXPERIMENTAL
 * update-gnome-list.sh : update list/gnome.list file
 * update-MATE-list.sh : update list/MATE.list file
