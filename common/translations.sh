@@ -123,7 +123,7 @@ BASE_PATH=${WORK_PATH}/${PROJECT_NAME}
 
 if [ "${DOWNLOAD}" == "YES" ]; then
     case $TYPE in
-        fedora|git|transifex)
+        fedora|bzr|git|transifex)
             source ${WORK_PATH}/common/download-${TYPE}.sh
         ;;
 	*)

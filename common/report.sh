@@ -158,7 +158,7 @@ function report {
             fedora)
                 COMPONENT_NAME="${1}-${2}"
             ;;
-            git|transifex)
+            bzr|git|transifex)
                 COMPONENT_NAME="${1}"
             ;;
             *)

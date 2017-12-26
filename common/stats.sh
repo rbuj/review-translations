@@ -26,7 +26,7 @@ function populate_db {
          fedora)
             COMPONENT="${1}-${2}"
          ;;
-         git|transifex)
+         bzr|git|transifex)
             COMPONENT="${1}"
          ;;
          *)
