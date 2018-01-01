@@ -10,7 +10,6 @@ banshee git://git.gnome.org/banshee
 baobab git://git.gnome.org/baobab
 bijiben git://git.gnome.org/bijiben
 brasero git://git.gnome.org/brasero
-california git://git.gnome.org/california
 caribou git://git.gnome.org/caribou
 cheese git://git.gnome.org/cheese
 chrome-gnome-shell git://git.gnome.org/chrome-gnome-shell
@@ -20,7 +19,6 @@ dasher git://git.gnome.org/dasher
 dconf-editor git://git.gnome.org/dconf-editor
 devhelp git://git.gnome.org/devhelp
 d-feet git://git.gnome.org/d-feet
-dia git://git.gnome.org/dia
 easytag git://git.gnome.org/easytag
 ekiga git://git.gnome.org/ekiga
 empathy git://git.gnome.org/empathy
@@ -101,7 +99,6 @@ gnome-shell git://git.gnome.org/gnome-shell
 gnome-software git://git.gnome.org/gnome-software
 gnome-sound-recorder git://git.gnome.org/gnome-sound-recorder
 gnome-sudoku git://git.gnome.org/gnome-sudoku
-gnome-system-log git://git.gnome.org/gnome-system-log
 gnome-system-monitor git://git.gnome.org/gnome-system-monitor
 gnome-taquin git://git.gnome.org/gnome-taquin
 gnome-terminal git://git.gnome.org/gnome-terminal
@@ -110,6 +107,7 @@ gnome-themes-standard git://git.gnome.org/gnome-themes-standard
 gnome-todo git://git.gnome.org/gnome-todo
 gnome-tweak-tool git://git.gnome.org/gnome-tweak-tool
 gnome-user-share git://git.gnome.org/gnome-user-share
+gnome-video-arcade git://git.gnome.org/gnome-video-arcade
 gnome-video-effects git://git.gnome.org/gnome-video-effects
 gnome-weather git://git.gnome.org/gnome-weather
 gnote git://git.gnome.org/gnote
@@ -171,6 +169,7 @@ regexxer git://git.gnome.org/regexxer
 rhythmbox git://git.gnome.org/rhythmbox
 rygel git://git.gnome.org/rygel
 seahorse git://git.gnome.org/seahorse
+seahorse-nautilus git://git.gnome.org/seahorse-nautilus
 shotwell git://git.gnome.org/shotwell
 simple-scan git://git.gnome.org/simple-scan
 sound-juicer git://git.gnome.org/sound-juicer
@@ -179,11 +178,12 @@ swell-foop git://git.gnome.org/swell-foop
 sysprof git://git.gnome.org/sysprof
 tali git://git.gnome.org/tali
 template-glib git://git.gnome.org/template-glib
+tepl git://git.gnome.org/tepl
 tomboy git://git.gnome.org/tomboy
 totem git://git.gnome.org/totem
 totem-pl-parser git://git.gnome.org/totem-pl-parser
 tracker git://git.gnome.org/tracker
-transmageddon git://git.gnome.org/transmageddon
+tracker-miners git://git.gnome.org/tracker-miners
 vinagre git://git.gnome.org/vinagre
 vino git://git.gnome.org/vino
 vte git://git.gnome.org/vte
