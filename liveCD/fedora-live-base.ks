@@ -7,8 +7,8 @@
 # Does includes "default" language configuration (kickstarts including
 # this template can override these settings)
 
-lang ca_ES.UTF-8
-keyboard es
+lang ca_ES
+keyboard --vckeymap=es --xlayouts=es
 timezone Europe/Madrid
 auth --useshadow --passalgo=sha512
 selinux --enforcing
