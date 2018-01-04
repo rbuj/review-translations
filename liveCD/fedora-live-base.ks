@@ -7,7 +7,7 @@
 # Does includes "default" language configuration (kickstarts including
 # this template can override these settings)
 
-lang ca_ES
+lang ca_ES.UTF-8
 keyboard --vckeymap=es --xlayouts=es
 timezone Europe/Madrid
 auth --useshadow --passalgo=sha512
