@@ -36,14 +36,14 @@ More scripts:
 * geany.sh : downloads and tests the translations of [geany](http://www.geany.org/)
 * gnome.sh : downloads and tests the translations of some [GNOME packages](https://www.gnome.org/)
 * hexchat.sh : downloads and tests the translations of [HexChat](https://hexchat.github.io/)
-* MATE.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
+* MATE-1-20.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
+* MATE-master.sh : downloads and tests the translations of [MATE Desktop Environment on Fedora](http://mate-desktop.org/)
 * phpMyAdmin.sh : downloads and tests the translations of [phpMyAdmin on Fedora](https://www.phpmyadmin.net/)
 * rpm.sh : downloads and tests the translations of [RPM package](http://www.rpm.org/)
 * sugar.sh : downloads and tests the translations of [Sugar Labs on Fedora](https://spins.fedoraproject.org/soas/)
 * transmission.sh : downloads and tests the translations of [Transmission](https://transmissionbt.com/) - gtk only
 * update-compiz-reloaded.list.sh : update list/compiz-reloaded.list file EXPERIMENTAL
 * update-gnome-list.sh : update list/gnome.list file
-* update-MATE-list.sh : update list/MATE.list file
 * XFCE.sh : downloads and tests the translations of [xfce](http://www.xfce.org/)
 * yumex.sh : downloads and tests the translations of [yumex](http://www.yumex.dk/) and [yumex-dnf](http://www.yumex.dk/)
 
