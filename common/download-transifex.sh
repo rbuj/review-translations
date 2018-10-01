@@ -25,6 +25,7 @@ function download_code {
     else
         tx pull -l ${LANG_CODE} > /dev/null && echo "${GREEN}[ OK ]${NC}" || echo "${RED}[ FAIL ]${NC}";
     fi
+    find . -name *.po -exec sed -i 's/CHARSET/UTF-8/g' {} +
 }
 
 function download {
