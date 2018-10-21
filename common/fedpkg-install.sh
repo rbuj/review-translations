@@ -123,6 +123,7 @@ function install {
         cp ${PROJECT}.spec ${PROJECT}.spec.ori
 
         echo -ne "${PROJECT}: spec "
+	sed -i "s/--enable-gtk-doc//" ${PROJECT}.spec
         sed -i '/^%setup -q*/ a %patch9999 -p1' ${PROJECT}.spec
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
