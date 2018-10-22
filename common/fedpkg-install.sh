@@ -124,7 +124,7 @@ function install {
 
         echo -ne "${PROJECT}: spec "
 	sed -i "s/--enable-gtk-doc//" ${PROJECT}.spec
-	sed -i "s/^%autosetup/%setup -q/" ${PROJECT}.spec
+	sed -i "s/^%autosetup$/%autosetup -p1/" ${PROJECT}.spec
         sed -i '/^%setup -q*/ a %patch9999 -p1' ${PROJECT}.spec
         if [ $? -ne 0 ]; then
             echo "${RED}[ FAIL ]${NC}"
