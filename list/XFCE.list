@@ -1,3 +1,4 @@
+catfish git://git.xfce.org/apps/catfish
 exo git://git.xfce.org/xfce/exo
 gigolo git://git.xfce.org/apps/gigolo
 garcon git://git.xfce.org/xfce/garcon
@@ -41,6 +42,7 @@ xfce4-panel git://git.xfce.org/xfce/xfce4-panel
 xfce4-places-plugin git://git.xfce.org/panel-plugins/xfce4-places-plugin
 xfce4-power-manager git://git.xfce.org/xfce/xfce4-power-manager
 xfce4-pulseaudio-plugin git://git.xfce.org/panel-plugins/xfce4-pulseaudio-plugin
+xfce4-screensaver git://git.xfce.org/apps/xfce4-screensaver
 xfce4-screenshooter git://git.xfce.org/apps/xfce4-screenshooter
 xfce4-sensors-plugin git://git.xfce.org/panel-plugins/xfce4-sensors-plugin
 xfce4-session git://git.xfce.org/xfce/xfce4-session
@@ -60,4 +62,5 @@ xfce4-xkb-plugin git://git.xfce.org/panel-plugins/xfce4-xkb-plugin
 xfdashboard git://git.xfce.org/apps/xfdashboard
 xfdesktop git://git.xfce.org/xfce/xfdesktop
 xfmpc git://git.xfce.org/apps/xfmpc
+xfpanel-switch git://git.xfce.org/apps/xfce4-panel-profiles
 xfwm4 git://git.xfce.org/xfce/xfwm4
