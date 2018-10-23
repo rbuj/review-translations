@@ -27,8 +27,6 @@ gnome-keyring-pam
 # Note that blank is still default.
 xscreensaver-extras
 wget
-# Handy for debugging
-rfkill
 # Better more popular browser
 firefox
 system-config-printer
@@ -38,7 +36,6 @@ system-config-printer
 -acpid
 -gimp-help
 -desktop-backgrounds-basic
--PackageKit*                # we switched to dnfdragora, so we don't need this
 -aspell-*                   # dictionaries are big
 -xfce4-sensors-plugin
 

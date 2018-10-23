@@ -5,14 +5,8 @@
 
 # save some space
 -mpage
--sox
 -hplip
--numactl
 -isdn4k-utils
--autofs
-# smartcards won't really work on the livecd.
--coolkey
--wget
 
 # scanning takes quite a bit of space :/
 -xsane

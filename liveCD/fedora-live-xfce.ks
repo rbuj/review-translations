@@ -60,6 +60,9 @@ sed -i -e 's/NoDisplay=true/NoDisplay=false/' /usr/share/applications/liveinst.d
 mkdir /home/liveuser/Desktop
 cp /usr/share/applications/liveinst.desktop /home/liveuser/Desktop
 
+# no updater applet in live environment
+rm -f /etc/xdg/autostart/org.mageia.dnfdragora-updater.desktop
+
 # and mark it as executable (new Xfce security feature)
 chmod +x /home/liveuser/Desktop/liveinst.desktop
 
