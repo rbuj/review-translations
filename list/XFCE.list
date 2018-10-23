@@ -32,7 +32,6 @@ xfce4-genmon-plugin git://git.xfce.org/panel-plugins/xfce4-genmon-plugin
 xfce4-hardware-monitor-plugin git://git.xfce.org/panel-plugins/xfce4-hardware-monitor-plugin
 xfce4-indicator-plugin git://git.xfce.org/panel-plugins/xfce4-indicator-plugin
 xfce4-mailwatch-plugin git://git.xfce.org/panel-plugins/xfce4-mailwatch-plugin
-xfce4-mixer git://git.xfce.org/apps/xfce4-mixer
 xfce4-mount-plugin git://git.xfce.org/panel-plugins/xfce4-mount-plugin
 xfce4-mpc-plugin git://git.xfce.org/panel-plugins/xfce4-mpc-plugin
 xfce4-netload-plugin git://git.xfce.org/panel-plugins/xfce4-netload-plugin
